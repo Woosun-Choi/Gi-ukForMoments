@@ -7,23 +7,35 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A78B0DF6228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0DF5228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift */; };
+		A78B0DF8228D9D2900D0B275 /* Giuk_MainButtonItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0DF7228D9D2900D0B275 /* Giuk_MainButtonItem.swift */; };
 		A7A6A5FB228A4CCA001FCA4D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A6A5FA228A4CCA001FCA4D /* AppDelegate.swift */; };
-		A7A6A5FD228A4CCA001FCA4D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A6A5FC228A4CCA001FCA4D /* ViewController.swift */; };
 		A7A6A600228A4CCA001FCA4D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7A6A5FE228A4CCA001FCA4D /* Main.storyboard */; };
 		A7A6A603228A4CCA001FCA4D /* Gi_ukForMoments.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A7A6A601228A4CCA001FCA4D /* Gi_ukForMoments.xcdatamodeld */; };
 		A7A6A605228A4CCE001FCA4D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A7A6A604228A4CCE001FCA4D /* Assets.xcassets */; };
 		A7A6A608228A4CCE001FCA4D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7A6A606228A4CCE001FCA4D /* LaunchScreen.storyboard */; };
+		A7A6A610228A4D1A001FCA4D /* ContentUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A6A60F228A4D19001FCA4D /* ContentUIViewController.swift */; };
+		A7A6A612228A4EAC001FCA4D /* PublicExtentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A6A611228A4EAC001FCA4D /* PublicExtentions.swift */; };
+		A7A6A61A228B9249001FCA4D /* Giuk_MainFrameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A6A619228B9249001FCA4D /* Giuk_MainFrameViewController.swift */; };
+		A7A6A61E228B9C1B001FCA4D /* GenericMultiButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A6A61D228B9C1B001FCA4D /* GenericMultiButtonView.swift */; };
+		A7A6A620228BA048001FCA4D /* ButtonGridManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A6A61F228BA048001FCA4D /* ButtonGridManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A78B0DF5228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_MainFrame_ContainerView.swift; sourceTree = "<group>"; };
+		A78B0DF7228D9D2900D0B275 /* Giuk_MainButtonItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_MainButtonItem.swift; sourceTree = "<group>"; };
 		A7A6A5F7228A4CCA001FCA4D /* Gi-ukForMoments.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Gi-ukForMoments.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7A6A5FA228A4CCA001FCA4D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		A7A6A5FC228A4CCA001FCA4D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		A7A6A5FF228A4CCA001FCA4D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A7A6A602228A4CCA001FCA4D /* Gi_ukForMoments.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Gi_ukForMoments.xcdatamodel; sourceTree = "<group>"; };
 		A7A6A604228A4CCE001FCA4D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A7A6A607228A4CCE001FCA4D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A7A6A609228A4CCE001FCA4D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A7A6A60F228A4D19001FCA4D /* ContentUIViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentUIViewController.swift; sourceTree = "<group>"; };
+		A7A6A611228A4EAC001FCA4D /* PublicExtentions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublicExtentions.swift; sourceTree = "<group>"; };
+		A7A6A619228B9249001FCA4D /* Giuk_MainFrameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_MainFrameViewController.swift; sourceTree = "<group>"; };
+		A7A6A61D228B9C1B001FCA4D /* GenericMultiButtonView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenericMultiButtonView.swift; sourceTree = "<group>"; };
+		A7A6A61F228BA048001FCA4D /* ButtonGridManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonGridManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,6 +49,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A78B0DF9228D9D4A00D0B275 /* Giuk Main Container View */ = {
+			isa = PBXGroup;
+			children = (
+				A78B0DF5228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift */,
+				A78B0DF7228D9D2900D0B275 /* Giuk_MainButtonItem.swift */,
+			);
+			path = "Giuk Main Container View";
+			sourceTree = "<group>";
+		};
+		A78B0DFA228D9D8900D0B275 /* Grid Managers */ = {
+			isa = PBXGroup;
+			children = (
+				A7A6A61F228BA048001FCA4D /* ButtonGridManager.swift */,
+			);
+			path = "Grid Managers";
+			sourceTree = "<group>";
+		};
 		A7A6A5EE228A4CC9001FCA4D = {
 			isa = PBXGroup;
 			children = (
@@ -56,15 +85,52 @@
 		A7A6A5F9228A4CCA001FCA4D /* Gi-ukForMoments */ = {
 			isa = PBXGroup;
 			children = (
-				A7A6A5FA228A4CCA001FCA4D /* AppDelegate.swift */,
-				A7A6A5FC228A4CCA001FCA4D /* ViewController.swift */,
 				A7A6A5FE228A4CCA001FCA4D /* Main.storyboard */,
+				A7A6A616228A4F12001FCA4D /* Generic Support Sources */,
+				A7A6A613228A4EB9001FCA4D /* MainView */,
+				A7A6A614228A4EDE001FCA4D /* Supporing Files */,
 				A7A6A604228A4CCE001FCA4D /* Assets.xcassets */,
-				A7A6A606228A4CCE001FCA4D /* LaunchScreen.storyboard */,
 				A7A6A609228A4CCE001FCA4D /* Info.plist */,
-				A7A6A601228A4CCA001FCA4D /* Gi_ukForMoments.xcdatamodeld */,
+				A7A6A606228A4CCE001FCA4D /* LaunchScreen.storyboard */,
+				A7A6A615228A4EFB001FCA4D /* Data Model */,
 			);
 			path = "Gi-ukForMoments";
+			sourceTree = "<group>";
+		};
+		A7A6A613228A4EB9001FCA4D /* MainView */ = {
+			isa = PBXGroup;
+			children = (
+				A78B0DF9228D9D4A00D0B275 /* Giuk Main Container View */,
+				A7A6A619228B9249001FCA4D /* Giuk_MainFrameViewController.swift */,
+			);
+			path = MainView;
+			sourceTree = "<group>";
+		};
+		A7A6A614228A4EDE001FCA4D /* Supporing Files */ = {
+			isa = PBXGroup;
+			children = (
+				A7A6A5FA228A4CCA001FCA4D /* AppDelegate.swift */,
+				A7A6A611228A4EAC001FCA4D /* PublicExtentions.swift */,
+			);
+			path = "Supporing Files";
+			sourceTree = "<group>";
+		};
+		A7A6A615228A4EFB001FCA4D /* Data Model */ = {
+			isa = PBXGroup;
+			children = (
+				A7A6A601228A4CCA001FCA4D /* Gi_ukForMoments.xcdatamodeld */,
+			);
+			path = "Data Model";
+			sourceTree = "<group>";
+		};
+		A7A6A616228A4F12001FCA4D /* Generic Support Sources */ = {
+			isa = PBXGroup;
+			children = (
+				A7A6A60F228A4D19001FCA4D /* ContentUIViewController.swift */,
+				A7A6A61D228B9C1B001FCA4D /* GenericMultiButtonView.swift */,
+				A78B0DFA228D9D8900D0B275 /* Grid Managers */,
+			);
+			path = "Generic Support Sources";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -138,8 +204,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A7A6A610228A4D1A001FCA4D /* ContentUIViewController.swift in Sources */,
+				A7A6A61A228B9249001FCA4D /* Giuk_MainFrameViewController.swift in Sources */,
 				A7A6A603228A4CCA001FCA4D /* Gi_ukForMoments.xcdatamodeld in Sources */,
-				A7A6A5FD228A4CCA001FCA4D /* ViewController.swift in Sources */,
+				A7A6A61E228B9C1B001FCA4D /* GenericMultiButtonView.swift in Sources */,
+				A7A6A620228BA048001FCA4D /* ButtonGridManager.swift in Sources */,
+				A78B0DF6228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift in Sources */,
+				A78B0DF8228D9D2900D0B275 /* Giuk_MainButtonItem.swift in Sources */,
+				A7A6A612228A4EAC001FCA4D /* PublicExtentions.swift in Sources */,
 				A7A6A5FB228A4CCA001FCA4D /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
