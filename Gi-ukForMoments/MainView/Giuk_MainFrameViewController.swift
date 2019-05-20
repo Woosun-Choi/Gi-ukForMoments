@@ -11,11 +11,17 @@ import UIKit
 class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButtonDataSource
 {
     
+    private(set) var topAnimationView: UIView!
+    
+    private(set) var rightAnimationView: UIView!
+    
     private(set) var topContainerView: Giuk_MainFrame_ContainerView!
     
-    private var topHandleArea: UIView!
-    
     private(set) var rightContainerView: Giuk_MainFrame_ContainerView!
+    
+    private(set) var containerView_settings: Giuk_MainFrame_ContainerView!
+    
+    private var topHandleArea: UIView!
     
     private var rightHandleArea: UIView!
     
@@ -26,6 +32,7 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
         case normal
         case topContainerMode
         case rightContainerMode
+        case settingMenuContainerMode
     }
     
     enum ContainerState {
@@ -74,10 +81,22 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
         controlButtons.append(addButton)
         return controlButtons
     }()
+    
+    lazy var settingButtons : [Giuk_MainButtonItem] = {
+        var controlButtons = [Giuk_MainButtonItem]()
+        var addButton = Giuk_MainButtonItem()
+        addButton.identifire = "setting"
+        addButton.setTitle("set", for: .normal)
+        addButton.addTarget(self, action: #selector(handleOntap(_:)), for: .touchUpInside)
+        addButton.backgroundColor = .red
+        controlButtons.append(addButton)
+        return controlButtons
+    }()
     //end
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setAnimationView()
         setContainers()
         setHandleAreas()
         print("did load - \n safeAreaRect : \(safeAreaRelatedAreaFrame)\n viewFrame: \(view.frame)")
@@ -91,6 +110,7 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         print("did appear - \n safeAreaRect : \(safeAreaRelatedAreaFrame)\n viewFrame: \(view.frame)")
+        layoutAnimationView()
         layoutContainers()
         layoutHandleAreas()
     }
@@ -108,16 +128,20 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
     func containerViewButtonItem(_ containerView: Giuk_MainFrame_ContainerView) -> [Giuk_MainButtonItem] {
         if containerView == topContainerView {
             return topButtons
-        } else {
+        } else if containerView == rightContainerView {
             return rightButtons
+        } else {
+            return settingButtons
         }
     }
     
     func containerViewButtonAreaRect(_ containerView: Giuk_MainFrame_ContainerView) -> CGRect {
         if containerView == topContainerView {
             return topButtonAreaFrame
+        } else if containerView == rightContainerView {
+            return rightButtonAreaFrame
         } else {
-            return rightContainerViewHandleAreaFrame
+            return settingContainerViewButtonAreaFrame
         }
     }
     
@@ -126,19 +150,45 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
     }
     //end
     
+    var initailBackgroundColor: UIColor {
+        return UIColor.goyaBlack.withAlphaComponent(0.7)
+    }
     
     //MARK: set Sub views - containerViews & handle area
+    private func setAnimationView() {
+        topAnimationView = generateUIView(view: topAnimationView, origin: topAnimationViewStartFrame.origin, size: topAnimationViewStartFrame.size)
+        topAnimationView.backgroundColor = initailBackgroundColor
+        topAnimationView.isOpaque = false
+        view.addSubview(topAnimationView)
+        
+        rightAnimationView = generateUIView(view: rightAnimationView, origin: rightAnimationViewStartFrame.origin, size: rightAnimationViewStartFrame.size)
+        rightAnimationView.backgroundColor = initailBackgroundColor
+        rightAnimationView.isOpaque = false
+        view.addSubview(rightAnimationView)
+    }
+    
+    private func layoutAnimationView() {
+        topAnimationView?.setNewFrame(topAnimationViewStartFrame)
+        rightAnimationView?.setNewFrame(rightAnimationViewStartFrame)
+    }
+    
+    
     private func setContainers() {
         
         topContainerView = generateUIView(view: topContainerView, origin: topContainerViewStartOrigin, size: fullFrameSize)
-        topContainerView.backgroundColor = UIColor.goyaBlack.withAlphaComponent(0.7)
+        topContainerView.backgroundColor = UIColor.clear
         topContainerView.dataSource = self
         view.addSubview(topContainerView)
         
         rightContainerView = generateUIView(view: rightContainerView, origin: rightContainerViewStartOrigin, size: fullFrameSize)
-        rightContainerView.backgroundColor = UIColor.goyaBlack.withAlphaComponent(0.7)
+        rightContainerView.backgroundColor = UIColor.clear
         rightContainerView.dataSource = self
         view.addSubview(rightContainerView)
+        
+        containerView_settings = generateUIView(view: containerView_settings, origin: settingContainerViewStartOrigin, size: fullFrameSize)
+        containerView_settings.backgroundColor = UIColor.blue.withAlphaComponent(0.5)
+        containerView_settings.dataSource = self
+        view.addSubview(containerView_settings)
         
         contentContainerView = generateUIView(view: contentContainerView, origin: contentAreaStartOrigin, size: contentAreaSize)
         contentContainerView.backgroundColor = UIColor.goyaYellowWhite.withAlphaComponent(1)
@@ -148,6 +198,7 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
     private func layoutContainers() {
         topContainerView?.setNewFrame(CGRect(origin: topContainerViewStartOrigin, size: fullFrameSize))
         rightContainerView?.setNewFrame(CGRect(origin: rightContainerViewStartOrigin, size: fullFrameSize))
+        containerView_settings?.setNewFrame(CGRect(origin: settingContainerViewStartOrigin, size: fullFrameSize))
         contentContainerView?.setNewFrame(CGRect(origin: contentAreaStartOrigin, size: contentAreaSize))
     }
     
@@ -166,8 +217,8 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
     
     //MARK: Container trigger button action
     @objc func handleOntap(_ sender: Giuk_MainButtonItem) {
-        if sender.identifire == "add" {
-            print("top touched")
+        switch sender.identifire {
+        case "add":
             if containerStateFormat == .normal {
                 containerStateFormat = .topContainerMode
                 containerState = .extanded
@@ -175,8 +226,7 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
                 containerStateFormat = .normal
                 containerState = .collapsed
             }
-        } else {
-            print("right touched")
+        case "right":
             if containerStateFormat == .normal {
                 containerStateFormat = .rightContainerMode
                 containerState = .extanded
@@ -184,7 +234,18 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
                 containerStateFormat = .normal
                 containerState = .collapsed
             }
+        case "setting":
+            if containerStateFormat == .normal {
+                containerStateFormat = .settingMenuContainerMode
+                containerState = .extanded
+            } else {
+                containerStateFormat = .normal
+                containerState = .collapsed
+            }
+        default:
+            break
         }
+        
         startInteractiveTransition(state: self.containerStateFormat, duration: 0.9)
         endTransition()
     }
@@ -227,47 +288,62 @@ extension Giuk_MainFrameViewController {
                 [unowned self] in
                 switch state {
                 case .normal :
+                    self.topAnimationView.frame = self.topAnimationViewStartFrame
+                    self.rightAnimationView.frame = self.rightAnimationViewStartFrame
+                    
                     self.contentContainerView.frame.origin = self.contentAreaStartOrigin
                     self.topContainerView?.frame.origin = self.topContainerViewStartOrigin
                     self.rightContainerView?.frame.origin = self.rightContainerViewStartOrigin
-                    
-                    self.topContainerView?.backgroundColor = UIColor.goyaBlack.withAlphaComponent(0.7)
-                    self.rightContainerView?.backgroundColor = UIColor.goyaBlack.withAlphaComponent(0.7)
+                    self.containerView_settings?.frame.origin = self.settingContainerViewStartOrigin
                     
                 case .topContainerMode :
+                    self.topAnimationView.frame = self.animationViewAnimatedFrame_extanded
+                    self.rightAnimationView.frame = self.rightAnimationViewAnimatedFrame_collapsed
+                    
                     self.contentContainerView.frame.origin = self.contentAreaCollapsedOrigin_TopContainerExtantedCase
                     self.topContainerView?.frame.origin = self.topContainerViewExtandedOrigin
                     self.rightContainerView?.frame.origin = self.rightContainerViewCollapsedOrigin
+                    self.containerView_settings?.frame.origin = self.settingContainerViewCollapsedOrgin_topContainerExpanded
                     
-                    self.topContainerView?.backgroundColor = UIColor.goyaBlack.withAlphaComponent(1)
-                    self.rightContainerView?.backgroundColor = UIColor.goyaBlack.withAlphaComponent(0)
                 case .rightContainerMode :
+                    self.topAnimationView.frame = self.topAnimationViewAnimatedFrame_collapsed
+                    self.rightAnimationView.frame = self.animationViewAnimatedFrame_extanded
+                    
                     self.contentContainerView.frame.origin = self.contentAreaCollapsedOrigin_RightContainerExtantedCase
                     self.topContainerView?.frame.origin = self.topContainerViewCollapedOrigin
                     self.rightContainerView?.frame.origin = self.rightContainerViewExtandedOrigin
+                    self.containerView_settings?.frame.origin = self.settingContainerViewCollapsedOrgin_rightContainerExpanded
                     
-                    self.topContainerView?.backgroundColor = UIColor.goyaBlack.withAlphaComponent(0)
-                    self.rightContainerView?.backgroundColor = UIColor.goyaBlack.withAlphaComponent(1)
+                case .settingMenuContainerMode:
+                    self.topAnimationView.frame = self.animationViewAnimatedFrame_extanded
+                    self.rightAnimationView.frame = self.animationViewAnimatedFrame_extanded
+                    
+                    self.topContainerView.frame.origin = self.topContainerViewCollapedOrigin
+                    self.rightContainerView.frame.origin = self.rightContainerViewCollapsedOrigin
+                    self.contentContainerView.frame.origin = self.contentAreaCollapsedOrigin_SettingContainerExtanedCase
+                    self.containerView_settings?.frame.origin = self.settingContainerViewExtandedOrgin
                 }
             }
             
             frameAnimator.startAnimation()
             runningAnimations.append(frameAnimator)
             
-            let alphaAnimator = UIViewPropertyAnimator(duration: duration, curve: .easeIn) {
-                [unowned self] in
-                switch state {
-                case .normal :
-                    self.contentContainerView.alpha = 1
-                case .topContainerMode :
-                    self.contentContainerView.alpha = 0
-                case .rightContainerMode :
-                    self.contentContainerView.alpha = 0
-                }
-            }
-            
-            alphaAnimator.startAnimation()
-            runningAnimations.append(alphaAnimator)
+//            let alphaAnimator = UIViewPropertyAnimator(duration: duration, curve: .easeIn) {
+//                [unowned self] in
+//                switch state {
+//                case .normal :
+//                    self.contentContainerView.alpha = 1
+//                case .topContainerMode :
+//                    self.contentContainerView.alpha = 0
+//                case .rightContainerMode :
+//                    self.contentContainerView.alpha = 0
+//                case .settingMenuContainerMode:
+//                    self.contentContainerView.alpha = 0
+//                }
+//            }
+//
+//            alphaAnimator.startAnimation()
+//            runningAnimations.append(alphaAnimator)
             
             //when animation ended
             frameAnimator.addCompletion { [unowned self] (_) in
@@ -285,6 +361,8 @@ extension Giuk_MainFrameViewController {
 
 extension Giuk_MainFrameViewController {
     //MARK: Computed Frame resource part
+    
+    //anchor factors
     var fullFrameSize: CGSize {
         return view.frame.size
     }
@@ -301,19 +379,52 @@ extension Giuk_MainFrameViewController {
         return max(fullFrameSize.height * 0.0818, 50)
     }
     
-    var topContainerViewHandleAreaFrame: CGRect {
-        let size: CGSize = CGSize(width: fullFrameSize.width, height: topContainerViewAreaHeight)
-        let origin = CGPoint(x: 0, y: fullFrameSize.height - topContainerViewAreaHeight)
-        return CGRect(origin: origin, size: size)
-    }
-    
     var rightContainerViewAreaWidth: CGFloat {
         return topContainerViewAreaHeight * 0.618
     }
     
-    var rightContainerViewHandleAreaFrame: CGRect {
-        let size = CGSize(width: rightContainerViewAreaWidth, height: fullFrameSize.height - (topContainerViewAreaHeight + safeAreaRelatedTopFrameMargin))
-        let origin = CGPoint(x: 0, y: fullFrameSize.height - size.height)
+    var estimateButtonMarign: CGFloat {
+        return 3
+    }
+    // anchor end
+    
+    //source frames
+    // - Animation View Frames
+    var topAnimationViewStartFrame: CGRect {
+        let size: CGSize = CGSize(width: fullFrameSize.width, height: topContainerViewAreaHeight + safeAreaRelatedTopFrameMargin)
+        let origin = CGPoint(x: 0, y: 0)
+        return CGRect(origin: origin, size: size)
+    }
+    
+    var rightAnimationViewStartFrame: CGRect {
+        let size: CGSize = CGSize(width: rightContainerViewAreaWidth, height: fullFrameSize.height)
+        let origin = CGPoint(x: fullFrameSize.width - size.width, y: 0)
+        return CGRect(origin: origin, size: size)
+    }
+    
+    var animationViewAnimatedFrame_extanded: CGRect {
+        let size = fullFrameSize
+        let origin = CGPoint.zero
+        return CGRect(origin: origin, size: size)
+    }
+    
+    var topAnimationViewAnimatedFrame_collapsed: CGRect {
+        let size = CGSize(width: topAnimationViewStartFrame.size.width, height: 0)
+        let origin = CGPoint.zero
+        return CGRect(origin: origin, size: size)
+    }
+    
+    var rightAnimationViewAnimatedFrame_collapsed: CGRect {
+        let size = CGSize(width: 0, height: rightAnimationViewStartFrame.size.height)
+        let origin = CGPoint(x: fullFrameSize.width, y: 0)
+        return CGRect(origin: origin, size: size)
+    }
+    
+    
+    // container view frames
+    var topContainerViewHandleAreaFrame: CGRect {
+        let size: CGSize = CGSize(width: fullFrameSize.width, height: topContainerViewAreaHeight)
+        let origin = CGPoint(x: 0, y: fullFrameSize.height - topContainerViewAreaHeight)
         return CGRect(origin: origin, size: size)
     }
     
@@ -330,6 +441,27 @@ extension Giuk_MainFrameViewController {
         return CGPoint(x: 0, y: 0)
     }
     
+    var topButtonAreaFrame: CGRect {
+        let topTriggerSizeHeight = topContainerViewAreaHeight - (estimateButtonMarign*2)
+        let topTriggerSizeWidth = topContainerView.frame.width - rightContainerViewAreaWidth - (estimateButtonMarign*2)
+        let topTriggerOriginX = estimateButtonMarign
+        let topTriggrtOriginY = fullFrameSize.height - estimateButtonMarign - topTriggerSizeHeight
+        return CGRect(origin: CGPoint(x: topTriggerOriginX, y: topTriggrtOriginY), size: CGSize(width: topTriggerSizeWidth, height: topTriggerSizeHeight))
+    }
+    
+    var rightContainerViewHandleAreaFrame: CGRect {
+        let size = CGSize(width: rightContainerViewAreaWidth, height: fullFrameSize.height - (topContainerViewAreaHeight + safeAreaRelatedTopFrameMargin))
+        let origin = CGPoint(x: 0, y: fullFrameSize.height - size.height)
+        return CGRect(origin: origin, size: size)
+    }
+    
+    var rightButtonAreaFrame: CGRect {
+        let height = rightContainerViewHandleAreaFrame.height - (estimateButtonMarign*2)
+        let width = rightContainerViewHandleAreaFrame.width - (estimateButtonMarign*2)
+        let origin = rightContainerViewHandleAreaFrame.origin.offSetBy(dX: estimateButtonMarign, dY: estimateButtonMarign)
+        return CGRect(origin: origin, size: CGSize(width: width, height: height))
+    }
+    
     var rightContainerViewStartOrigin: CGPoint {
         let originX: CGFloat = fullFrameSize.width - rightContainerViewAreaWidth
         return CGPoint(x: originX, y: 0)
@@ -341,6 +473,29 @@ extension Giuk_MainFrameViewController {
     
     var rightContainerViewCollapsedOrigin: CGPoint {
         return CGPoint(x: fullFrameSize.width, y: 0)
+    }
+    
+    var settingContainerViewStartOrigin: CGPoint {
+        return CGPoint(x: fullFrameSize.width - rightContainerViewAreaWidth, y: (-fullFrameSize.height) + safeAreaRelatedTopFrameMargin + topContainerViewAreaHeight)
+    }
+    
+    var settingContainerViewExtandedOrgin: CGPoint {
+        return CGPoint.zero
+    }
+    
+    var settingContainerViewCollapsedOrgin_topContainerExpanded: CGPoint {
+        return CGPoint(x: fullFrameSize.width, y: settingContainerViewStartOrigin.y)
+    }
+    
+    var settingContainerViewCollapsedOrgin_rightContainerExpanded: CGPoint {
+        return CGPoint(x: settingContainerViewStartOrigin.x, y: -fullFrameSize.height)
+    }
+    
+    var settingContainerViewButtonAreaFrame: CGRect {
+        let buttonSizeAnchor = rightContainerViewAreaWidth - (estimateButtonMarign * 2)
+        let size = CGSize(width: buttonSizeAnchor, height: buttonSizeAnchor)
+        let origin = CGPoint(x: estimateButtonMarign, y: fullFrameSize.height - size.height - estimateButtonMarign)
+        return CGRect(origin: origin, size: size)
     }
     
     var contentAreaSize: CGSize {
@@ -362,30 +517,10 @@ extension Giuk_MainFrameViewController {
         return CGPoint(x: -contentAreaSize.width, y: contentAreaStartOrigin.y)
     }
     
-    var estimateButtonMarign: CGFloat {
-        return 3
-    }
-    
-    var topTriggerButtonFrame: CGRect {
-        let topTriggerSizeHeight = topContainerViewAreaHeight - (estimateButtonMarign*2)
-        let topTriggerOriginX = estimateButtonMarign
-        let topTriggrtOriginY = fullFrameSize.height - estimateButtonMarign - topTriggerSizeHeight
-        return CGRect(origin: CGPoint(x: topTriggerOriginX, y: topTriggrtOriginY), size: CGSize(width: topTriggerSizeHeight, height: topTriggerSizeHeight))
-    }
-    
-    var topButtonAreaFrame: CGRect {
-        let topTriggerSizeHeight = topContainerViewAreaHeight - (estimateButtonMarign*2)
-        let topTriggerSizeWidth = topContainerView.frame.width - rightContainerViewAreaWidth - (estimateButtonMarign*2)
-        let topTriggerOriginX = estimateButtonMarign
-        let topTriggrtOriginY = fullFrameSize.height - estimateButtonMarign - topTriggerSizeHeight
-        return CGRect(origin: CGPoint(x: topTriggerOriginX, y: topTriggrtOriginY), size: CGSize(width: topTriggerSizeWidth, height: topTriggerSizeHeight))
-    }
-    
-    var rightTriggerBittonFrame: CGRect {
-        let rightTriggerSizeWidth = rightContainerViewAreaWidth - (estimateButtonMarign*2)
-        let rightTriggerOriginX = estimateButtonMarign
-        let rightTriggerOriginY = topContainerViewAreaHeight + safeAreaRelatedTopFrameMargin + estimateButtonMarign
-        return CGRect(origin: CGPoint(x: rightTriggerOriginX, y: rightTriggerOriginY), size: CGSize(width: rightTriggerSizeWidth, height: rightTriggerSizeWidth))
+    var contentAreaCollapsedOrigin_SettingContainerExtanedCase: CGPoint {
+        let originX = -contentAreaSize.width
+        let originY = (fullFrameSize.height + contentContainerView.frame.height)
+        return CGPoint(x: originX, y: originY)
     }
     //end
 }
