@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A78B0DF6228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0DF5228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift */; };
-		A78B0DF8228D9D2900D0B275 /* Giuk_MainButtonItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0DF7228D9D2900D0B275 /* Giuk_MainButtonItem.swift */; };
+		A78B0DF8228D9D2900D0B275 /* UIButton_WithIdentifire.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0DF7228D9D2900D0B275 /* UIButton_WithIdentifire.swift */; };
 		A78B0E0D2292E0B200D0B275 /* DotStylePresentorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0DFE2292E0B200D0B275 /* DotStylePresentorView.swift */; };
 		A78B0E0E2292E0B200D0B275 /* CircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0DFF2292E0B200D0B275 /* CircleView.swift */; };
 		A78B0E0F2292E0B200D0B275 /* CenteredCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E012292E0B200D0B275 /* CenteredCollectionView.swift */; };
@@ -33,6 +33,9 @@
 		A78B0E342292E1FC00D0B275 /* ZommingTransitionDelegate_DismissAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E312292E1FC00D0B275 /* ZommingTransitionDelegate_DismissAnimator.swift */; };
 		A78B0E352292E1FC00D0B275 /* ZoomingStyleTransitionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E322292E1FC00D0B275 /* ZoomingStyleTransitionDelegate.swift */; };
 		A78B0E362292E1FC00D0B275 /* ZommingTransitionDelegate_PresentingAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E332292E1FC00D0B275 /* ZommingTransitionDelegate_PresentingAnimator.swift */; };
+		A78B0E3A2296FB0000D0B275 /* Giuk_MainPage_ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E392296FB0000D0B275 /* Giuk_MainPage_ViewController.swift */; };
+		A78B0E3C22993FB100D0B275 /* Giuk_ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E3B22993FB100D0B275 /* Giuk_ContentView.swift */; };
+		A78B0E3E2299464E00D0B275 /* Giuk_ContentView_WriteSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E3D2299464E00D0B275 /* Giuk_ContentView_WriteSection.swift */; };
 		A7A6A5FB228A4CCA001FCA4D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A6A5FA228A4CCA001FCA4D /* AppDelegate.swift */; };
 		A7A6A600228A4CCA001FCA4D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7A6A5FE228A4CCA001FCA4D /* Main.storyboard */; };
 		A7A6A603228A4CCA001FCA4D /* Gi_ukForMoments.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A7A6A601228A4CCA001FCA4D /* Gi_ukForMoments.xcdatamodeld */; };
@@ -47,7 +50,7 @@
 
 /* Begin PBXFileReference section */
 		A78B0DF5228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_MainFrame_ContainerView.swift; sourceTree = "<group>"; };
-		A78B0DF7228D9D2900D0B275 /* Giuk_MainButtonItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_MainButtonItem.swift; sourceTree = "<group>"; };
+		A78B0DF7228D9D2900D0B275 /* UIButton_WithIdentifire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIButton_WithIdentifire.swift; sourceTree = "<group>"; };
 		A78B0DFE2292E0B200D0B275 /* DotStylePresentorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DotStylePresentorView.swift; sourceTree = "<group>"; };
 		A78B0DFF2292E0B200D0B275 /* CircleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircleView.swift; sourceTree = "<group>"; };
 		A78B0E012292E0B200D0B275 /* CenteredCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CenteredCollectionView.swift; sourceTree = "<group>"; };
@@ -72,6 +75,9 @@
 		A78B0E312292E1FC00D0B275 /* ZommingTransitionDelegate_DismissAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZommingTransitionDelegate_DismissAnimator.swift; sourceTree = "<group>"; };
 		A78B0E322292E1FC00D0B275 /* ZoomingStyleTransitionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoomingStyleTransitionDelegate.swift; sourceTree = "<group>"; };
 		A78B0E332292E1FC00D0B275 /* ZommingTransitionDelegate_PresentingAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZommingTransitionDelegate_PresentingAnimator.swift; sourceTree = "<group>"; };
+		A78B0E392296FB0000D0B275 /* Giuk_MainPage_ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_MainPage_ViewController.swift; sourceTree = "<group>"; };
+		A78B0E3B22993FB100D0B275 /* Giuk_ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_ContentView.swift; sourceTree = "<group>"; };
+		A78B0E3D2299464E00D0B275 /* Giuk_ContentView_WriteSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_ContentView_WriteSection.swift; sourceTree = "<group>"; };
 		A7A6A5F7228A4CCA001FCA4D /* Gi-ukForMoments.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Gi-ukForMoments.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7A6A5FA228A4CCA001FCA4D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A7A6A5FF228A4CCA001FCA4D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -101,7 +107,6 @@
 			isa = PBXGroup;
 			children = (
 				A78B0DF5228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift */,
-				A78B0DF7228D9D2900D0B275 /* Giuk_MainButtonItem.swift */,
 			);
 			path = "Giuk Main Container View";
 			sourceTree = "<group>";
@@ -228,6 +233,31 @@
 			path = ZommingTransitionDelegate;
 			sourceTree = "<group>";
 		};
+		A78B0E372292E48500D0B275 /* Photo Module */ = {
+			isa = PBXGroup;
+			children = (
+				A78B0E272292E1AE00D0B275 /* PhotoModule.swift */,
+			);
+			path = "Photo Module";
+			sourceTree = "<group>";
+		};
+		A78B0E382292E49200D0B275 /* Content View Controller */ = {
+			isa = PBXGroup;
+			children = (
+				A7A6A60F228A4D19001FCA4D /* ContentUIViewController.swift */,
+			);
+			path = "Content View Controller";
+			sourceTree = "<group>";
+		};
+		A78B0E3F2299465300D0B275 /* Giuk Content View */ = {
+			isa = PBXGroup;
+			children = (
+				A78B0E3B22993FB100D0B275 /* Giuk_ContentView.swift */,
+				A78B0E3D2299464E00D0B275 /* Giuk_ContentView_WriteSection.swift */,
+			);
+			path = "Giuk Content View";
+			sourceTree = "<group>";
+		};
 		A7A6A5EE228A4CC9001FCA4D = {
 			isa = PBXGroup;
 			children = (
@@ -264,6 +294,8 @@
 			children = (
 				A78B0DF9228D9D4A00D0B275 /* Giuk Main Container View */,
 				A7A6A619228B9249001FCA4D /* Giuk_MainFrameViewController.swift */,
+				A78B0E392296FB0000D0B275 /* Giuk_MainPage_ViewController.swift */,
+				A78B0E3F2299465300D0B275 /* Giuk Content View */,
 			);
 			path = MainView;
 			sourceTree = "<group>";
@@ -288,9 +320,10 @@
 		A7A6A616228A4F12001FCA4D /* Generic Support Sources */ = {
 			isa = PBXGroup;
 			children = (
-				A7A6A60F228A4D19001FCA4D /* ContentUIViewController.swift */,
 				A7A6A61D228B9C1B001FCA4D /* GenericMultiButtonView.swift */,
-				A78B0E272292E1AE00D0B275 /* PhotoModule.swift */,
+				A78B0DF7228D9D2900D0B275 /* UIButton_WithIdentifire.swift */,
+				A78B0E382292E49200D0B275 /* Content View Controller */,
+				A78B0E372292E48500D0B275 /* Photo Module */,
 				A78B0E302292E1FC00D0B275 /* ZommingTransitionDelegate */,
 				A78B0E292292E1EE00D0B275 /* HashtagScrollView */,
 				A78B0E242292E19300D0B275 /* Cropping View */,
@@ -391,13 +424,16 @@
 				A78B0E152292E0B200D0B275 /* FocusingIndexBasedCollectionview.swift in Sources */,
 				A78B0DF6228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift in Sources */,
 				A78B0E0E2292E0B200D0B275 /* CircleView.swift in Sources */,
-				A78B0DF8228D9D2900D0B275 /* Giuk_MainButtonItem.swift in Sources */,
+				A78B0DF8228D9D2900D0B275 /* UIButton_WithIdentifire.swift in Sources */,
 				A78B0E212292E15700D0B275 /* AnalogNumberItemView.swift in Sources */,
+				A78B0E3A2296FB0000D0B275 /* Giuk_MainPage_ViewController.swift in Sources */,
 				A7A6A612228A4EAC001FCA4D /* PublicExtentions.swift in Sources */,
 				A78B0E262292E19300D0B275 /* ImageCroppingView.swift in Sources */,
 				A78B0E1C2292E13900D0B275 /* ColorCollectionViewCell.swift in Sources */,
 				A78B0E172292E0B200D0B275 /* VerticalSpotlightCollectionViewFlowLayout.swift in Sources */,
+				A78B0E3E2299464E00D0B275 /* Giuk_ContentView_WriteSection.swift in Sources */,
 				A78B0E102292E0B200D0B275 /* CenteredCollectionViewFlowLayout.swift in Sources */,
+				A78B0E3C22993FB100D0B275 /* Giuk_ContentView.swift in Sources */,
 				A78B0E282292E1AE00D0B275 /* PhotoModule.swift in Sources */,
 				A78B0E352292E1FC00D0B275 /* ZoomingStyleTransitionDelegate.swift in Sources */,
 				A78B0E2E2292E1EE00D0B275 /* HashTagScrollView.swift in Sources */,

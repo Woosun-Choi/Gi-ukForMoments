@@ -8,6 +8,6 @@
 
 import UIKit
 
-class Giuk_MainButtonItem: UIButton {
+class UIButton_WithIdentifire: UIButton {
     var identifire : String = ""
 }

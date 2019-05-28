@@ -10,10 +10,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Giuk Main Frame View Controller-->
+        <!--Giuk Main Page View Controller-->
         <scene sceneID="zeC-dE-Wwt">
             <objects>
-                <viewController id="asp-Qk-T2R" customClass="Giuk_MainFrameViewController" customModule="Gi_ukForMoments" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="asp-Qk-T2R" customClass="Giuk_MainPage_ViewController" customModule="Gi_ukForMoments" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="nut-Ds-ZvC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
