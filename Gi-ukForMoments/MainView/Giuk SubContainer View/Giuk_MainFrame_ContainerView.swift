@@ -20,15 +20,17 @@ class Giuk_MainFrame_ContainerView: UIView
     
     private var buttonGrid = ButtonGridManager()
     
-    private var contentArea: UIView!
+    private weak var contentArea: UIView!
     
-    private var closeButton: UIButton!
+    private weak var closeButton: UIButton!
     
     var contentAreaBackgroundColor: UIColor?
     
-    var buttonArea: UIView!
+    var closingButtonRequired: Bool = true
     
-    var contentView: UIView!
+    weak var buttonArea: UIView!
+    
+    weak var contentView: UIView!
     
     var requieredTopMargin: CGFloat = 0
     
@@ -105,14 +107,19 @@ class Giuk_MainFrame_ContainerView: UIView
     }
     
     private func setOrRepositionColseButton() {
-        if closeButton == nil {
-            closeButton = generateUIView(view: closeButton, origin: closeButtonOrigin, size: closeButtonSize)
-            closeButton?.addTarget(self, action: #selector(closeButtonAction(_:)), for: .touchUpInside)
-            closeButton?.setTitle("-", for: .normal)
-            closeButton?.backgroundColor = .green
-            addSubview(closeButton)
+        if closingButtonRequired {
+            if closeButton == nil {
+                let newButton = generateUIView(view: closeButton, origin: closeButtonOrigin, size: closeButtonSize)
+                closeButton = newButton
+                closeButton?.addTarget(self, action: #selector(closeButtonAction(_:)), for: .touchUpInside)
+                closeButton?.setTitle("-", for: .normal)
+                closeButton?.backgroundColor = .green
+                addSubview(closeButton)
+            } else {
+                closeButton.setNewFrame(CGRect(origin: closeButtonOrigin, size: closeButtonSize))
+            }
         } else {
-            closeButton.setNewFrame(CGRect(origin: closeButtonOrigin, size: closeButtonSize))
+            return
         }
     }
     

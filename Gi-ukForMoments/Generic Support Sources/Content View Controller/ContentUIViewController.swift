@@ -21,6 +21,7 @@ class ContentUIViewController: UIViewController {
         setContentView()
         loadContentViewMargins()
         safaAreaRelatedView.layoutIfNeeded()
+        print("view did load - \n safeAreaRect : \(safeAreaRelatedAreaFrame)\n viewFrame: \(view.frame)")
     }
     
     private func setContentView() {
@@ -55,6 +56,26 @@ class ContentUIViewController: UIViewController {
                 bottomLayoutGuide.topAnchor.constraint(equalTo: safaAreaRelatedView.bottomAnchor, constant: standardSpacing)
                 ])
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        print("view will appear - \n safeAreaRect : \(safeAreaRelatedAreaFrame)\n viewFrame: \(view.frame)")
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        print("view did appear - \n safeAreaRect : \(safeAreaRelatedAreaFrame)\n viewFrame: \(view.frame)")
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        print("view will layout subviews - \n safeAreaRect : \(safeAreaRelatedAreaFrame)\n viewFrame: \(view.frame)")
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        print("view did subviews - \n safeAreaRect : \(safeAreaRelatedAreaFrame)\n viewFrame: \(view.frame)")
     }
     
 

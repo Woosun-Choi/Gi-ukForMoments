@@ -78,7 +78,6 @@ class GenericMultiButtonView: UIView {
     }
     
     func reloadButtons() {
-        print(buttons)
         if buttons.count > 0 {
             buttonContentArea.subviews.forEach { (view) in
                 view.removeFromSuperview()

@@ -8,7 +8,7 @@
 
 import UIKit
 
-@objc protocol ZoomingStyleTransitionDataSource {
+@objc protocol FrameTransitionDataSource {
     
     @objc optional func preparePresenting(_ viewController: UIViewController) -> Void
     
@@ -20,7 +20,7 @@ import UIKit
     
 }
 
-@objc protocol ZoomingStyleInteractionTransitionDataSource {
+@objc protocol FrameTransitionInteractionDataSource {
     
     func interactiveActionViewForAnimation(view: UIViewController?) -> UIView?
     
@@ -45,15 +45,21 @@ import UIKit
     case right
 }
 
-class ZoomingStyleTransitioningDelegate: UIPercentDrivenInteractiveTransition, UIViewControllerTransitioningDelegate {
+class FrameTransitioningDelegate: UIPercentDrivenInteractiveTransition, UIViewControllerTransitioningDelegate {
     
     private var openingFrame: CGRect?
     
     var interactive = false
     
+    var fading: Bool = false
+    
+    var animationDuration: TimeInterval = 0.5
+    
+    weak var tarnsitionDataSource: FrameTransitionDataSource?
+    
     var interationSourceViewController : UIViewController? {
         didSet {
-            if let dataSource = interationSourceViewController as? ZoomingStyleInteractionTransitionDataSource,
+            if let dataSource = interationSourceViewController as? FrameTransitionInteractionDataSource,
                 let targetView = interationSourceViewController {
                 configureInteractions(viewController: targetView)
                 interactionCompletion = {
@@ -66,7 +72,7 @@ class ZoomingStyleTransitioningDelegate: UIPercentDrivenInteractiveTransition, U
     private var interactionCompletion: (() -> Void)?
     
     private func configureInteractions(viewController: UIViewController) {
-        guard let targetView = viewController as? ZoomingStyleInteractionTransitionDataSource else { return }
+        guard let targetView = viewController as? FrameTransitionInteractionDataSource else { return }
         let gesture = UIPanGestureRecognizer(target: self, action: #selector(handleOnstagePan(pan:)))
         (targetView.interactiveActionViewForAnimation(view: viewController) != nil) ? targetView.interactiveActionViewForAnimation(view: viewController)?.addGestureRecognizer(gesture) : viewController.view.addGestureRecognizer(gesture)
     }
@@ -83,7 +89,7 @@ class ZoomingStyleTransitioningDelegate: UIPercentDrivenInteractiveTransition, U
             return
         }
         
-        guard let controlData = targetView as? ZoomingStyleInteractionTransitionDataSource else {
+        guard let controlData = targetView as? FrameTransitionInteractionDataSource else {
             print("control nil")
             return
         }
@@ -135,8 +141,8 @@ class ZoomingStyleTransitioningDelegate: UIPercentDrivenInteractiveTransition, U
     
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         guard let dismissTarget = openingFrame else { return nil }
-        let dismissAnimator = ZommingTransitionDelegate_DismissAnimator(targetRect: dismissTarget)
-        if let datasourceDelivered = dismissed as? ZoomingStyleTransitionDataSource {
+        let dismissAnimator = FrameTransitionDelegate_DismissAnimator(targetRect: dismissTarget)
+        if let datasourceDelivered = dismissed as? FrameTransitionDataSource {
             dismissAnimator.convenienceTargetViewOriginSetting = {
                 (controller) in
                 datasourceDelivered.prepareDismissing?(controller)
@@ -146,13 +152,15 @@ class ZoomingStyleTransitioningDelegate: UIPercentDrivenInteractiveTransition, U
                 datasourceDelivered.finishDismissing?(controller)
             }
         }
+        dismissAnimator.animateDuration = animationDuration
+        dismissAnimator.fading = fading
         return dismissAnimator
     }
     
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         guard let presentingTarget = openingFrame else { return nil }
-        let presentationAnimator = ZommingTransitionDelegate_PresentingAnimator(targetRect: presentingTarget)
-        if let datasourceDelivered = presented as? ZoomingStyleTransitionDataSource {
+        let presentationAnimator = FrameTransitionDelegate_PresentingAnimator(targetRect: presentingTarget)
+        if let datasourceDelivered = presented as? FrameTransitionDataSource {
             presentationAnimator.convenienceTargetViewOriginSetting = {
                 (controller) in
                 datasourceDelivered.preparePresenting?(controller)
@@ -162,6 +170,8 @@ class ZoomingStyleTransitioningDelegate: UIPercentDrivenInteractiveTransition, U
                 datasourceDelivered.finishPresenting?(controller)
             }
         }
+        presentationAnimator.animateDuration = animationDuration
+        presentationAnimator.fading = fading
         return presentationAnimator
     }
 }

@@ -10,4 +10,9 @@ import UIKit
 
 class UIButton_WithIdentifire: UIButton {
     var identifire : String = ""
+    
+    convenience init(with identifire: String) {
+        self.init()
+        self.identifire = identifire
+    }
 }

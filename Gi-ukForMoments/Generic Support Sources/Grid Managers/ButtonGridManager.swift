@@ -70,20 +70,20 @@ struct ButtonGridManager {
             }
         case .negativeAligned:
             if isHorizontal {
-                var originX: CGFloat = targetFrame.width - actualRequiredAreaSizeFactor
+                var originX: CGFloat = targetFrame.width - requiredButtonSize.width
                 let originY: CGFloat = (targetFrame.height - requiredButtonSize.height)/2
                 for _ in 0...(numberOfButtons - 1) {
                     let newRect = CGRect(origin: CGPoint(x: originX, y: originY), size: requiredButtonSize)
                     frames.append(newRect)
-                    originX = newRect.maxX + minSpacing
+                    originX = newRect.minX - (minSpacing + requiredButtonSize.width)
                 }
             } else {
                 let originX: CGFloat = (targetFrame.width - requiredButtonSize.width)/2
-                var originY: CGFloat = targetFrame.height - actualRequiredAreaSizeFactor
+                var originY: CGFloat = targetFrame.height - (requiredButtonSize.height)
                 for _ in 0...(numberOfButtons - 1) {
                     let newRect = CGRect(origin: CGPoint(x: originX, y: originY), size: requiredButtonSize)
                     frames.append(newRect)
-                    originY = newRect.maxY + minSpacing
+                    originY = newRect.minY - (minSpacing + requiredButtonSize.height)
                 }
             }
         case .edgeAligned:

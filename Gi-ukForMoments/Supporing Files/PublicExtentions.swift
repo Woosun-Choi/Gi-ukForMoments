@@ -474,6 +474,28 @@ extension UIView {
         self.frame = frame
         self.layoutSubviews()
     }
+    
+    // Example use: myView.addBorder(toSide: .Left, withColor: UIColor.redColor().CGColor, andThickness: 1.0)
+    
+    enum ViewSide {
+        case left, right, top, bottom
+    }
+    
+    func addBorder(toSide side: ViewSide, withColor color: CGColor, andThickness thickness: CGFloat) {
+        
+        let border = CALayer()
+        border.backgroundColor = color
+        
+        switch side {
+        case .left: border.frame = CGRect(x: bounds.minX, y: bounds.minY, width: thickness, height: frame.height); break
+        case .right: border.frame = CGRect(x: bounds.maxX, y: bounds.minY, width: thickness, height: frame.height); break
+        case .top: border.frame = CGRect(x: bounds.minX, y: bounds.minY, width: frame.width, height: thickness); break
+        case .bottom: border.frame = CGRect(x: bounds.minX, y: bounds.maxY, width: frame.width, height: thickness); break
+        }
+        
+        layer.addSublayer(border)
+    }
+    
 }
 
 extension UIViewController {

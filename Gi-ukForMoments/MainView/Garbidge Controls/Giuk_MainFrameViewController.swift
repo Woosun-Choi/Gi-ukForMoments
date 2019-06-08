@@ -10,19 +10,20 @@ import UIKit
 
 class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButtonDataSource
 {
+    var transitionAnimator = FrameTransitioningDelegate()
     
     //MARK: Variables for container views
-    private(set) var animationView_Top: UIView!
+    private(set) weak var animationView_Top: UIView!
     
-    private(set) var animationView_Right: UIView!
+    private(set) weak var animationView_Right: UIView!
     
-    private(set) var containerView_Top: Giuk_MainFrame_ContainerView!
+    private(set) weak var containerView_Top: Giuk_MainFrame_ContainerView!
     
-    private(set) var containerView_Right: Giuk_MainFrame_ContainerView!
+    private(set) weak var containerView_Right: Giuk_MainFrame_ContainerView!
     
-    private(set) var containerView_settings: Giuk_MainFrame_ContainerView!
+    private(set) weak var containerView_settings: Giuk_MainFrame_ContainerView!
     
-    private(set) var containerView_MainContent: UIView!
+    private(set) weak var containerView_MainContent: UIView!
     
     //MARK: Variables for running animations
     enum ContainerStateFormat {
@@ -128,8 +129,10 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         print("did appear - \n safeAreaRect : \(safeAreaRelatedAreaFrame)\n viewFrame: \(view.frame)")
-        layoutAnimationView()
-        layoutContainers()
+        if containerState == .collapsed {
+            layoutAnimationView()
+            layoutContainers()
+        }
     }
     
     override func viewWillLayoutSubviews() {
@@ -173,12 +176,14 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
     
     //MARK: set Sub views - containerViews & handle area
     private func setAnimationView() {
-        animationView_Top = generateUIView(view: animationView_Top, origin: topAnimationViewStartFrame.origin, size: topAnimationViewStartFrame.size)
+        let topAnimationView = generateUIView(view: animationView_Top, origin: topAnimationViewStartFrame.origin, size: topAnimationViewStartFrame.size)
+        animationView_Top = topAnimationView
         animationView_Top.backgroundColor = initailBackgroundColor
         animationView_Top.isOpaque = false
         view.addSubview(animationView_Top)
         
-        animationView_Right = generateUIView(view: animationView_Right, origin: rightAnimationViewStartFrame.origin, size: rightAnimationViewStartFrame.size)
+        let rightAnimationView = generateUIView(view: animationView_Right, origin: rightAnimationViewStartFrame.origin, size: rightAnimationViewStartFrame.size)
+        animationView_Right = rightAnimationView
         animationView_Right.backgroundColor = initailBackgroundColor
         animationView_Right.isOpaque = false
         view.addSubview(animationView_Right)
@@ -191,8 +196,9 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
     
     
     private func setContainers() {
+        let topContainer = generateUIView(view: containerView_Top, origin: topContainerViewOrigin_Start, size: topContainerViewFrameSize)
         
-        containerView_Top = generateUIView(view: containerView_Top, origin: topContainerViewOrigin_Start, size: topContainerViewFrameSize)
+        containerView_Top = topContainer
         containerView_Top.isOpaque = false
         containerView_Top.backgroundColor = UIColor.clear
         containerView_Top.dataSource = self
@@ -201,7 +207,8 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
         }
         view.addSubview(containerView_Top)
         
-        containerView_Right = generateUIView(view: containerView_Right, origin: rightContainerViewOrigin_Start, size: rightContainerVeiwFrameSize)
+        let rightContainer = generateUIView(view: containerView_Right, origin: rightContainerViewOrigin_Start, size: rightContainerVeiwFrameSize)
+        containerView_Right = rightContainer
         containerView_Right.isOpaque = false
         containerView_Right.backgroundColor = UIColor.clear
         containerView_Right.dataSource = self
@@ -210,7 +217,8 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
         }
         view.addSubview(containerView_Right)
         
-        containerView_settings = generateUIView(view: containerView_settings, origin: settingContainerViewOrigin_Start, size: settingContainerViewFrameSize)
+        let settingContainer = generateUIView(view: containerView_settings, origin: settingContainerViewOrigin_Start, size: settingContainerViewFrameSize)
+        containerView_settings = settingContainer
         containerView_settings.isOpaque = false
         containerView_settings.contentAreaBackgroundColor = .clear
         containerView_settings.backgroundColor = .clear
@@ -220,7 +228,8 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
         }
         view.addSubview(containerView_settings)
         
-        containerView_MainContent = generateUIView(view: containerView_MainContent, origin: contentAreaOrigin_Start, size: contentAreaSize)
+        let contentContainer = generateUIView(view: containerView_MainContent, origin: contentAreaOrigin_Start, size: contentAreaSize)
+        containerView_MainContent = contentContainer
         containerView_MainContent.isOpaque = false
         containerView_MainContent.backgroundColor = UIColor.clear
         view.addSubview(containerView_MainContent)
@@ -243,6 +252,12 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
         containerView_settings?.layoutSubviews()
         
         containerView_MainContent?.setNewFrame(CGRect(origin: contentAreaOrigin_Start, size: contentAreaSize))
+    }
+    
+    func openViewControllerFromRect(_ rect: CGRect, viewController: UIViewController) {
+        transitionAnimator.setOpeningFrameWithRect(rect)
+        viewController.transitioningDelegate = transitionAnimator
+        present(viewController, animated: true)
     }
     
     //MARK: Container trigger button action
@@ -289,7 +304,7 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
     var nowPresentingContainersContentView: UIView! {
         didSet {
             if nowPresentingContainersContentView != nil {
-                addRedViewTest(nowPresentingContainersContentView!)
+                addPresentingContentView(nowPresentingContainersContentView!)
             }
         }
     }
@@ -297,7 +312,7 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
     func setContainersContentViewAtStateOfContainer() {
         switch containerStateFormat {
         case .normal:
-            UIView.animate(withDuration: 0.25
+            UIView.animate(withDuration: 0.35
                 , animations: {
                     [unowned self] in
                     self.nowPresentingContainersContentView.alpha = 0
@@ -317,7 +332,7 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
         }
     }
     
-    func addRedViewTest(_ view: UIView?) {
+    func addPresentingContentView(_ view: UIView?) {
         if view != nil {
             var redView = UIView()
             if containerStateFormat == .topContainerMode {
@@ -327,7 +342,6 @@ class Giuk_MainFrameViewController: ContentUIViewController, ContainerViewButton
             }
             let midX = (view?.frame.width ?? 0)/2
             let midY = (view?.frame.height ?? 0)/2
-            redView.backgroundColor = .red
             redView.frame.size = CGSize(width: view?.frame.width ?? 100, height: view?.frame.height ?? 100)
             redView.center = CGPoint(x: midX, y: midY)
             view?.addSubview(redView)

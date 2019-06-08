@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ZommingTransitionDelegate_DismissAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+class FrameTransitionDelegate_DismissAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     
     init(targetRect: CGRect) {
         openingFrame = targetRect
@@ -22,27 +22,39 @@ class ZommingTransitionDelegate_DismissAnimator: NSObject, UIViewControllerAnima
     
     private var openingFrame: CGRect?
     
+    var fading: Bool = false
+    
+    var animateDuration: TimeInterval = 0.5
+    
     var convenienceTargetViewOriginSetting : ((UIViewController) -> Void)?
     
     var convenienceTargetViewFinalSetting : ((UIViewController) -> Void)?
     
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.25
+        return animateDuration
     }
     
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         guard let originFrame = openingFrame,
-            let fromViewController = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from),
-            let toViewController = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)
+            let fromViewController = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from)
+            , let toViewController = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)
             else { return }
         
         let containerView = transitionContext.containerView
         
-        let animationDuration = self .transitionDuration(using: transitionContext)
+        let animationDuration = transitionDuration(using: transitionContext)
+        let finalFrame = transitionContext.finalFrame(for: toViewController)
         
         convenienceTargetViewOriginSetting?(fromViewController)
+        toViewController.view.frame = finalFrame
+        containerView.addSubview(toViewController.view)
+        containerView.addSubview(fromViewController.view)
         
-        UIView.animate(withDuration: animationDuration * 2, animations: {
+        UIView.animate(withDuration: animationDuration, delay: 0, options: .curveEaseInOut, animations: {
+//            toViewController.view.subviews.forEach{ $0.alpha = 1 }
+            if self.fading {
+                fromViewController.view.alpha = 0
+            }
             fromViewController.view.frame = originFrame
             self.convenienceTargetViewFinalSetting?(fromViewController)
             fromViewController.view.layoutIfNeeded()
