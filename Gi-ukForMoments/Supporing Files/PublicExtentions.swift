@@ -136,6 +136,13 @@ extension String {
     }
 }
 
+extension CGRect {
+    func offSetBy(dX: CGFloat, dY: CGFloat) -> CGRect {
+        let newOrigin = self.origin.offSetBy(dX: dX, dY: dY)
+        return CGRect(origin: newOrigin, size: self.size)
+    }
+}
+
 extension CGFloat {
     var absValue : CGFloat {
         if self < 0 {

@@ -1,7 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -11,9 +15,45 @@
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BnT-54-Wfh">
+                                <rect key="frame" x="152.5" y="375.5" width="109" height="145"/>
+                                <subviews>
+                                    <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Thw-cH-sma">
+                                        <rect key="frame" x="0.0" y="0.0" width="109" height="67"/>
+                                        <color key="backgroundColor" red="0.19607843137254902" green="0.20000000000000001" blue="0.20000000000000001" alpha="0.69999999999999996" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="Thw-cH-sma" secondAttribute="height" multiplier="1.618:1" id="Sbf-jl-R42"/>
+                                        </constraints>
+                                    </view>
+                                    <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aNw-48-VES">
+                                        <rect key="frame" x="53" y="0.0" width="56" height="145"/>
+                                        <color key="backgroundColor" red="0.19607843137254902" green="0.20000000000000001" blue="0.20000000000000001" alpha="0.69999999999999996" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="aNw-48-VES" secondAttribute="height" multiplier="1:2.589" id="38b-ZD-eFA"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" red="0.95294117647058818" green="0.95294117647058818" blue="0.95294117647058818" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstItem="Thw-cH-sma" firstAttribute="width" secondItem="BnT-54-Wfh" secondAttribute="width" id="9F1-mn-agS"/>
+                                    <constraint firstItem="aNw-48-VES" firstAttribute="top" secondItem="BnT-54-Wfh" secondAttribute="top" id="Dcr-sO-daV"/>
+                                    <constraint firstAttribute="trailing" secondItem="aNw-48-VES" secondAttribute="trailing" id="P0D-R5-aNq"/>
+                                    <constraint firstItem="Thw-cH-sma" firstAttribute="top" secondItem="BnT-54-Wfh" secondAttribute="top" id="Rhr-aK-ZjD"/>
+                                    <constraint firstItem="Thw-cH-sma" firstAttribute="leading" secondItem="BnT-54-Wfh" secondAttribute="leading" id="SuM-nA-U1Y"/>
+                                    <constraint firstItem="aNw-48-VES" firstAttribute="height" secondItem="BnT-54-Wfh" secondAttribute="height" id="giT-Y8-4nZ"/>
+                                    <constraint firstAttribute="width" secondItem="BnT-54-Wfh" secondAttribute="height" multiplier="3:4" id="tAk-II-jmm"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="0.95294117647058818" green="0.95294117647058818" blue="0.95294117647058818" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="BnT-54-Wfh" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="a2L-vp-ypF"/>
+                            <constraint firstItem="BnT-54-Wfh" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="uqH-PI-b66"/>
+                            <constraint firstItem="BnT-54-Wfh" firstAttribute="height" secondItem="Ze5-6b-2t3" secondAttribute="height" multiplier="0.1618" id="zKa-qv-8Ob"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                 </viewController>

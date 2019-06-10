@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TestViewController: Giuk_OpenFromFrame_ViewController {
+class WriteSectionViewController: Giuk_OpenFromFrame_ViewController {
     
     weak var contentView: Giuk_ContentView_WriteSection!
 

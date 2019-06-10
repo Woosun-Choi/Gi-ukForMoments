@@ -1,17 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="asp-Qk-T2R">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--Start With Animation View Controller-->
+        <scene sceneID="1Kd-zL-s1y">
+            <objects>
+                <viewController id="aKY-0u-lOc" customClass="StartWithAnimation_ViewController" customModule="Gi_ukForMoments" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="DeU-pD-8DQ">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="UfA-VB-91K"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="HTu-f4-PMP" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1229" y="-16"/>
+        </scene>
         <!--Giuk Main Frame View Controller-->
         <scene sceneID="zeC-dE-Wwt">
             <objects>
                 <viewController id="asp-Qk-T2R" customClass="Giuk_MainFrame_ViewController" customModule="Gi_ukForMoments" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="nut-Ds-ZvC">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="Obj-QE-3NL"/>
@@ -20,6 +39,38 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pku-xS-kPg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-455.07246376811599" y="-14.0625"/>
+        </scene>
+        <!--Text View Test View Controller-->
+        <scene sceneID="N2y-GO-plv">
+            <objects>
+                <viewController id="tky-ak-U7x" customClass="TextViewTestViewController" customModule="Gi_ukForMoments" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="zs1-vd-UGA">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="ZRa-ml-UVR">
+                                <rect key="frame" x="0.0" y="44" width="414" height="179"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="s5Y-y2-2mE" firstAttribute="top" secondItem="ZRa-ml-UVR" secondAttribute="top" id="8Vs-f7-pQT"/>
+                            <constraint firstItem="ZRa-ml-UVR" firstAttribute="centerX" secondItem="s5Y-y2-2mE" secondAttribute="centerX" id="WMl-pQ-e4M"/>
+                            <constraint firstItem="ZRa-ml-UVR" firstAttribute="width" secondItem="zs1-vd-UGA" secondAttribute="width" id="f5m-Jf-wqo"/>
+                            <constraint firstItem="ZRa-ml-UVR" firstAttribute="height" secondItem="zs1-vd-UGA" secondAttribute="height" multiplier="0.2" id="lRs-yY-2Eu"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="s5Y-y2-2mE"/>
+                    </view>
+                    <connections>
+                        <outlet property="textView" destination="ZRa-ml-UVR" id="3ga-bs-Rmy"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="tv0-T9-eHU" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="252" y="-20"/>
         </scene>
     </scenes>
 </document>

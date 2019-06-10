@@ -17,7 +17,7 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, MultiButtonViewDataSource
         case choosingTag
     }
     
-    var writingState: WritingState = .choosingPhoto {
+    var writingState: WritingState = .writingComment {
         didSet {
             topButtonView?.reloadButtons()
         }
@@ -37,6 +37,7 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, MultiButtonViewDataSource
     
     weak var noticeLabel : UILabel!
     
+    //MARK: button datasources
     func multiButtonView_ButtonsForPresent(_ buttonView: GenericMultiButtonView) -> [UIButton_WithIdentifire] {
         switch writingState {
         case .choosingPhoto:
@@ -111,25 +112,11 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, MultiButtonViewDataSource
         button.backgroundColor = buttonBackgroundColor
         return button
     }
+    //end
     
+    //MARK: button actions
     func buttonActions(_ sender: UIButton_WithIdentifire) {
         checkButtonStateWithIdentifire(sender.identifire)
-//        switch sender.identifire {
-//        case "A":
-//            checkButtonStateWithIdentifire("A")
-//        case "B":
-//            checkButtonStateWithIdentifire("B")
-//        case "left":
-//            checkButtonStateWithIdentifire("left")
-//        case "middle":
-//            checkButtonStateWithIdentifire("middle")
-//        case "right":
-//            checkButtonStateWithIdentifire("right")
-//        case "tag":
-//            checkButtonStateWithIdentifire("tag")
-//        default:
-//            break
-//        }
     }
     
     @objc func actionInTopButtonPressed(_ sender: UIButton_WithIdentifire) {
@@ -154,6 +141,10 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, MultiButtonViewDataSource
         noticeLabel?.text = sender.identifire
     }
     
+    //end
+    
+    
+    //MARK: layout triggers
     func setOrRepostionBottomSubViews() {
         setOrRepositionNoticeLabel()
         setOrRepositioningNavigationButtons()
@@ -190,6 +181,7 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, MultiButtonViewDataSource
         setOrRePositionTopButtonView()
         setOrRepostionBottomSubViews()
     }
+    //end
 }
 
 extension Giuk_ContentView_WriteSection {
@@ -219,7 +211,7 @@ extension Giuk_ContentView_WriteSection {
     }
     
     var topButtonViewFrame: CGRect {
-        let width = topContainerAreaFrame.width * 0.618
+        let width = topContainerAreaFrame.width * 0.518
         let height = topContainerAreaFrame.height * 0.618
         let originX = (topContainerAreaFrame.width - width)/2
         let originY = (topContainerAreaFrame.height - height)/2
@@ -286,7 +278,8 @@ extension Giuk_ContentView_WriteSection {
             let newContainer = generateUIView(view: bottomContainer, origin: bottomContainerAreaFrame.origin, size: bottomContainerAreaFrame.size)
             bottomContainer = newContainer
             addSubview(bottomContainer)
-            bottomContainer.backgroundColor = .goyaSemiBlackColor
+            bottomContainer.isOpaque = false
+            bottomContainer.backgroundColor = .clear
         } else {
             bottomContainer.setNewFrame(bottomContainerAreaFrame)
         }

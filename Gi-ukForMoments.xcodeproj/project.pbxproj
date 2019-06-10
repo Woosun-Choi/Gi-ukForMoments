@@ -38,10 +38,12 @@
 		A78B0E3E2299464E00D0B275 /* Giuk_ContentView_WriteSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E3D2299464E00D0B275 /* Giuk_ContentView_WriteSection.swift */; };
 		A78B0E42229CFFF800D0B275 /* Giuk_ContentView_WriteSection_SubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E41229CFFF800D0B275 /* Giuk_ContentView_WriteSection_SubView.swift */; };
 		A78B0E44229D006B00D0B275 /* NonAutomaticScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E43229D006B00D0B275 /* NonAutomaticScrollView.swift */; };
-		A78B0E46229F50BA00D0B275 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E45229F50BA00D0B275 /* TestViewController.swift */; };
+		A78B0E46229F50BA00D0B275 /* WriteSectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E45229F50BA00D0B275 /* WriteSectionViewController.swift */; };
 		A78B0E48229F6BDC00D0B275 /* Giuk_MainFrame_ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E47229F6BDC00D0B275 /* Giuk_MainFrame_ViewController.swift */; };
 		A78B0E4B22ABDF3100D0B275 /* Giuk_OpenFromFrame_ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E4A22ABDF3100D0B275 /* Giuk_OpenFromFrame_ViewController.swift */; };
 		A78B0E4D22ABDFE900D0B275 /* AnimationButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E4C22ABDFE900D0B275 /* AnimationButtonView.swift */; };
+		A78B0E5222AD1CDC00D0B275 /* TextViewTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E5122AD1CDC00D0B275 /* TextViewTestViewController.swift */; };
+		A78B0E5422ADE9FD00D0B275 /* StartWithAnimation_ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E5322ADE9FC00D0B275 /* StartWithAnimation_ViewController.swift */; };
 		A7A6A5FB228A4CCA001FCA4D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A6A5FA228A4CCA001FCA4D /* AppDelegate.swift */; };
 		A7A6A600228A4CCA001FCA4D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7A6A5FE228A4CCA001FCA4D /* Main.storyboard */; };
 		A7A6A603228A4CCA001FCA4D /* Gi_ukForMoments.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A7A6A601228A4CCA001FCA4D /* Gi_ukForMoments.xcdatamodeld */; };
@@ -86,10 +88,12 @@
 		A78B0E3D2299464E00D0B275 /* Giuk_ContentView_WriteSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_ContentView_WriteSection.swift; sourceTree = "<group>"; };
 		A78B0E41229CFFF800D0B275 /* Giuk_ContentView_WriteSection_SubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_ContentView_WriteSection_SubView.swift; sourceTree = "<group>"; };
 		A78B0E43229D006B00D0B275 /* NonAutomaticScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonAutomaticScrollView.swift; sourceTree = "<group>"; };
-		A78B0E45229F50BA00D0B275 /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
+		A78B0E45229F50BA00D0B275 /* WriteSectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteSectionViewController.swift; sourceTree = "<group>"; };
 		A78B0E47229F6BDC00D0B275 /* Giuk_MainFrame_ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_MainFrame_ViewController.swift; sourceTree = "<group>"; };
 		A78B0E4A22ABDF3100D0B275 /* Giuk_OpenFromFrame_ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_OpenFromFrame_ViewController.swift; sourceTree = "<group>"; };
 		A78B0E4C22ABDFE900D0B275 /* AnimationButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationButtonView.swift; sourceTree = "<group>"; };
+		A78B0E5122AD1CDC00D0B275 /* TextViewTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewTestViewController.swift; sourceTree = "<group>"; };
+		A78B0E5322ADE9FC00D0B275 /* StartWithAnimation_ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartWithAnimation_ViewController.swift; sourceTree = "<group>"; };
 		A7A6A5F7228A4CCA001FCA4D /* Gi-ukForMoments.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Gi-ukForMoments.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7A6A5FA228A4CCA001FCA4D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A7A6A5FF228A4CCA001FCA4D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -290,6 +294,32 @@
 			path = "Garbidge Controls";
 			sourceTree = "<group>";
 		};
+		A78B0E4E22ABE0F200D0B275 /* SubView */ = {
+			isa = PBXGroup;
+			children = (
+				A78B0E4F22ABE11300D0B275 /* FrameViewController For Contents */,
+				A78B0E45229F50BA00D0B275 /* WriteSectionViewController.swift */,
+				A78B0E3F2299465300D0B275 /* Giuk Content View */,
+			);
+			path = SubView;
+			sourceTree = "<group>";
+		};
+		A78B0E4F22ABE11300D0B275 /* FrameViewController For Contents */ = {
+			isa = PBXGroup;
+			children = (
+				A78B0E4A22ABDF3100D0B275 /* Giuk_OpenFromFrame_ViewController.swift */,
+			);
+			path = "FrameViewController For Contents";
+			sourceTree = "<group>";
+		};
+		A78B0E5022ABE12F00D0B275 /* FrameViewController For Main */ = {
+			isa = PBXGroup;
+			children = (
+				A78B0E47229F6BDC00D0B275 /* Giuk_MainFrame_ViewController.swift */,
+			);
+			path = "FrameViewController For Main";
+			sourceTree = "<group>";
+		};
 		A7A6A5EE228A4CC9001FCA4D = {
 			isa = PBXGroup;
 			children = (
@@ -312,11 +342,13 @@
 				A7A6A5FE228A4CCA001FCA4D /* Main.storyboard */,
 				A7A6A616228A4F12001FCA4D /* Generic Support Sources */,
 				A7A6A613228A4EB9001FCA4D /* MainView */,
+				A78B0E4E22ABE0F200D0B275 /* SubView */,
 				A7A6A614228A4EDE001FCA4D /* Supporing Files */,
 				A7A6A604228A4CCE001FCA4D /* Assets.xcassets */,
 				A7A6A609228A4CCE001FCA4D /* Info.plist */,
 				A7A6A606228A4CCE001FCA4D /* LaunchScreen.storyboard */,
 				A7A6A615228A4EFB001FCA4D /* Data Model */,
+				A78B0E5122AD1CDC00D0B275 /* TextViewTestViewController.swift */,
 			);
 			path = "Gi-ukForMoments";
 			sourceTree = "<group>";
@@ -326,10 +358,7 @@
 			children = (
 				A78B0E4922ABDE9200D0B275 /* Garbidge Controls */,
 				A78B0DF9228D9D4A00D0B275 /* Giuk SubContainer View */,
-				A78B0E45229F50BA00D0B275 /* TestViewController.swift */,
-				A78B0E4A22ABDF3100D0B275 /* Giuk_OpenFromFrame_ViewController.swift */,
-				A78B0E47229F6BDC00D0B275 /* Giuk_MainFrame_ViewController.swift */,
-				A78B0E3F2299465300D0B275 /* Giuk Content View */,
+				A78B0E5022ABE12F00D0B275 /* FrameViewController For Main */,
 			);
 			path = MainView;
 			sourceTree = "<group>";
@@ -355,6 +384,7 @@
 			isa = PBXGroup;
 			children = (
 				A7A6A61D228B9C1B001FCA4D /* GenericMultiButtonView.swift */,
+				A78B0E5322ADE9FC00D0B275 /* StartWithAnimation_ViewController.swift */,
 				A78B0DF7228D9D2900D0B275 /* UIButton_WithIdentifire.swift */,
 				A78B0E382292E49200D0B275 /* Content View Controller */,
 				A78B0E372292E48500D0B275 /* Photo Module */,
@@ -449,6 +479,7 @@
 				A78B0E122292E0B200D0B275 /* CenteredSquareTypeCollectionViewFlowlayout.swift in Sources */,
 				A78B0E162292E0B200D0B275 /* VerticalLinearCollectionView.swift in Sources */,
 				A78B0E2D2292E1EE00D0B275 /* HashTagItemView.swift in Sources */,
+				A78B0E5422ADE9FD00D0B275 /* StartWithAnimation_ViewController.swift in Sources */,
 				A78B0E232292E15700D0B275 /* AnalogTypeLcdItemView.swift in Sources */,
 				A7A6A61E228B9C1B001FCA4D /* GenericMultiButtonView.swift in Sources */,
 				A78B0E42229CFFF800D0B275 /* Giuk_ContentView_WriteSection_SubView.swift in Sources */,
@@ -456,13 +487,14 @@
 				A78B0E2F2292E1EE00D0B275 /* HashTagView.swift in Sources */,
 				A78B0E222292E15700D0B275 /* AnalogNumberView.swift in Sources */,
 				A78B0E362292E1FC00D0B275 /* FrameTransitionDelegate_PresentingAnimator.swift in Sources */,
+				A78B0E5222AD1CDC00D0B275 /* TextViewTestViewController.swift in Sources */,
 				A7A6A620228BA048001FCA4D /* ButtonGridManager.swift in Sources */,
 				A78B0E4B22ABDF3100D0B275 /* Giuk_OpenFromFrame_ViewController.swift in Sources */,
 				A78B0E152292E0B200D0B275 /* FocusingIndexBasedCollectionview.swift in Sources */,
 				A78B0DF6228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift in Sources */,
 				A78B0E0E2292E0B200D0B275 /* CircleView.swift in Sources */,
 				A78B0DF8228D9D2900D0B275 /* UIButton_WithIdentifire.swift in Sources */,
-				A78B0E46229F50BA00D0B275 /* TestViewController.swift in Sources */,
+				A78B0E46229F50BA00D0B275 /* WriteSectionViewController.swift in Sources */,
 				A78B0E212292E15700D0B275 /* AnalogNumberItemView.swift in Sources */,
 				A78B0E48229F6BDC00D0B275 /* Giuk_MainFrame_ViewController.swift in Sources */,
 				A78B0E3A2296FB0000D0B275 /* Giuk_MainPage_ViewController.swift in Sources */,
