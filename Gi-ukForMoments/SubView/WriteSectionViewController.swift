@@ -34,9 +34,9 @@ class WriteSectionViewController: Giuk_OpenFromFrame_ViewController {
         let originY = (contentView.topContainer.frame.height - closeButtonSize.height)/2
         if closeButton == nil {
             let newButton = generateUIView(view: closeButton, origin: CGPoint(x: originX, y: originY), size: closeButtonSize)
-            newButton?.setTitle("-", for: .normal)
+            newButton?.setTitle("✕", for: .normal)
             newButton?.addTarget(self, action: #selector(closeButtonAction(_:)), for: .touchUpInside)
-            newButton?.backgroundColor = .green
+            newButton?.backgroundColor = .clear
             closeButton = newButton
             contentView.topContainer.addSubview(closeButton)
             contentView.topContainer.bringSubviewToFront(closeButton)

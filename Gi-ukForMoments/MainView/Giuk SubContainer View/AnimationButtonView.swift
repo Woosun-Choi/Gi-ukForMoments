@@ -63,6 +63,7 @@ class AnimateButtonView: UIView
     }
     
     override func draw(_ rect: CGRect) {
+        super.draw(rect)
         setOrRepositionButtonArea()
         setOrRepositionButtonsInButtonArea()
     }

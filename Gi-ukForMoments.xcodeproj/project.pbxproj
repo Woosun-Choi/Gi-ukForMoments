@@ -36,7 +36,6 @@
 		A78B0E3A2296FB0000D0B275 /* Giuk_MainPage_ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E392296FB0000D0B275 /* Giuk_MainPage_ViewController.swift */; };
 		A78B0E3C22993FB100D0B275 /* Giuk_ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E3B22993FB100D0B275 /* Giuk_ContentView.swift */; };
 		A78B0E3E2299464E00D0B275 /* Giuk_ContentView_WriteSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E3D2299464E00D0B275 /* Giuk_ContentView_WriteSection.swift */; };
-		A78B0E42229CFFF800D0B275 /* Giuk_ContentView_WriteSection_SubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E41229CFFF800D0B275 /* Giuk_ContentView_WriteSection_SubView.swift */; };
 		A78B0E44229D006B00D0B275 /* NonAutomaticScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E43229D006B00D0B275 /* NonAutomaticScrollView.swift */; };
 		A78B0E46229F50BA00D0B275 /* WriteSectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E45229F50BA00D0B275 /* WriteSectionViewController.swift */; };
 		A78B0E48229F6BDC00D0B275 /* Giuk_MainFrame_ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E47229F6BDC00D0B275 /* Giuk_MainFrame_ViewController.swift */; };
@@ -44,6 +43,9 @@
 		A78B0E4D22ABDFE900D0B275 /* AnimationButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E4C22ABDFE900D0B275 /* AnimationButtonView.swift */; };
 		A78B0E5222AD1CDC00D0B275 /* TextViewTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E5122AD1CDC00D0B275 /* TextViewTestViewController.swift */; };
 		A78B0E5422ADE9FD00D0B275 /* StartWithAnimation_ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E5322ADE9FC00D0B275 /* StartWithAnimation_ViewController.swift */; };
+		A78B0E5622AFBFD000D0B275 /* Giuk_ContentView_SubView_ImageSelectAndCropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E5522AFBFD000D0B275 /* Giuk_ContentView_SubView_ImageSelectAndCropView.swift */; };
+		A78B0E5D22AFC7D400D0B275 /* Image_CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E5C22AFC7D400D0B275 /* Image_CollectionViewCell.swift */; };
+		A78B0E5F22AFE8F000D0B275 /* ImageFilterModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E5E22AFE8F000D0B275 /* ImageFilterModule.swift */; };
 		A7A6A5FB228A4CCA001FCA4D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A6A5FA228A4CCA001FCA4D /* AppDelegate.swift */; };
 		A7A6A600228A4CCA001FCA4D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7A6A5FE228A4CCA001FCA4D /* Main.storyboard */; };
 		A7A6A603228A4CCA001FCA4D /* Gi_ukForMoments.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A7A6A601228A4CCA001FCA4D /* Gi_ukForMoments.xcdatamodeld */; };
@@ -86,7 +88,6 @@
 		A78B0E392296FB0000D0B275 /* Giuk_MainPage_ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_MainPage_ViewController.swift; sourceTree = "<group>"; };
 		A78B0E3B22993FB100D0B275 /* Giuk_ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_ContentView.swift; sourceTree = "<group>"; };
 		A78B0E3D2299464E00D0B275 /* Giuk_ContentView_WriteSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_ContentView_WriteSection.swift; sourceTree = "<group>"; };
-		A78B0E41229CFFF800D0B275 /* Giuk_ContentView_WriteSection_SubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_ContentView_WriteSection_SubView.swift; sourceTree = "<group>"; };
 		A78B0E43229D006B00D0B275 /* NonAutomaticScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonAutomaticScrollView.swift; sourceTree = "<group>"; };
 		A78B0E45229F50BA00D0B275 /* WriteSectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteSectionViewController.swift; sourceTree = "<group>"; };
 		A78B0E47229F6BDC00D0B275 /* Giuk_MainFrame_ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_MainFrame_ViewController.swift; sourceTree = "<group>"; };
@@ -94,6 +95,9 @@
 		A78B0E4C22ABDFE900D0B275 /* AnimationButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationButtonView.swift; sourceTree = "<group>"; };
 		A78B0E5122AD1CDC00D0B275 /* TextViewTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewTestViewController.swift; sourceTree = "<group>"; };
 		A78B0E5322ADE9FC00D0B275 /* StartWithAnimation_ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartWithAnimation_ViewController.swift; sourceTree = "<group>"; };
+		A78B0E5522AFBFD000D0B275 /* Giuk_ContentView_SubView_ImageSelectAndCropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_ContentView_SubView_ImageSelectAndCropView.swift; sourceTree = "<group>"; };
+		A78B0E5C22AFC7D400D0B275 /* Image_CollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image_CollectionViewCell.swift; sourceTree = "<group>"; };
+		A78B0E5E22AFE8F000D0B275 /* ImageFilterModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageFilterModule.swift; sourceTree = "<group>"; };
 		A7A6A5F7228A4CCA001FCA4D /* Gi-ukForMoments.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Gi-ukForMoments.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7A6A5FA228A4CCA001FCA4D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A7A6A5FF228A4CCA001FCA4D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -279,8 +283,9 @@
 			isa = PBXGroup;
 			children = (
 				A78B0E3D2299464E00D0B275 /* Giuk_ContentView_WriteSection.swift */,
-				A78B0E41229CFFF800D0B275 /* Giuk_ContentView_WriteSection_SubView.swift */,
+				A78B0E5522AFBFD000D0B275 /* Giuk_ContentView_SubView_ImageSelectAndCropView.swift */,
 				A78B0E43229D006B00D0B275 /* NonAutomaticScrollView.swift */,
+				A78B0E5B22AFC63F00D0B275 /* Image Cell */,
 			);
 			path = "Giuk Content_Writing";
 			sourceTree = "<group>";
@@ -318,6 +323,22 @@
 				A78B0E47229F6BDC00D0B275 /* Giuk_MainFrame_ViewController.swift */,
 			);
 			path = "FrameViewController For Main";
+			sourceTree = "<group>";
+		};
+		A78B0E5B22AFC63F00D0B275 /* Image Cell */ = {
+			isa = PBXGroup;
+			children = (
+				A78B0E5C22AFC7D400D0B275 /* Image_CollectionViewCell.swift */,
+			);
+			path = "Image Cell";
+			sourceTree = "<group>";
+		};
+		A78B0E6022AFEA8800D0B275 /* FilterModule */ = {
+			isa = PBXGroup;
+			children = (
+				A78B0E5E22AFE8F000D0B275 /* ImageFilterModule.swift */,
+			);
+			path = FilterModule;
 			sourceTree = "<group>";
 		};
 		A7A6A5EE228A4CC9001FCA4D = {
@@ -392,6 +413,7 @@
 				A78B0E292292E1EE00D0B275 /* HashtagScrollView */,
 				A78B0E242292E19300D0B275 /* Cropping View */,
 				A78B0DFB2292E0B100D0B275 /* Focusing Based CollectionViews */,
+				A78B0E6022AFEA8800D0B275 /* FilterModule */,
 				A78B0E1D2292E15700D0B275 /* AnalogNumberView */,
 				A78B0DFA228D9D8900D0B275 /* Grid Managers */,
 			);
@@ -471,6 +493,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A78B0E4D22ABDFE900D0B275 /* AnimationButtonView.swift in Sources */,
+				A78B0E5622AFBFD000D0B275 /* Giuk_ContentView_SubView_ImageSelectAndCropView.swift in Sources */,
 				A78B0E0F2292E0B200D0B275 /* CenteredCollectionView.swift in Sources */,
 				A7A6A610228A4D1A001FCA4D /* ContentUIViewController.swift in Sources */,
 				A78B0E132292E0B200D0B275 /* TimeCollectionViewer.swift in Sources */,
@@ -482,10 +505,10 @@
 				A78B0E5422ADE9FD00D0B275 /* StartWithAnimation_ViewController.swift in Sources */,
 				A78B0E232292E15700D0B275 /* AnalogTypeLcdItemView.swift in Sources */,
 				A7A6A61E228B9C1B001FCA4D /* GenericMultiButtonView.swift in Sources */,
-				A78B0E42229CFFF800D0B275 /* Giuk_ContentView_WriteSection_SubView.swift in Sources */,
 				A78B0E142292E0B200D0B275 /* TimeCollectionView.swift in Sources */,
 				A78B0E2F2292E1EE00D0B275 /* HashTagView.swift in Sources */,
 				A78B0E222292E15700D0B275 /* AnalogNumberView.swift in Sources */,
+				A78B0E5F22AFE8F000D0B275 /* ImageFilterModule.swift in Sources */,
 				A78B0E362292E1FC00D0B275 /* FrameTransitionDelegate_PresentingAnimator.swift in Sources */,
 				A78B0E5222AD1CDC00D0B275 /* TextViewTestViewController.swift in Sources */,
 				A7A6A620228BA048001FCA4D /* ButtonGridManager.swift in Sources */,
@@ -512,6 +535,7 @@
 				A7A6A5FB228A4CCA001FCA4D /* AppDelegate.swift in Sources */,
 				A78B0E342292E1FC00D0B275 /* FrameTransitionDelegate_DismissAnimator.swift in Sources */,
 				A78B0E0D2292E0B200D0B275 /* DotStylePresentorView.swift in Sources */,
+				A78B0E5D22AFC7D400D0B275 /* Image_CollectionViewCell.swift in Sources */,
 				A78B0E112292E0B200D0B275 /* CenteredContentCollectionStyleViewer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

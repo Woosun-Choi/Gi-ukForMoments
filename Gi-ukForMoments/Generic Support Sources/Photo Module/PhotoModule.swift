@@ -310,7 +310,7 @@ struct PhotoModule {
 
         if (status == PHAuthorizationStatus.authorized) {
             // Access has been granted.
-            DispatchQueue.global(qos: .background).async {
+            DispatchQueue.global(qos: .userInitiated).async {
                 self.requestedActionWhenAuthorized?()
                 DispatchQueue.main.async {
                 }
@@ -321,7 +321,7 @@ struct PhotoModule {
             // Access has not been determined.
             PHPhotoLibrary.requestAuthorization({ (newStatus) in
                 if (newStatus == PHAuthorizationStatus.authorized) {
-                    DispatchQueue.global(qos: .background).async {
+                    DispatchQueue.global(qos: .userInitiated).async {
                         self.requestedActionWhenAuthorized?()
                         DispatchQueue.main.async {
                             //self.images = imageArray

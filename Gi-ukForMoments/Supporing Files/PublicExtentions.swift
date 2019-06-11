@@ -89,6 +89,11 @@ extension UIColor {
     static var goyaBlack: UIColor {
         return UIColor.init(red: 50/255, green: 51/255, blue: 51/255, alpha: 1)
     }
+    
+    static var goyaSemiBlackColor: UIColor {
+        return UIColor.init(red: 50/255, green: 51/255, blue: 51/255, alpha: 1)
+    }
+    
     static var goyaWhite: UIColor {
         return UIColor.init(red: 243/255, green: 243/255, blue: 243/255, alpha: 1)
     }
@@ -107,10 +112,6 @@ extension UIColor {
     
     static var goyaBurgundyColor: UIColor {
         return UIColor.init(red: 128/255, green: 0/255, blue: 32/255, alpha: 1)
-    }
-    
-    static var goyaSemiBlackColor: UIColor {
-        return UIColor.init(red: 50/255, green: 51/255, blue: 51/255, alpha: 1)
     }
     
     static var goyaFontColor: UIColor {

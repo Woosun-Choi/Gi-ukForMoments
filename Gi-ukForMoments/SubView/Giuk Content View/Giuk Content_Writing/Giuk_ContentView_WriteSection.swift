@@ -8,6 +8,18 @@
 
 import UIKit
 
+struct WillSaveContent {
+    static var image: Data?
+    static var comment: String?
+    static var giuks: [String]?
+    
+    static func resetWillSaveData() {
+        image = nil
+        comment = nil
+        giuks = nil
+    }
+}
+
 class Giuk_ContentView_WriteSection: Giuk_ContentView, MultiButtonViewDataSource {
     
     enum WritingState {
@@ -17,7 +29,7 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, MultiButtonViewDataSource
         case choosingTag
     }
     
-    var writingState: WritingState = .writingComment {
+    var writingState: WritingState = .choosingPhoto {
         didSet {
             topButtonView?.reloadButtons()
         }
@@ -25,7 +37,7 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, MultiButtonViewDataSource
     
     weak var topContainer: UIView!
     
-    weak var contentContainer: NonAutomaticScrollView!
+    weak var contentContainer: Giuk_ContentView_SubView_ImageSelectAndCropView!
     
     weak var bottomContainer: UIView!
     
@@ -78,13 +90,13 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, MultiButtonViewDataSource
         var buttons = [UIButton_WithIdentifire]()
         
         let buttonA = initialButtonItemForTopButton(estimateButtonItemFontSize)
-        buttonA.identifire = "A"
+        buttonA.identifire = "Verti"
         buttonA.setTitle("Verti", for: .normal)
         buttonA.addTarget(self, action: #selector(actionInTopButtonPressed(_:)), for: .touchUpInside)
         buttons.append(buttonA)
         
         let buttonB = initialButtonItemForTopButton(estimateButtonItemFontSize)
-        buttonB.identifire = "B"
+        buttonB.identifire = "Horizon"
         buttonB.setTitle("Horizon", for: .normal)
         buttonB.addTarget(self, action: #selector(actionInTopButtonPressed(_:)), for: .touchUpInside)
         buttons.append(buttonB)
@@ -117,6 +129,18 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, MultiButtonViewDataSource
     //MARK: button actions
     func buttonActions(_ sender: UIButton_WithIdentifire) {
         checkButtonStateWithIdentifire(sender.identifire)
+        switch sender.identifire {
+        case "Verti":
+            if contentContainer.isHorizontal != true {
+                contentContainer.isHorizontal = true
+            }
+        case "Horizon":
+            if contentContainer.isHorizontal == true {
+                contentContainer.isHorizontal = false
+            }
+        default:
+            break
+        }
     }
     
     @objc func actionInTopButtonPressed(_ sender: UIButton_WithIdentifire) {
@@ -267,7 +291,7 @@ extension Giuk_ContentView_WriteSection {
             let newContainer = generateUIView(view: contentContainer, origin: contentAreaFrame.origin, size: contentAreaFrame.size)
             contentContainer = newContainer
             addSubview(contentContainer)
-            contentContainer.backgroundColor = .purple
+            contentContainer.backgroundColor = .goyaWhite
         } else {
             contentContainer.setNewFrame(contentAreaFrame)
         }
@@ -323,9 +347,9 @@ extension Giuk_ContentView_WriteSection {
         if leftNavigationButton == nil {
             let newButton = generateUIView(view: leftNavigationButton, origin: bottomNavigationButtonOrigins[0], size: bottomNavigationButtonSize)
             newButton?.identifire = GiukNavigationButton.leftNavigationButton.rawValue
-            newButton?.backgroundColor = .goyaWhite
-            newButton?.setTitleColor(.goyaSemiBlackColor, for: .normal)
-            newButton?.setTitle("◁", for: .normal)
+            newButton?.backgroundColor = .clear
+            newButton?.setTitleColor(.goyaWhite, for: .normal)
+            newButton?.setTitle("◀︎", for: .normal)
             leftNavigationButton = newButton
             leftNavigationButton.addTarget(self, action: #selector(navigationButtonPressed(_:)), for: .touchUpInside)
             bottomContainer.addSubview(leftNavigationButton)
@@ -336,9 +360,9 @@ extension Giuk_ContentView_WriteSection {
         if rightNavigationButton == nil {
             let newButton = generateUIView(view: rightNavigationButton, origin: bottomNavigationButtonOrigins[1], size: bottomNavigationButtonSize)
             newButton?.identifire = GiukNavigationButton.rightNavigationButton.rawValue
-            newButton?.backgroundColor = .goyaWhite
-            newButton?.setTitleColor(.goyaSemiBlackColor, for: .normal)
-            newButton?.setTitle("▷", for: .normal)
+            newButton?.backgroundColor = .clear
+            newButton?.setTitleColor(.goyaWhite, for: .normal)
+            newButton?.setTitle("▶︎", for: .normal)
             rightNavigationButton = newButton
             rightNavigationButton.addTarget(self, action: #selector(navigationButtonPressed(_:)), for: .touchUpInside)
             bottomContainer.addSubview(rightNavigationButton)

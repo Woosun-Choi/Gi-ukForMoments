@@ -15,19 +15,7 @@ struct GiukContentFrameFactors {
 }
 
 class Giuk_ContentView: UIView {
-
-    override func draw(_ rect: CGRect) {
-        // Drawing code
-        let path_1 = UIBezierPath(rect: topContainerAreaFrame)
-        UIColor.red.setFill()
-        path_1.fill()
-        let path_2 = UIBezierPath(rect: contentAreaFrame)
-        UIColor.blue.setFill()
-        path_2.fill()
-        let path_3 = UIBezierPath(rect: bottomContainerAreaFrame)
-        UIColor.yellow.setFill()
-        path_3.fill()
-    }
+    
 }
 
 extension Giuk_ContentView {

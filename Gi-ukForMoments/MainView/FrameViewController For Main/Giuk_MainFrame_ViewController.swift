@@ -172,14 +172,14 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     private func setAnimationView() {
         let topAnimationView = generateUIView(view: animationView_Top, origin: topAnimationViewFrame.origin, size: topAnimationViewFrame.size)
         animationView_Top = topAnimationView
-        animationView_Top.backgroundColor = animationView_InitailBackgroundColor
+        animationView_Top.layer.backgroundColor = animationView_InitailBackgroundColor.cgColor
         animationView_Top.dataSource = self
         animationView_Top.isOpaque = false
         exepctedMainView.addSubview(animationView_Top)
         
         let rightAnimationView = generateUIView(view: animationView_Right, origin: rightAnimationViewFrame.origin, size: rightAnimationViewFrame.size)
         animationView_Right = rightAnimationView
-        animationView_Right.backgroundColor = animationView_InitailBackgroundColor
+        animationView_Right.layer.backgroundColor = animationView_InitailBackgroundColor.cgColor
         animationView_Right.dataSource = self
         animationView_Right.isOpaque = false
         exepctedMainView.addSubview(animationView_Right)
@@ -216,6 +216,8 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
                     self.initialAnimationFrameFor_RightAnimationView(self.initialAnimationFrame_Big)
                         .offSetBy(dX: self.fixedOriginXForInitialAnimation, dY: 0)
                 )
+                //self.animationView_Top.layer.backgroundColor = self.animationView_FinalBackgroundColor.cgColor
+                //self.animationView_Right.layer.backgroundColor = self.animationView_FinalBackgroundColor.cgColor
             }
         }
         requieredFunctionWithInInitialStageAnimationCompleted = { [unowned self] in
@@ -489,6 +491,10 @@ extension Giuk_MainFrame_ViewController {
     }
     
     var animationView_InitailBackgroundColor: UIColor {
+        return UIColor.goyaSemiBlackColor.withAlphaComponent(0.7)
+    }
+    
+    var animationView_FinalBackgroundColor: UIColor {
         return UIColor.goyaSemiBlackColor.withAlphaComponent(0.7)
     }
     
