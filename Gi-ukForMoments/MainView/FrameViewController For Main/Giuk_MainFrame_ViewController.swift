@@ -41,24 +41,25 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     var runningAnimations = [UIViewPropertyAnimator]()
     
     var animationProgressWhenInterrupted: CGFloat = 0
+    
     //end
 
     //MARK: Variables For Buttons
     enum buttonLocation: String {
         case top
         case right
-        case setting
+        case rightTop
     }
     
     private var buttons : Dictionary<buttonLocation,[UIButton_WithIdentifire]> =
         [
             buttonLocation.top : [],
             buttonLocation.right : [],
-            buttonLocation.setting : []
+            buttonLocation.rightTop : []
     ]
     
     private var allButtons: [UIButton_WithIdentifire] {
-        let allbuttons = buttons[.top]! + buttons[.right]! + buttons[.setting]!
+        let allbuttons = buttons[.top]! + buttons[.right]! + buttons[.rightTop]!
         return allbuttons
     }
     
@@ -66,13 +67,29 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //for authorize - passcode or login
+        authorized = true
+        
+        //if authorize failed - create a VC for authorize
+        requieredBehaviorWhenAuthrizeFailed = {
+            [unowned self] in
+            let newVC = Giuk_OpenFromFrame_ViewController()
+            newVC.closingFunction = {
+                [weak self] in
+                self?.authorized = true
+            }
+            self.openViewControllerFromRect(self.topOpeningFrame, viewController: newVC)
+        }
+        
+        //else
         setButtonDataSource()
         transitionAnimator.animationDuration = animationDuration
-        view.backgroundColor = .goyaWhite
+        transitionAnimator.presentAnimationCurveStyle = .curveEaseOut
+        transitionAnimator.dismissAnimationCurveStyle = .curveEaseOut
+        view.backgroundColor = .white
         setContainers()
         setAnimationView()
-        setAnimationBehavior()
-        
+        setAnimationBehaviorForInitailAnimation()
     }
     
     override func viewWillLayoutSubviews() {
@@ -92,7 +109,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         }
     }
     
-    //MARK: ContainerView button resources
+    //MARK: Main Button resources
     
     func containerViewButtonItem(_ containerView: AnimateButtonView) -> [UIButton_WithIdentifire] {
         if containerView == animationView_Top {
@@ -100,7 +117,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         } else if containerView == animationView_Right {
             return buttons[.right]!
         } else {
-            return buttons[.setting]!
+            return buttons[.rightTop]!
         }
     }
     
@@ -114,43 +131,43 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         }
     }
     
-    func buttonsForTopContainerView(target: Any = self ,selector: Selector = #selector(handleOntap(_:)), forEvent: UIControl.Event = .touchUpInside) -> [UIButton_WithIdentifire] {
+    func buttonsForTop(target: Any = self ,selector: Selector = #selector(handleOntap(_:)), forEvent: UIControl.Event = .touchUpInside) -> [UIButton_WithIdentifire] {
         var controlButtons = [UIButton_WithIdentifire]()
         let addButton = UIButton_WithIdentifire()
         addButton.identifire = buttonLocation.top.rawValue
-        addButton.setTitle("+", for: .normal)
+        addButton.setImage(UIImage(named: "GiukIcon-Add"), for: .normal)
         addButton.addTarget(target, action: selector, for: forEvent)
-        addButton.backgroundColor = .red
+        addButton.backgroundColor = .clear
         controlButtons.append(addButton)
         return controlButtons
     }
     
-    func buttonsForRightContainerView(target: Any = self ,selector: Selector = #selector(handleOntap(_:)), forEvent: UIControl.Event = .touchUpInside) -> [UIButton_WithIdentifire] {
+    func buttonsForRight(target: Any = self ,selector: Selector = #selector(handleOntap(_:)), forEvent: UIControl.Event = .touchUpInside) -> [UIButton_WithIdentifire] {
         var controlButtons = [UIButton_WithIdentifire]()
         let addButton = UIButton_WithIdentifire()
         addButton.identifire = buttonLocation.right.rawValue
-        addButton.setTitle("#", for: .normal)
+        addButton.setImage(UIImage(named: "GiukIcon-Key"), for: .normal)
         addButton.addTarget(target, action: selector, for: forEvent)
-        addButton.backgroundColor = .red
+        addButton.backgroundColor = .clear
         controlButtons.append(addButton)
         return controlButtons
     }
     
-    func buttonsForSettingContainerView(target: Any = self ,selector: Selector = #selector(handleOntap(_:)), forEvent: UIControl.Event = .touchUpInside) -> [UIButton_WithIdentifire] {
+    func buttonsForRightTop(target: Any = self ,selector: Selector = #selector(handleOntap(_:)), forEvent: UIControl.Event = .touchUpInside) -> [UIButton_WithIdentifire] {
         var controlButtons = [UIButton_WithIdentifire]()
         let addButton = UIButton_WithIdentifire()
-        addButton.identifire = buttonLocation.setting.rawValue
+        addButton.identifire = buttonLocation.rightTop.rawValue
         addButton.setTitle("⚙︎", for: .normal)
         addButton.addTarget(target, action: selector, for: forEvent)
-        addButton.backgroundColor = .red
+        addButton.backgroundColor = .clear
         controlButtons.append(addButton)
         return controlButtons
     }
     
     private func setButtonDataSource() {
-        buttons[.top] = buttonsForTopContainerView()
-        buttons[.right] = buttonsForRightContainerView()
-        buttons[.setting] = buttonsForSettingContainerView()
+        buttons[.top] = buttonsForTop()
+        buttons[.right] = buttonsForRight()
+        buttons[.rightTop] = buttonsForRightTop()
     }
     
     //end
@@ -166,28 +183,28 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     }
     
     private func layoutContainers() {
-        containerView_MainContent?.setNewFrame(CGRect(origin: contentAreaOrigin_Start, size: contentAreaSize))
+        containerView_MainContent?.setNewFrame(contentAreaOrigin_Start, size: contentAreaSize)
     }
     
     private func setAnimationView() {
-        let topAnimationView = generateUIView(view: animationView_Top, origin: topAnimationViewFrame.origin, size: topAnimationViewFrame.size)
+        let topAnimationView = generateUIView(view: animationView_Top, frame: topAnimationViewFrame)
         animationView_Top = topAnimationView
         animationView_Top.layer.backgroundColor = animationView_InitailBackgroundColor.cgColor
         animationView_Top.dataSource = self
         animationView_Top.isOpaque = false
         exepctedMainView.addSubview(animationView_Top)
         
-        let rightAnimationView = generateUIView(view: animationView_Right, origin: rightAnimationViewFrame.origin, size: rightAnimationViewFrame.size)
+        let rightAnimationView = generateUIView(view: animationView_Right, frame: rightAnimationViewFrame)
         animationView_Right = rightAnimationView
         animationView_Right.layer.backgroundColor = animationView_InitailBackgroundColor.cgColor
         animationView_Right.dataSource = self
         animationView_Right.isOpaque = false
         exepctedMainView.addSubview(animationView_Right)
         
-        let settingAnimationView = generateUIView(view: animationView_Setting, origin: settingAnimationViewStartFrame.origin, size: settingAnimationViewStartFrame.size)
+        let settingAnimationView = generateUIView(view: animationView_Setting, frame: settingAnimationViewStartFrame)
         animationView_Setting = settingAnimationView
         animationView_Setting.backgroundColor = .clear
-        animationView_Setting.buttonGrid.alignmentStyle = .negativeAligned
+        animationView_Setting.buttonAlignType = .negativeAligned
         animationView_Setting.dataSource = self
         animationView_Setting.isOpaque = false
         exepctedMainView.addSubview(animationView_Setting)
@@ -202,12 +219,13 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     //end
     
     //MARK: Initial animation behavior
-    func setAnimationBehavior() {
+    
+    func setAnimationBehaviorForInitailAnimation() {
         requieredAnimationWithInInitialStage = { [unowned self] in
             if self.animationCondition == .collapsed {
                 self.layoutContainers()
                 self.layoutAnimationView()
-                self.view.backgroundColor = .goyaYellowWhite
+                self.view.backgroundColor = .goyaDarkWhite
                 self.animationView_Top.setNewFrame(
                     self.initialAnimationFrameFor_TopAnimationView(self.initialAnimationFrame_Big)
                         .offSetBy(dX: self.fixedOriginXForInitialAnimation, dY: 0)
@@ -239,9 +257,13 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         case buttonLocation.top.rawValue:
             return WriteSectionViewController()
         case buttonLocation.right.rawValue:
-            return Giuk_OpenFromFrame_ViewController()
-        case buttonLocation.setting.rawValue:
-            return Giuk_OpenFromFrame_ViewController()
+            let newVC = Giuk_OpenFromFrame_ViewController()
+            newVC.view.backgroundColor = .GiukBackgroundColor_depth_1
+            return newVC
+        case buttonLocation.rightTop.rawValue:
+            let newVC = Giuk_OpenFromFrame_ViewController()
+            newVC.view.backgroundColor = .GiukBackgroundColor_depth_2
+            return newVC
         default:
             return nil
         }
@@ -253,7 +275,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
             return topOpeningFrame
         case buttonLocation.right.rawValue:
             return rightOpeningFrame
-        case buttonLocation.setting.rawValue:
+        case buttonLocation.rightTop.rawValue:
             return settingOpeningFrame
         default:
             return rightOpeningFrame
@@ -321,7 +343,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
             } else {
                 return
             }
-        case buttonLocation.setting.rawValue:
+        case buttonLocation.rightTop.rawValue:
             if animationState == .normal {
                 animationState = .settingMenuContainerMode
                 animationCondition = .extended
@@ -367,9 +389,13 @@ extension Giuk_MainFrame_ViewController {
             
             self.containerView_MainContent.isUserInteractionEnabled = false
             
+            if state != .normal {
+                self.allButtons.forEach{ $0.alpha = 0 }
+            }
+            
 //            let frameAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1)
 //            let frameAnimator = UIViewPropertyAnimator(duration: duration, curve: .easeInOut)
-            let frameAnimator = UIViewPropertyAnimator(duration: duration, curve: .easeInOut) {
+            let frameAnimator = UIViewPropertyAnimator(duration: duration, curve: .easeOut) {
                 [unowned self] in
                 switch state {
                 case .normal :
@@ -402,24 +428,17 @@ extension Giuk_MainFrame_ViewController {
                 }
             }
             
-            let buttonFadeAnimator = UIViewPropertyAnimator(duration: duration/2, curve: .easeInOut) {
-                [unowned self] in
-                if state != .normal {
-                    self.allButtons.forEach{ $0.alpha = 0 }
-                } else {
-                    self.allButtons.forEach{ $0.alpha = 1 }
-                }
-            }
-            
             frameAnimator.startAnimation()
             runningAnimations.append(frameAnimator)
-            
-            buttonFadeAnimator.startAnimation()
-            runningAnimations.append(buttonFadeAnimator)
             
             //when animation ended
             frameAnimator.addCompletion { [unowned self] (_) in
                 self.runningAnimations.removeAll()
+                if state == .normal {
+                    UIView.animate(withDuration: 0.25, animations: {
+                        self.allButtons.forEach{ $0.alpha = 1 }
+                    })
+                }
                 completion?()
             }
             //
@@ -529,6 +548,10 @@ extension Giuk_MainFrame_ViewController {
         return fullFrameSize.width/view.frame.width
     }
     
+    var fullViewRatio: CGFloat {
+        return fullFrameSize.width/fullFrameSize.height
+    }
+    
     var safeAreaRelatedTopMargin: CGFloat {
         return safeAreaRelatedAreaFrame.minY.absValue * fullFrameRatio
     }
@@ -543,10 +566,6 @@ extension Giuk_MainFrame_ViewController {
     
     var rightAnimationViewAreaWidth: CGFloat {
         return topAnimationViewAreaHeight * 0.618
-    }
-    
-    var estimateButtonMarign: CGFloat {
-        return 3
     }
     
     var estimateTopContainerHeight: CGFloat {
@@ -628,12 +647,17 @@ extension Giuk_MainFrame_ViewController {
     
     
     // preseting view frames
+    
     var topOpeningFrame: CGRect {
-        return CGRect(x: 0, y: (-fullFrameSize.height), width: fullFrameSize.width, height: fullFrameSize.height)
+        let estimateWidth = fullFrameSize.width - rightAnimationViewAreaWidth
+        let estimateHeight = estimateWidth / fullViewRatio
+        return CGRect(x: 0, y: (-estimateHeight), width: estimateWidth, height: estimateHeight)
     }
     
     var rightOpeningFrame: CGRect {
-        return CGRect(x: fullFrameSize.width, y: 0, width: fullFrameSize.width, height: fullFrameSize.height)
+        let estimateHeight = fullFrameSize.height - estimateTopContainerHeight
+        let estimateWidth = estimateHeight / fullViewRatio
+        return CGRect(x: fullFrameSize.width, y: estimateTopContainerHeight, width: estimateWidth, height: estimateHeight)
     }
     
     var settingOpeningFrame: CGRect {
@@ -671,10 +695,15 @@ extension Giuk_MainFrame_ViewController {
     }
     
     //Button area frames
+    
+    var estimateButtonMarign: CGFloat {
+        return 5
+    }
+    
     var containerView_Top_ButtonAreaFrame: CGRect {
-        let topTriggerSizeHeight = topAnimationViewAreaHeight - (estimateButtonMarign*2)
-        let topTriggerSizeWidth = fullFrameSize.width - rightAnimationViewAreaWidth - (estimateButtonMarign*2)
-        let topTriggerOriginX = estimateButtonMarign
+        let topTriggerSizeHeight = min(CGFloat(45), (topAnimationViewAreaHeight - (estimateButtonMarign*2)))
+        let topTriggerSizeWidth = fullFrameSize.width - rightAnimationViewAreaWidth - (estimateButtonMarign*2) - 16
+        let topTriggerOriginX = estimateButtonMarign + 8
         let topTriggrtOriginY = animationView_Top.bounds.height - estimateButtonMarign - topTriggerSizeHeight
         return CGRect(origin: CGPoint(x: topTriggerOriginX, y: topTriggrtOriginY), size: CGSize(width: topTriggerSizeWidth, height: topTriggerSizeHeight))
     }

@@ -10,6 +10,22 @@ import UIKit
 
 class Image_CollectionViewCell: UICollectionViewCell {
     
+    var didSelected: Bool = false {
+        didSet {
+            if didSelected {
+                imageView.alpha = 0.3
+            } else {
+                imageView.alpha = 1
+            }
+        }
+    }
+    
+    override var isSelected: Bool {
+        didSet {
+            
+        }
+    }
+    
     weak var imageView: UIImageView!
     
     static let reuseIdentifire = String(describing: Image_CollectionViewCell.self)
@@ -17,11 +33,26 @@ class Image_CollectionViewCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
-        imageView.alpha = 1
+        didSelected = false
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        setOrRepositionImageView()
     }
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        setOrRepositionImageView()
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setOrRepositionImageView()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
         setOrRepositionImageView()
     }
     

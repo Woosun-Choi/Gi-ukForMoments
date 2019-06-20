@@ -53,6 +53,10 @@ class FrameTransitioningDelegate: UIPercentDrivenInteractiveTransition, UIViewCo
     
     var fading: Bool = false
     
+    var presentAnimationCurveStyle : UIView.AnimationOptions?
+    
+    var dismissAnimationCurveStyle: UIView.AnimationOptions?
+    
     var animationDuration: TimeInterval = 0.5
     
     weak var tarnsitionDataSource: FrameTransitionDataSource?
@@ -154,6 +158,7 @@ class FrameTransitioningDelegate: UIPercentDrivenInteractiveTransition, UIViewCo
         }
         dismissAnimator.animateDuration = animationDuration
         dismissAnimator.fading = fading
+        dismissAnimator.animationCurveStyle = dismissAnimationCurveStyle
         return dismissAnimator
     }
     
@@ -172,6 +177,7 @@ class FrameTransitioningDelegate: UIPercentDrivenInteractiveTransition, UIViewCo
         }
         presentationAnimator.animateDuration = animationDuration
         presentationAnimator.fading = fading
+        presentationAnimator.animationCurveStyle = presentAnimationCurveStyle
         return presentationAnimator
     }
 }

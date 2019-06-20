@@ -30,6 +30,17 @@ public func generateUIView<T: UIView>(view: T!, origin: CGPoint, size: CGSize) -
     }
 }
 
+public func generateUIView<T: UIView>(view: T!, frame: CGRect) -> T! {
+    if view == nil {
+        let container = T()
+        container.frame = frame
+        return container
+    } else {
+        view.frame = frame
+        return view
+    }
+}
+
 extension UIFont {
     
     enum appleSDGothicNeo: String {
@@ -94,8 +105,20 @@ extension UIColor {
         return UIColor.init(red: 50/255, green: 51/255, blue: 51/255, alpha: 1)
     }
     
+    static var GiukBackgroundColor_depth_1: UIColor {
+        return UIColor.init(red: 105/255, green: 106/255, blue: 106/255, alpha: 1)
+    }
+    
+    static var GiukBackgroundColor_depth_2: UIColor {
+        return UIColor.init(red: 67/255, green: 68/255, blue: 68/255, alpha: 1)
+    }
+    
     static var goyaWhite: UIColor {
         return UIColor.init(red: 243/255, green: 243/255, blue: 243/255, alpha: 1)
+    }
+    
+    static var goyaDarkWhite: UIColor {
+        return UIColor.init(red: 233/255, green: 233/255, blue: 233/255, alpha: 1)
     }
     
     static var goyaZenColorBackground: UIColor {
@@ -159,6 +182,14 @@ extension CGFloat {
     
     var clearUnderDot: CGFloat {
         return CGFloat(Int(self))
+    }
+    
+    var preventNaN: CGFloat {
+        if self.isNaN {
+            return 1
+        } else {
+            return self
+        }
     }
 }
 
@@ -479,8 +510,22 @@ public extension UIDevice {
 extension UIView {
     
     func setNewFrame(_ frame: CGRect) {
-        self.frame = frame
-        self.layoutSubviews()
+        if self.frame != frame {
+            self.frame = frame
+            self.layoutSubviews()
+        } else {
+            return
+        }
+    }
+    
+    func setNewFrame(_ origin: CGPoint, size: CGSize) {
+        if self.frame.origin != origin || self.frame.size != size{
+            self.frame.origin = origin
+            self.frame.size = size
+            self.layoutSubviews()
+        } else {
+            return
+        }
     }
     
     // Example use: myView.addBorder(toSide: .Left, withColor: UIColor.redColor().CGColor, andThickness: 1.0)

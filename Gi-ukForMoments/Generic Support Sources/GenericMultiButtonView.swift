@@ -8,7 +8,7 @@
 
 import UIKit
 
-@objc protocol MultiButtonViewDataSource {
+@objc protocol GenericMultiButtonViewDataSource {
     //func multiButtonView_NumberOfButtons(_ buttonView: GenericMultiButtonView) -> Int
     func multiButtonView_ButtonsForPresent(_ buttonView: GenericMultiButtonView) -> [UIButton_WithIdentifire]
 }
@@ -16,7 +16,7 @@ import UIKit
 @IBDesignable
 class GenericMultiButtonView: UIView {
     
-    weak var dataSource: MultiButtonViewDataSource?
+    weak var dataSource: GenericMultiButtonViewDataSource?
     
     var buttonContentArea: UIView!
     
@@ -77,24 +77,36 @@ class GenericMultiButtonView: UIView {
         }
     }
     
-    func reloadButtons() {
-        if buttons.count > 0 {
-            buttonContentArea.subviews.forEach { (view) in
-                view.removeFromSuperview()
+    func reloadButtons(completion: (()->Void)? = nil) {
+        self.isUserInteractionEnabled = false
+        UIView.animate(withDuration: 0.15, animations: {
+            self.alpha = 0
+        }) { [unowned self](finished) in
+            if self.buttons.count > 0 {
+                self.buttonContentArea.subviews.forEach { (view) in
+                    view.removeFromSuperview()
+                }
+                
+                var nowOriginX: CGFloat = self.requiredMarginInsets
+                var nowOriginY: CGFloat = self.requiredMarginInsets
+                var buttonOrigin: CGPoint {
+                    return CGPoint(x: nowOriginX, y: nowOriginY)
+                }
+                for button in self.buttons {
+                    button.frame = CGRect(origin: buttonOrigin, size: self.estimatedButtonSize)
+                    self.buttonContentArea.addSubview(button)
+                    nowOriginX = (button.frame.maxX + self.requiredMarginBetweenItems)
+                }
+            } else {
+                return
             }
-            
-            var nowOriginX: CGFloat = requiredMarginInsets
-            var nowOriginY: CGFloat = requiredMarginInsets
-            var buttonOrigin: CGPoint {
-                return CGPoint(x: nowOriginX, y: nowOriginY)
-            }
-            for button in buttons {
-                button.frame = CGRect(origin: buttonOrigin, size: estimatedButtonSize)
-                buttonContentArea.addSubview(button)
-                nowOriginX = (button.frame.maxX + requiredMarginBetweenItems)
-            }
-        } else {
-            return
+            completion?()
+            UIView.animate(withDuration: 0.25, animations: {
+                self.alpha = 1
+            }, completion:
+                { [weak self](finished) in
+                    self?.isUserInteractionEnabled = true
+            })
         }
     }
     
@@ -119,6 +131,14 @@ class GenericMultiButtonView: UIView {
                     buttons[button].sendActions(for: .touchUpInside)
                 }
             }
+        }
+    }
+    
+    func requieredActionWithButtonIndex(_ index: Int?) {
+        if let buttonIndex = index {
+            buttons[buttonIndex].sendActions(for: .touchUpInside)
+        } else {
+            initialAction()
         }
     }
     

@@ -10,21 +10,29 @@ import UIKit
 
 @objc protocol AnimateButtonViewButtonDataSource {
     func containerViewButtonItem(_ containerView: AnimateButtonView) -> [UIButton_WithIdentifire]
-    func containerViewButtonAreaRect(_ containerView: AnimateButtonView) -> CGRect
+    @objc optional func containerViewButtonAreaRect(_ containerView: AnimateButtonView) -> CGRect
 }
 
 class AnimateButtonView: UIView
 {
-    var buttonGrid = ButtonGridManager()
+    private var buttonGrid = ButtonGridManager()
     weak var dataSource: AnimateButtonViewButtonDataSource?
     weak var buttonArea: UIView!
+    
+    var buttonAlignType: ButtonGridManager.AlignmentStyle {
+        get {
+            return buttonGrid.alignmentStyle
+        } set {
+            buttonGrid.alignmentStyle = newValue
+        }
+    }
     
     var buttonItems: [UIButton_WithIdentifire] {
         return dataSource?.containerViewButtonItem(self) ?? [UIButton_WithIdentifire]()
     }
     
     var buttonFrame: CGRect {
-        return dataSource?.containerViewButtonAreaRect(self) ?? frame
+        return dataSource?.containerViewButtonAreaRect?(self) ?? frame
     }
     
     private func setOrRepositionButtonArea() {

@@ -23,7 +23,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HTu-f4-PMP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1229" y="-16"/>
+            <point key="canvasLocation" x="-1690" y="-14"/>
         </scene>
         <!--Giuk Main Frame View Controller-->
         <scene sceneID="zeC-dE-Wwt">
@@ -38,7 +38,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pku-xS-kPg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-455.07246376811599" y="-14.0625"/>
+            <point key="canvasLocation" x="-649" y="-14"/>
         </scene>
         <!--Text View Test View Controller-->
         <scene sceneID="N2y-GO-plv">
@@ -49,7 +49,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="ZRa-ml-UVR">
-                                <rect key="frame" x="0.0" y="44" width="414" height="179"/>
+                                <rect key="frame" x="0.0" y="74" width="414" height="179"/>
                                 <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -57,7 +57,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="s5Y-y2-2mE" firstAttribute="top" secondItem="ZRa-ml-UVR" secondAttribute="top" id="8Vs-f7-pQT"/>
+                            <constraint firstItem="s5Y-y2-2mE" firstAttribute="top" secondItem="ZRa-ml-UVR" secondAttribute="top" constant="-30" id="8Vs-f7-pQT"/>
                             <constraint firstItem="ZRa-ml-UVR" firstAttribute="centerX" secondItem="s5Y-y2-2mE" secondAttribute="centerX" id="WMl-pQ-e4M"/>
                             <constraint firstItem="ZRa-ml-UVR" firstAttribute="width" secondItem="zs1-vd-UGA" secondAttribute="width" id="f5m-Jf-wqo"/>
                             <constraint firstItem="ZRa-ml-UVR" firstAttribute="height" secondItem="zs1-vd-UGA" secondAttribute="height" multiplier="0.2" id="lRs-yY-2Eu"/>

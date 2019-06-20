@@ -8,17 +8,67 @@
 
 import UIKit
 
-class WriteSectionViewController: Giuk_OpenFromFrame_ViewController {
+class WriteSectionViewController: Giuk_OpenFromFrame_ViewController, ImageSelectAndCropViewDataSource {
     
     weak var contentView: Giuk_ContentView_WriteSection!
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setContentView()
-        setCloseButton()
-        // Do any additional setup after loading the view.
+    
+    //MARK: CollectionView RelatedVariables
+    var photoModule = PhotoModule(.all)
+    
+    var thumbnails : [Thumbnail]? {
+        didSet {
+            DispatchQueue.main.async {
+                self.contentView.photoControlView.collectionView?.reloadData()
+            }
+        }
     }
     
+    var selectedIndex: IndexPath {
+        get {
+            return photoControlView.selectedIndex
+        } set {
+            photoControlView.selectedIndex = newValue
+        }
+    }
+    
+    var isUserSelected: Bool = false
+    
+    var photoControlView: Giuk_ContentView_SubView_ImageSelectAndCropView! {
+        return contentView.photoControlView
+    }
+    //end
+
+    //MARK: Controller Lifecyle methods
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .GiukBackgroundColor_depth_1
+        setContentView()
+        photoModule.requestedActionWhenAuthorized = {
+            [unowned self] in
+            self.thumbnails = self.photoModule.getImageArrayWithThumbnails_AsUIImage()
+        }
+        photoControlView.dataSource = self
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        setCloseButton()
+        setContentView()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        photoModule.authorizeChecker()
+    }
+    //end
+    
+    override func closeButtonAction(_ sender: UIButton) {
+        thumbnails = nil
+        photoControlView.resetAllContent()
+        dismiss(animated: true, completion: nil)
+    }
+    
+    //MARK: Set subviews & Layouts
     func setContentView() {
         if contentView == nil {
             let view = generateUIView(view: contentView, origin: safeAreaRelatedAreaFrame.origin, size: safeAreaRelatedAreaFrame.size)
@@ -29,36 +79,102 @@ class WriteSectionViewController: Giuk_OpenFromFrame_ViewController {
         }
     }
     
-    override func setCloseButton() {
-        let originX = GiukContentFrameFactors.contentMinimumMargin.dX
-        let originY = (contentView.topContainer.frame.height - closeButtonSize.height)/2
-        if closeButton == nil {
-            let newButton = generateUIView(view: closeButton, origin: CGPoint(x: originX, y: originY), size: closeButtonSize)
-            newButton?.setTitle("✕", for: .normal)
-            newButton?.addTarget(self, action: #selector(closeButtonAction(_:)), for: .touchUpInside)
-            newButton?.backgroundColor = .clear
-            closeButton = newButton
-            contentView.topContainer.addSubview(closeButton)
-            contentView.topContainer.bringSubviewToFront(closeButton)
+    //end
+    
+}
+
+extension WriteSectionViewController {
+    
+    //MARK: PhoroControlview datasource
+    func imageSelectAndCropView(_ imageSelectAndCropView: Giuk_ContentView_SubView_ImageSelectAndCropView, numberOfItemsInSection section: Int) -> Int {
+        return thumbnails?.count ?? 0
+    }
+    
+    func imageSelectAndCropView(_ imageSelectAndCropView: Giuk_ContentView_SubView_ImageSelectAndCropView, imageForItemAt indexPath: IndexPath) -> UIImage {
+        return thumbnails?[indexPath.row].image ?? UIImage()
+    }
+    
+    func imageSelectAndCropView(_ imageSelectAndCropView: Giuk_ContentView_SubView_ImageSelectAndCropView, didSelectImageDataAt indexPath: IndexPath) -> Data? {
+        if let thumbIndex = thumbnails?[indexPath.row].createdDate {
+            print(thumbIndex)
+            let data = photoModule.getOriginalImageFromDate_AsSize(thumbIndex, size: 600)
+            return data
         } else {
-            closeButton.setNewFrame(CGRect(x: originX, y: originY, width: closeButtonSize.width, height: closeButtonSize.height))
+            return nil
         }
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        setCloseButton()
-        setContentView()
+    func imageSelectAndCropView_ShouldPerformActionAfter(_ imageSelectAndCropView: Giuk_ContentView_SubView_ImageSelectAndCropView, didSelectImageDataAt indexPath: IndexPath) -> (() -> Void)? {
+        return {
+            self.contentView.checkImageExist()
+        }
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+    //end
 }
+
+extension WriteSectionViewController {
+    
+    //MARK: Frmae sources
+    var topBackgroundFrame: CGRect {
+        let width = view.frame.width
+        let heigth = bottomContainerAreaFrame.minY
+        let size = CGSize(width: width, height: heigth)
+        let origin = CGPoint.zero
+        return CGRect(origin: origin, size: size)
+    }
+    
+    var bottomBackgroundFrame: CGRect {
+        let width = view.frame.width
+        let height = view.frame.height - bottomContainerAreaFrame.minY
+        let size = CGSize(width: width, height: height)
+        let originX: CGFloat = 0
+        let originY = bottomContainerAreaFrame.minY
+        let origin = CGPoint(x: originX, y: originY)
+        return CGRect(origin: origin, size: size)
+    }
+    
+    var topBackgroundPath: UIBezierPath {
+        let width = view.frame.width
+        let heigth = bottomContainerAreaFrame.minY
+        let size = CGSize(width: width, height: heigth)
+        let origin = CGPoint.zero
+        return UIBezierPath(rect: CGRect(origin: origin, size: size))
+    }
+    
+    var bottomBackgroundPath: UIBezierPath {
+        let width = view.frame.width
+        let height = view.frame.height - bottomContainerAreaFrame.minY
+        let size = CGSize(width: width, height: height)
+        let originX: CGFloat = 0
+        let originY = bottomContainerAreaFrame.minY
+        let origin = CGPoint(x: originX, y: originY)
+        return UIBezierPath(rect: CGRect(origin: origin, size: size))
+    }
+    
+}
+
+//func setOrRepostionBackgroundView() {
+//    if backgroundView == nil {
+//        let newView = generateUIView(view: backgroundView, origin: CGPoint.zero, size: view.bounds.size)
+//        backgroundView = newView
+//        backgroundView.isOpaque = false
+//        backgroundView.backgroundColor = UIColor.init(red: 105/255, green: 106/255, blue: 106/255, alpha: 1)
+//        view.addSubview(backgroundView)
+//    } else {
+//        backgroundView.setNewFrame(view.bounds)
+//    }
+//}
+//
+//func setSubLayer() {
+//    if (view.layer.sublayers?.count ?? 0) > 0 {
+//        let topBackgroundLayer = CALayer()
+//        topBackgroundLayer.frame = topBackgroundFrame
+//        topBackgroundLayer.backgroundColor = UIColor.goyaSemiBlackColor.withAlphaComponent(0.7).cgColor
+//        let bottomBackgroundLayer = CALayer()
+//        bottomBackgroundLayer.frame = bottomBackgroundFrame
+//        bottomBackgroundLayer.isOpaque = false
+//        bottomBackgroundLayer.backgroundColor = UIColor.goyaSemiBlackColor.withAlphaComponent(0.7).cgColor
+//        view.layer.addSublayer(topBackgroundLayer)
+//        view.layer.addSublayer(bottomBackgroundLayer)
+//    }
+//}

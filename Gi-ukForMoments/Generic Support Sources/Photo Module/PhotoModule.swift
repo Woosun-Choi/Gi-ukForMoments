@@ -173,8 +173,6 @@ struct PhotoModule {
         }
     }
     
-    typealias ImageWithCreatedDate = (image: UIImage, createdDate: Date)
-    
     func getImageArrayWithThumbnails_AsUIImage(_ size: CGFloat? = nil) -> [Thumbnail]? {
         
         var requestedSizeFactor = thumbnailSize
@@ -204,23 +202,7 @@ struct PhotoModule {
         }
     }
     
-    func getOriginalImageFromThumbnail(_ thumbnail: Thumbnail_DataType) -> OriginalImage? {
-        guard let created = thumbnail.createdDate else { return nil }
-//        if let index = thumbnail.index {
-//            if let data = getOriginalImageFromFetchResultsArrayIndex(index) {
-//                return OriginalImage(data: data, created: created)
-//            } else {
-//                return nil
-//            }
-//        } else { return nil }
-        if let data = getOriginalImageFromSelectedDate(created) {
-            return OriginalImage(data: data, created: created)
-        } else {
-            return nil
-        }
-    }
-    
-    func getOriginalImageFromSelectedDate(_ date: Date) -> Data? {
+    func getOriginalImageFromDate(_ date: Date) -> Data? {
         
         let instantRequestOptions : PHImageRequestOptions = PHImageRequestOptions()
         let instantFetchOptions : PHFetchOptions = PHFetchOptions()
@@ -235,16 +217,15 @@ struct PhotoModule {
         
         var myImageData : Data!
         
-        let fetchResault : PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+        let fetchResault : PHFetchResult = PHAsset.fetchAssets(with: .image, options: instantFetchOptions)
         
+        print(fetchResault.count)
         if fetchResault.count > 0 {
             if let imageAsset = fetchResault.firstObject {
                 imageManager.requestImageData(for: imageAsset, options: requestOptions) {
                     (data, string, orientation, hashable) in
-                    if let fetchedImage = data, let imagesCreatedDate = imageAsset.creationDate {
-                        if imagesCreatedDate.day == self.requestedDate?.day {
-                            myImageData = fetchedImage
-                        }
+                    if let fetchedImage = data {
+                        myImageData = fetchedImage
                     }
                 }
                 return myImageData
@@ -256,7 +237,50 @@ struct PhotoModule {
         }
     }
     
-    func getOriginalImageFromFetchResultsArrayIndex(_ index: Int) -> Data? {
+    func getOriginalImageFromDate_AsSize(_ date: Date, size: CGFloat) -> Data? {
+        
+        let instantRequestOptions : PHImageRequestOptions = PHImageRequestOptions()
+        let instantFetchOptions : PHFetchOptions = PHFetchOptions()
+        let predicate = NSPredicate(format: "%K == %@", #keyPath(PHAsset.creationDate), date as CVarArg)
+        
+        instantRequestOptions.isSynchronous = true
+        instantRequestOptions.isNetworkAccessAllowed = true
+        instantRequestOptions.deliveryMode = .opportunistic
+        instantRequestOptions.resizeMode = .exact
+        instantFetchOptions.sortDescriptors = [NSSortDescriptor(key:"creationDate", ascending: false)]
+        instantFetchOptions.predicate = predicate
+        
+        var myImageData : Data!
+        
+        let fetchResault : PHFetchResult = PHAsset.fetchAssets(with: .image, options: instantFetchOptions)
+        
+        if fetchResault.count > 0 {
+            let asset = fetchResault.object(at: 0)
+            let ratio = CGFloat(Double(asset.pixelWidth)/Double(asset.pixelHeight))
+            var newWidth : CGFloat = 0
+            var newHeight: CGFloat = 0
+            if ratio > 1 {
+                newHeight = size
+                newWidth = newHeight * ratio
+            } else {
+                newWidth = size
+                newHeight = newWidth / ratio
+            }
+            let newSize = CGSize(width: newWidth, height: newHeight)
+            imageManager.requestImage(for: asset, targetSize: newSize, contentMode: .aspectFill, options: requestOptions, resultHandler: {
+                image, error in
+                if let myImage = image {
+                    myImageData = myImage.jpegData(compressionQuality: 1)
+                    print(myImage.size.width)
+                }
+            })
+            return myImageData
+        } else {
+            return nil
+        }
+    }
+    
+    func getOriginalImageFromIndex(_ index: Int) -> Data? {
         
         setRequestOptionsForQuallity(quallity: .high, ascending: false)
         

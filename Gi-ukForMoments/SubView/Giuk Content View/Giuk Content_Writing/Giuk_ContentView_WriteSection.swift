@@ -20,10 +20,27 @@ struct WillSaveContent {
     }
 }
 
-class Giuk_ContentView_WriteSection: Giuk_ContentView, MultiButtonViewDataSource {
+class FadingButton: UIButton_WithIdentifire {
+    override var isEnabled: Bool {
+        didSet {
+            if isEnabled {
+                UIView.animate(withDuration: 0.25) {
+                    self.imageView?.alpha = 1
+                    self.titleLabel?.alpha = 1
+                }
+            } else {
+                UIView.animate(withDuration: 0.25) {
+                    self.imageView?.alpha = 0.4
+                    self.titleLabel?.alpha = 0.4
+                }
+            }
+        }
+    }
+}
+
+class Giuk_ContentView_WriteSection: Giuk_ContentView, GenericMultiButtonViewDataSource {
     
     enum WritingState {
-        case none
         case choosingPhoto
         case writingComment
         case choosingTag
@@ -31,23 +48,31 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, MultiButtonViewDataSource
     
     var writingState: WritingState = .choosingPhoto {
         didSet {
-            topButtonView?.reloadButtons()
+            checkWritingState()
+            topButtonView?.reloadButtons{
+                [unowned self] in
+                self.requestButtonActionForRequieredButtonIndexFor(self.writingState)
+            }
         }
     }
     
     weak var topContainer: UIView!
     
-    weak var contentContainer: Giuk_ContentView_SubView_ImageSelectAndCropView!
+    weak var contentContainer: NonAutomaticScrollView!
     
     weak var bottomContainer: UIView!
     
     weak var topButtonView: GenericMultiButtonView!
     
-    weak var leftNavigationButton: UIButton_WithIdentifire!
+    weak var leftNavigationButton: FadingButton!
     
-    weak var rightNavigationButton: UIButton_WithIdentifire!
+    weak var rightNavigationButton: FadingButton!
     
     weak var noticeLabel : UILabel!
+    
+    var requieredButtonIndexs: (photo: Int?, write: Int?) = (nil,nil)
+    
+    weak var photoControlView: Giuk_ContentView_SubView_ImageSelectAndCropView!
     
     //MARK: button datasources
     func multiButtonView_ButtonsForPresent(_ buttonView: GenericMultiButtonView) -> [UIButton_WithIdentifire] {
@@ -58,8 +83,6 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, MultiButtonViewDataSource
             return buttons_ForWriteCommentState()
         case .choosingTag:
             return buttons_ForChoosingTagState()
-        default:
-            return []
         }
     }
     
@@ -67,6 +90,7 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, MultiButtonViewDataSource
         var buttons = [UIButton_WithIdentifire]()
         
         let buttonA = initialButtonItemForTopButton(estimateButtonItemFontSize)
+        buttonA.identifire = "left"
         buttonA.setTitle("left", for: .normal)
         buttonA.addTarget(self, action: #selector(actionInTopButtonPressed(_:)), for: .touchUpInside)
         buttons.append(buttonA)
@@ -131,15 +155,87 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, MultiButtonViewDataSource
         checkButtonStateWithIdentifire(sender.identifire)
         switch sender.identifire {
         case "Verti":
-            if contentContainer.isHorizontal != true {
-                contentContainer.isHorizontal = true
+            if photoControlView.isHorizontal != true {
+                photoControlView.imageCropView.cropInformation = nil
+                photoControlView.isHorizontal = true
+                //photoControlView.imageCropView.resetCropInformationAndRefrechImage()
             }
+            checkImageExist()
+            updateRequieredButtonIndex(writingState, sender: sender)
         case "Horizon":
-            if contentContainer.isHorizontal == true {
-                contentContainer.isHorizontal = false
+            if photoControlView.isHorizontal == true {
+                photoControlView.imageCropView.cropInformation = nil
+                photoControlView.isHorizontal = false
+                //photoControlView.imageCropView.resetCropInformationAndRefrechImage()
+            }
+            checkImageExist()
+            updateRequieredButtonIndex(writingState, sender: sender)
+        case "left":
+            updateRequieredButtonIndex(writingState, sender: sender)
+        case "middle":
+            updateRequieredButtonIndex(writingState, sender: sender)
+        case "right":
+            updateRequieredButtonIndex(writingState, sender: sender)
+        default:
+            break
+        }
+        print(requieredButtonIndexs)
+    }
+    
+    func updateRequieredButtonIndex(_ state: WritingState, sender: UIButton_WithIdentifire) {
+        let buttons = topButtonView.buttons
+        switch state {
+        case .choosingPhoto:
+            for button in buttons {
+                if button.identifire == sender.identifire {
+                    requieredButtonIndexs.photo = buttons.firstIndex(of: button)
+                }
+            }
+        case .writingComment:
+            for button in buttons {
+                if button.identifire == sender.identifire {
+                    requieredButtonIndexs.write = buttons.firstIndex(of: button)
+                }
             }
         default:
             break
+        }
+    }
+    
+    func requestButtonActionForRequieredButtonIndexFor(_ state: WritingState) {
+        switch state {
+        case .choosingPhoto:
+            topButtonView.requieredActionWithButtonIndex(requieredButtonIndexs.photo)
+        case .writingComment:
+            topButtonView.requieredActionWithButtonIndex(requieredButtonIndexs.write)
+        default:
+            break
+        }
+    }
+    
+    func checkWritingState() {
+        switch writingState {
+        case .choosingPhoto:
+            photoControlView.imageCropView.mode = .cropable
+            photoControlView.layoutSubviews()
+//            contentContainer.scrollToPosition(CGPoint.zero, animated: true)
+        default:
+//            contentContainer.scrollToPosition(CGPoint(x: -contentContainer.frame.width, y: 0), animated: true)
+            photoControlView.imageCropView.mode = .presentOnly
+            leftNavigationButton.isHidden = false
+            rightNavigationButton.isHidden = false
+            leftNavigationButton.isEnabled = true
+            rightNavigationButton.isEnabled = true
+        }
+    }
+    
+    func checkImageExist() {
+        if photoControlView.imageCropView.image == nil {
+            leftNavigationButton.isHidden = true
+            rightNavigationButton.isEnabled = false
+        } else {
+            leftNavigationButton.isHidden = true
+            rightNavigationButton.isEnabled = true
         }
     }
     
@@ -162,7 +258,22 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, MultiButtonViewDataSource
     }
     
     @objc func navigationButtonPressed(_ sender: UIButton_WithIdentifire) {
-        noticeLabel?.text = sender.identifire
+        updateWritingState(sender)
+    }
+    
+    func updateWritingState(_ sender: UIButton_WithIdentifire) {
+        switch sender.identifire {
+        case GiukNavigationButton.leftNavigationButton.rawValue:
+            if writingState == .writingComment {
+                writingState = .choosingPhoto
+            }
+        case GiukNavigationButton.rightNavigationButton.rawValue:
+            if writingState == .choosingPhoto {
+                writingState = .writingComment
+            }
+        default:
+            break
+        }
     }
     
     //end
@@ -181,6 +292,7 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, MultiButtonViewDataSource
     }
     
     override func layoutSubviews() {
+        super.layoutSubviews()
         setOrRePositionContainers()
         setOrRePositionTopButtonView()
         setOrRepostionBottomSubViews()
@@ -210,6 +322,7 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, MultiButtonViewDataSource
 
 extension Giuk_ContentView_WriteSection {
     
+    //MARK: Frame sources
     var estimateButtonItemFontSize: CGFloat {
         return min(topButtonViewFrame.height/2, 14)
     }
@@ -223,7 +336,7 @@ extension Giuk_ContentView_WriteSection {
     }
     
     var buttonBackgroundColor: UIColor {
-        return UIColor.goyaWhite
+        return UIColor.goyaYellowWhite
     }
     
     var buttonDeselectedBackgroundColor: UIColor {
@@ -275,6 +388,7 @@ extension Giuk_ContentView_WriteSection {
 
 extension Giuk_ContentView_WriteSection {
     
+    //MARK: Set SubViews
     private func setOrRepostionTopContainer() {
         if topContainer == nil {
             let newContainer = generateUIView(view: topContainer, origin: topContainerAreaFrame.origin, size: topContainerAreaFrame.size)
@@ -290,10 +404,22 @@ extension Giuk_ContentView_WriteSection {
         if contentContainer == nil {
             let newContainer = generateUIView(view: contentContainer, origin: contentAreaFrame.origin, size: contentAreaFrame.size)
             contentContainer = newContainer
+            contentContainer.backgroundColor = .goyaYellowWhite
             addSubview(contentContainer)
-            contentContainer.backgroundColor = .goyaWhite
+            setOrRepostionPhotoControlView()
         } else {
             contentContainer.setNewFrame(contentAreaFrame)
+            setOrRepostionPhotoControlView()
+        }
+    }
+    
+    private func setOrRepostionPhotoControlView() {
+        if photoControlView == nil {
+            let newView = generateUIView(view: photoControlView, origin: CGPoint.zero, size: contentContainer.bounds.size)
+            photoControlView = newView
+            contentContainer.addSubview(photoControlView)
+        } else {
+            photoControlView.setNewFrame(contentContainer.bounds)
         }
     }
     
@@ -318,8 +444,11 @@ extension Giuk_ContentView_WriteSection {
             topContainer.addSubview(topButtonView)
         } else {
             topButtonView.setNewFrame(topButtonViewFrame)
-            topButtonView.reloadButtons()
-            topButtonView.initialAction()
+            topButtonView.reloadButtons {
+                [unowned self] in
+                self.topButtonView.requieredActionWithButtonIndex(nil)
+            }
+            
         }
     }
     

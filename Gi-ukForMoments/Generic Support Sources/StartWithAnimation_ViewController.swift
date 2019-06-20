@@ -11,6 +11,8 @@ import UIKit
 class StartWithAnimation_ViewController: ContentUIViewController {
     
     private(set) var initailStage: Bool = true
+    
+    var authorized: Bool = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,12 +25,22 @@ class StartWithAnimation_ViewController: ContentUIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        animateInitialStage()
+        authorizeCheck()
+    }
+    
+    private func authorizeCheck() {
+        if authorized {
+            animateInitialStage()
+        } else {
+            requieredBehaviorWhenAuthrizeFailed?()
+        }
     }
     
     var initialAnimationTimeDuration: Double = 0.75
     
     var initialAnimationDelay: Double = 0.5
+    
+    var requieredBehaviorWhenAuthrizeFailed: (() -> Void)?
     
     var requieredAnimationWithInInitialStage: (() -> Void)?
     

@@ -54,10 +54,14 @@ class NonAutomaticScrollView: NonAutomaticScrollView_Skelleton {
     override func addSubview(_ view: UIView) {
         if view != contentView {
             contentView.addSubview(view)
-            contentView.frame.size = calculatedContentSize()
         } else {
             super.addSubview(view)
         }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        contentView.frame.size = calculatedContentSize()
     }
     
     func calculatedContentSize() -> CGSize {

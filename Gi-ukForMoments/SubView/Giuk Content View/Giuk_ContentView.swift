@@ -16,9 +16,7 @@ struct GiukContentFrameFactors {
 
 class Giuk_ContentView: UIView {
     
-}
-
-extension Giuk_ContentView {
+    //MARK: Frame factors
     var requiredRatio: CGFloat {
         let width: CGFloat = 3
         let height: CGFloat = 4
@@ -34,7 +32,7 @@ extension Giuk_ContentView {
     var topContainerAreaSize: CGSize {
         let width = frame.width
         let height: CGFloat = frame.width*0.08 + (GiukContentFrameFactors.contentMinimumMargin.dY*2)
-//        let height = max((frame.height - requierAreaSizeForPresentingContent.height)*0.384, 45)
+        //        let height = max((frame.height - requierAreaSizeForPresentingContent.height)*0.384, 45)
         return CGSize(width: width, height: height)
     }
     
@@ -61,6 +59,4 @@ extension Giuk_ContentView {
         let originY: CGFloat = contentAreaFrame.maxY
         return CGRect(origin: CGPoint(x: originX, y: originY), size: bottomContainerAreaSize)
     }
-    
-    
 }

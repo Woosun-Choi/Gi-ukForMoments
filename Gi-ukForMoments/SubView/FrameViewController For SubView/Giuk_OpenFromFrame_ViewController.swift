@@ -18,8 +18,17 @@ class Giuk_OpenFromFrame_ViewController: ContentUIViewController, FrameTransitio
         closingFunction?()
     }
     
+    func preparePresenting(_ viewController: UIViewController) {
+        closeButton?.alpha = 0
+    }
+    
+    func finishPresenting(_ viewController: UIViewController) {
+        closeButton?.alpha = 1
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        setCloseButton()
         view.backgroundColor = .goyaFontColor
     }
     
@@ -35,10 +44,12 @@ class Giuk_OpenFromFrame_ViewController: ContentUIViewController, FrameTransitio
             view.addSubview(closeButton)
         } else {
             closeButton.setNewFrame(CGRect(x: originX, y: originY, width: closeButtonSize.width, height: closeButtonSize.height))
+            view.bringSubviewToFront(closeButton)
         }
     }
     
     @objc func closeButtonAction(_ sender: UIButton) {
+        closeButton?.alpha = 0
         dismiss(animated: true, completion: nil)
     }
     

@@ -24,6 +24,8 @@ class FrameTransitionDelegate_DismissAnimator: NSObject, UIViewControllerAnimate
     
     var fading: Bool = false
     
+    var animationCurveStyle: UIView.AnimationOptions?
+    
     var animateDuration: TimeInterval = 0.5
     
     var convenienceTargetViewOriginSetting : ((UIViewController) -> Void)?
@@ -50,8 +52,7 @@ class FrameTransitionDelegate_DismissAnimator: NSObject, UIViewControllerAnimate
         containerView.addSubview(toViewController.view)
         containerView.addSubview(fromViewController.view)
         
-        UIView.animate(withDuration: animationDuration, delay: 0, options: .curveEaseInOut, animations: {
-//            toViewController.view.subviews.forEach{ $0.alpha = 1 }
+        UIView.animate(withDuration: animationDuration, delay: 0, options: (animationCurveStyle ?? .curveEaseOut), animations: {
             if self.fading {
                 fromViewController.view.alpha = 0
             }
