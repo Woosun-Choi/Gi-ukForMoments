@@ -40,15 +40,23 @@ class FadingButton: UIButton_WithIdentifire {
 
 class Giuk_ContentView_WriteSection: Giuk_ContentView, GenericMultiButtonViewDataSource {
     
+    weak var dataSource: GiukContentView_WritingDatasource? {
+        didSet {
+            writingView.dataSource = dataSource
+        }
+    }
+    
+    //writingstate should control the subviews state.
     enum WritingState {
         case choosingPhoto
         case writingComment
         case choosingTag
     }
     
-    var writingState: WritingState = .choosingPhoto {
+    var writingState: Giuk_ContentView_Writing.WritingState = .choosingPhoto {
         didSet {
             checkWritingState()
+            writingView.writingState = writingState
             topButtonView?.reloadButtons{
                 [unowned self] in
                 self.requestButtonActionForRequieredButtonIndexFor(self.writingState)
@@ -58,7 +66,7 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, GenericMultiButtonViewDat
     
     weak var topContainer: UIView!
     
-    weak var contentContainer: NonAutomaticScrollView!
+    weak var writingView: Giuk_ContentView_Writing!
     
     weak var bottomContainer: UIView!
     
@@ -71,8 +79,6 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, GenericMultiButtonViewDat
     weak var noticeLabel : UILabel!
     
     var requieredButtonIndexs: (photo: Int?, write: Int?) = (nil,nil)
-    
-    weak var photoControlView: Giuk_ContentView_SubView_ImageSelectAndCropView!
     
     //MARK: button datasources
     func multiButtonView_ButtonsForPresent(_ buttonView: GenericMultiButtonView) -> [UIButton_WithIdentifire] {
@@ -155,26 +161,21 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, GenericMultiButtonViewDat
         checkButtonStateWithIdentifire(sender.identifire)
         switch sender.identifire {
         case "Verti":
-            if photoControlView.isHorizontal != true {
-                photoControlView.imageCropView.cropInformation = nil
-                photoControlView.isHorizontal = true
-                //photoControlView.imageCropView.resetCropInformationAndRefrechImage()
-            }
+            writingView.setImageCropViewOrientationTo(isHorizontal: true)
             checkImageExist()
             updateRequieredButtonIndex(writingState, sender: sender)
         case "Horizon":
-            if photoControlView.isHorizontal == true {
-                photoControlView.imageCropView.cropInformation = nil
-                photoControlView.isHorizontal = false
-                //photoControlView.imageCropView.resetCropInformationAndRefrechImage()
-            }
+            writingView.setImageCropViewOrientationTo(isHorizontal: false)
             checkImageExist()
             updateRequieredButtonIndex(writingState, sender: sender)
         case "left":
+            writingView.textControlView.textView.textAlignment = .left
             updateRequieredButtonIndex(writingState, sender: sender)
         case "middle":
+            writingView.textControlView.textView.textAlignment = .center
             updateRequieredButtonIndex(writingState, sender: sender)
         case "right":
+            writingView.textControlView.textView.textAlignment = .right
             updateRequieredButtonIndex(writingState, sender: sender)
         default:
             break
@@ -182,7 +183,7 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, GenericMultiButtonViewDat
         print(requieredButtonIndexs)
     }
     
-    func updateRequieredButtonIndex(_ state: WritingState, sender: UIButton_WithIdentifire) {
+    func updateRequieredButtonIndex(_ state: Giuk_ContentView_Writing.WritingState, sender: UIButton_WithIdentifire) {
         let buttons = topButtonView.buttons
         switch state {
         case .choosingPhoto:
@@ -202,7 +203,7 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, GenericMultiButtonViewDat
         }
     }
     
-    func requestButtonActionForRequieredButtonIndexFor(_ state: WritingState) {
+    func requestButtonActionForRequieredButtonIndexFor(_ state: Giuk_ContentView_Writing.WritingState) {
         switch state {
         case .choosingPhoto:
             topButtonView.requieredActionWithButtonIndex(requieredButtonIndexs.photo)
@@ -216,12 +217,14 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, GenericMultiButtonViewDat
     func checkWritingState() {
         switch writingState {
         case .choosingPhoto:
-            photoControlView.imageCropView.mode = .cropable
-            photoControlView.layoutSubviews()
-//            contentContainer.scrollToPosition(CGPoint.zero, animated: true)
+            switchButtonStateForWritingState()
+            writingView.checkWritingState()
+        case .writingComment:
+            switchButtonStateForWritingState()
+            writingView.checkWritingState()
         default:
-//            contentContainer.scrollToPosition(CGPoint(x: -contentContainer.frame.width, y: 0), animated: true)
-            photoControlView.imageCropView.mode = .presentOnly
+            switchButtonStateForWritingState()
+            writingView.checkWritingState()
             leftNavigationButton.isHidden = false
             rightNavigationButton.isHidden = false
             leftNavigationButton.isEnabled = true
@@ -229,12 +232,19 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, GenericMultiButtonViewDat
         }
     }
     
-    func checkImageExist() {
-        if photoControlView.imageCropView.image == nil {
+    func switchButtonStateForWritingState() {
+        switch writingState {
+        case .choosingPhoto:
             leftNavigationButton.isHidden = true
+        default:
+            leftNavigationButton.isHidden = false
+        }
+    }
+    
+    func checkImageExist() {
+        if writingView.photoControlView.imageCropView.image == nil {
             rightNavigationButton.isEnabled = false
         } else {
-            leftNavigationButton.isHidden = true
             rightNavigationButton.isEnabled = true
         }
     }
@@ -276,16 +286,13 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, GenericMultiButtonViewDat
         }
     }
     
-    //end
-    
-    
-    //MARK: layout triggers
-    func setOrRepostionBottomSubViews() {
+    //MARK: inits and update view Layout
+    private func setOrRepostionBottomSubViews() {
         setOrRepositionNoticeLabel()
         setOrRepositioningNavigationButtons()
     }
     
-    func setOrRePositionContainers() {
+    private func setOrRePositionContainers() {
         setOrRepostionTopContainer()
         setOrRepositionContentView()
         setOrRepostionBottomContainer()
@@ -309,6 +316,7 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, GenericMultiButtonViewDat
         setOrRePositionContainers()
         setOrRePositionTopButtonView()
         setOrRepostionBottomSubViews()
+        switchButtonStateForWritingState()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -316,8 +324,10 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, GenericMultiButtonViewDat
         setOrRePositionContainers()
         setOrRePositionTopButtonView()
         setOrRepostionBottomSubViews()
+        switchButtonStateForWritingState()
     }
     //end
+    
 }
 
 extension Giuk_ContentView_WriteSection {
@@ -401,25 +411,13 @@ extension Giuk_ContentView_WriteSection {
     }
     
     private func setOrRepositionContentView() {
-        if contentContainer == nil {
-            let newContainer = generateUIView(view: contentContainer, origin: contentAreaFrame.origin, size: contentAreaFrame.size)
-            contentContainer = newContainer
-            contentContainer.backgroundColor = .goyaYellowWhite
-            addSubview(contentContainer)
-            setOrRepostionPhotoControlView()
+        if writingView == nil {
+            let newContainer = generateUIView(view: writingView, origin: contentAreaFrame.origin, size: contentAreaFrame.size)
+            writingView = newContainer
+            writingView.backgroundColor = .goyaYellowWhite
+            addSubview(writingView)
         } else {
-            contentContainer.setNewFrame(contentAreaFrame)
-            setOrRepostionPhotoControlView()
-        }
-    }
-    
-    private func setOrRepostionPhotoControlView() {
-        if photoControlView == nil {
-            let newView = generateUIView(view: photoControlView, origin: CGPoint.zero, size: contentContainer.bounds.size)
-            photoControlView = newView
-            contentContainer.addSubview(photoControlView)
-        } else {
-            photoControlView.setNewFrame(contentContainer.bounds)
+            writingView.setNewFrame(contentAreaFrame)
         }
     }
     

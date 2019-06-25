@@ -10,7 +10,7 @@ import UIKit
 
 @objc protocol ImageSelectAndCropViewDataSource {
     func imageSelectAndCropView(_ imageSelectAndCropView: Giuk_ContentView_SubView_ImageSelectAndCropView, numberOfItemsInSection section: Int) -> Int
-    func imageSelectAndCropView(_ imageSelectAndCropView: Giuk_ContentView_SubView_ImageSelectAndCropView, imageForItemAt indexPath: IndexPath) -> UIImage
+    func imageSelectAndCropView(_ imageSelectAndCropView: Giuk_ContentView_SubView_ImageSelectAndCropView, imageForItemAt indexPath: IndexPath) -> UIImage?
     func imageSelectAndCropView(_ imageSelectAndCropView: Giuk_ContentView_SubView_ImageSelectAndCropView, didSelectImageDataAt indexPath: IndexPath) -> Data?
     func imageSelectAndCropView_ShouldPerformActionAfter(_ imageSelectAndCropView: Giuk_ContentView_SubView_ImageSelectAndCropView, didSelectImageDataAt indexPath: IndexPath) -> (()->Void)?
 }
@@ -18,6 +18,14 @@ import UIKit
 class Giuk_ContentView_SubView_ImageSelectAndCropView: UIView, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UITextViewDelegate {
     
     weak var dataSource: ImageSelectAndCropViewDataSource?
+    
+    var croppedImageData: CroppedImageData? {
+        get {
+            return imageCropView.croppedImageData
+        } set {
+            imageCropView.croppedImageData = newValue
+        }
+    }
     
     var filterModule = ImageFilterModule()
     
@@ -66,7 +74,7 @@ class Giuk_ContentView_SubView_ImageSelectAndCropView: UIView, UICollectionViewD
     private func setOrRepositionCollectionView() {
         if collectionView == nil {
             let layout = UICollectionViewFlowLayout()
-            let newView = UICollectionView(frame: estimateAreaOfWritingModeView, collectionViewLayout: layout)
+            let newView = UICollectionView(frame: estimateAreaOfCollectionView, collectionViewLayout: layout)
             collectionView = newView
             collectionView.backgroundColor = .clear
             collectionView.showsVerticalScrollIndicator = false
@@ -77,7 +85,7 @@ class Giuk_ContentView_SubView_ImageSelectAndCropView: UIView, UICollectionViewD
             collectionView.register(Image_CollectionViewCell.self, forCellWithReuseIdentifier: Image_CollectionViewCell.reuseIdentifire)
             addSubview(collectionView)
         } else {
-            collectionView.setNewFrame(estimateAreaOfWritingModeView)
+            collectionView.setNewFrame(estimateAreaOfCollectionView)
         }
     }
     
@@ -210,7 +218,7 @@ class Giuk_ContentView_SubView_ImageSelectAndCropView: UIView, UICollectionViewD
     }
     //end
     
-    func resetAllContent() {
+    func clearAllContent() {
         imageCropView.image = nil
         collectionView?.reloadData()
     }
@@ -241,20 +249,38 @@ extension Giuk_ContentView_SubView_ImageSelectAndCropView {
         return 5
     }
     
-    var estimateAreaOfWritingModeView: CGRect {
+    var estimateAreaOfCollectionView: CGRect {
         if isHorizontal {
-            let width = frame.width
+            let width = frame.width - (estimateMarginForCollectionView*2)
             let height = frame.height - estimateAreaOfImageCorpView.height - (estimateMarginForCollectionView*2)
             let size = CGSize(width: width, height: height)
-            let originX : CGFloat = 0
+            let originX : CGFloat = estimateMarginForCollectionView
             let originY = estimateAreaOfImageCorpView.maxY + estimateMarginForCollectionView
             let origin = CGPoint(x: originX, y: originY)
             return CGRect(origin: origin, size: size)
         } else {
             let height = frame.height - (estimateMarginForCollectionView*2)
+            let width = frame.width - estimateAreaOfImageCorpView.width - (estimateMarginForCollectionView*2)
+            let size = CGSize(width: width, height: height)
+            let origin = CGPoint(x: estimateMarginForCollectionView, y: estimateMarginForCollectionView)
+            return CGRect(origin: origin, size: size)
+        }
+    }
+    
+    var estimateAreaForWriting: CGRect {
+        if isHorizontal {
+            let width = frame.width
+            let height = frame.height - estimateAreaOfImageCorpView.height
+            let size = CGSize(width: width, height: height)
+            let originX : CGFloat = 0
+            let originY = estimateAreaOfImageCorpView.maxY
+            let origin = CGPoint(x: originX, y: originY)
+            return CGRect(origin: origin, size: size)
+        } else {
+            let height = frame.height
             let width = frame.width - estimateAreaOfImageCorpView.width
             let size = CGSize(width: width, height: height)
-            let origin = CGPoint(x: 0, y: estimateMarginForCollectionView)
+            let origin = CGPoint(x: 0, y: 0)
             return CGRect(origin: origin, size: size)
         }
     }

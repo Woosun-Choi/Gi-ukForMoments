@@ -43,7 +43,7 @@ struct PhotoModule {
     
     enum RequestType {
         case all
-        case aDay
+        case toDay
     }
     
     enum RequestQuallity {

@@ -48,24 +48,31 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="ZRa-ml-UVR">
-                                <rect key="frame" x="0.0" y="74" width="414" height="179"/>
-                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kfI-b0-hRf">
+                                <rect key="frame" x="0.0" y="229" width="414" height="448"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GbV-PJ-6dj" customClass="Giuk_ContentView_WritingTextView" customModule="Gi_ukForMoments" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="341" width="414" height="224"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="s5Y-y2-2mE" firstAttribute="top" secondItem="ZRa-ml-UVR" secondAttribute="top" constant="-30" id="8Vs-f7-pQT"/>
-                            <constraint firstItem="ZRa-ml-UVR" firstAttribute="centerX" secondItem="s5Y-y2-2mE" secondAttribute="centerX" id="WMl-pQ-e4M"/>
-                            <constraint firstItem="ZRa-ml-UVR" firstAttribute="width" secondItem="zs1-vd-UGA" secondAttribute="width" id="f5m-Jf-wqo"/>
-                            <constraint firstItem="ZRa-ml-UVR" firstAttribute="height" secondItem="zs1-vd-UGA" secondAttribute="height" multiplier="0.2" id="lRs-yY-2Eu"/>
+                            <constraint firstItem="GbV-PJ-6dj" firstAttribute="width" secondItem="kfI-b0-hRf" secondAttribute="width" id="A1I-kq-haQ"/>
+                            <constraint firstItem="kfI-b0-hRf" firstAttribute="centerX" secondItem="s5Y-y2-2mE" secondAttribute="centerX" id="PNV-s3-j5q"/>
+                            <constraint firstItem="kfI-b0-hRf" firstAttribute="width" secondItem="zs1-vd-UGA" secondAttribute="width" id="Th9-ZE-Glx"/>
+                            <constraint firstItem="kfI-b0-hRf" firstAttribute="height" secondItem="zs1-vd-UGA" secondAttribute="height" multiplier="0.5" id="eAr-Nn-i6o"/>
+                            <constraint firstItem="GbV-PJ-6dj" firstAttribute="centerY" secondItem="kfI-b0-hRf" secondAttribute="centerY" id="iS4-U0-M9p"/>
+                            <constraint firstItem="kfI-b0-hRf" firstAttribute="centerY" secondItem="s5Y-y2-2mE" secondAttribute="centerY" id="jL5-Og-cG3"/>
+                            <constraint firstItem="GbV-PJ-6dj" firstAttribute="centerX" secondItem="kfI-b0-hRf" secondAttribute="centerX" id="jQv-g7-7Sb"/>
+                            <constraint firstItem="GbV-PJ-6dj" firstAttribute="height" secondItem="kfI-b0-hRf" secondAttribute="height" multiplier="0.5" id="vib-PD-xDv"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="s5Y-y2-2mE"/>
                     </view>
                     <connections>
-                        <outlet property="textView" destination="ZRa-ml-UVR" id="3ga-bs-Rmy"/>
+                        <outlet property="containerView" destination="kfI-b0-hRf" id="IbC-bS-8jF"/>
+                        <outlet property="textView" destination="GbV-PJ-6dj" id="ebb-Y1-GWl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tv0-T9-eHU" userLabel="First Responder" sceneMemberID="firstResponder"/>

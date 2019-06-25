@@ -8,87 +8,44 @@
 
 import UIKit
 
-class TextViewTestViewController: UIViewController, UITextViewDelegate {
-
-    @IBOutlet weak var textView: UITextView!
+class TextViewTestViewController: UIViewController, Giuk_ContentView_WritingTextViewDelegate {
+    
+    @IBOutlet weak var textView: Giuk_ContentView_WritingTextView!
+    
+    @IBOutlet weak var containerView: UIView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         textView.delegate = self
-        textView.textContainer.maximumNumberOfLines = 4
-        textView.textContainer.lineBreakMode = .byTruncatingTail
+        //textView.textContainer.lineBreakMode = .byTruncatingTail
         // Do any additional setup after loading the view.
+        
+//        let keyboardToolbar = UIToolbar()
+//        keyboardToolbar.sizeToFit()
+//        keyboardToolbar.backgroundColor = UIColor.clear
+//        keyboardToolbar.barTintColor = UIColor.darkGray
+//        
+//        let flexibleSapce = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
+//        
+//        let doneButton = UIBarButtonItem(image: UIImage(named:"GiukIcon-Key"), style: .done, target: self, action: #selector(donePressed))
+//        doneButton.tintColor = .goyaWhite
+//        
+//        keyboardToolbar.setItems([flexibleSapce, doneButton], animated: false)
+//        
+//        textView.textView.inputAccessoryView = keyboardToolbar
     }
     
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-//        let existingLines = textView.text.components(separatedBy: CharacterSet.newlines)
-//        let newLines = text.components(separatedBy: CharacterSet.newlines)
-//        let linesAfterChange = existingLines.count + newLines.count - 1
-//        print("existingLines = \(existingLines)")
-//        print("newLines = \(newLines)")
-//        if(text == "\n") {
-//            return linesAfterChange <= textView.textContainer.maximumNumberOfLines
-//        }
-        
-        //?? not sure
-        let endposition: UITextPosition = textView.endOfDocument
-        let position = textView.caretRect(for: endposition)
-
-        if position.maxX > textView.bounds.maxX {
-            print("false")
-            return false
+    func writingTextView(_ writingView: Giuk_ContentView_WritingTextView, didChangeSelectionAt rect: CGRect, keyBoardHeight boardHeight: CGFloat) {
+        let convertedPoint = self.view.convert(rect, from: view)
+        print("converted - \(self.view.convert(rect, from: view))")
+        print("convertedPoints maxY \(convertedPoint.maxY)")
+        if convertedPoint.maxY > (self.view.frame.height - boardHeight) {
+            print(true)
         }
-        //end
-        
-        if let cursorposition = trackingCursorPosition() {
-            
-            if marginForText == nil && marginForTextLine == nil {
-                marginForText = cursorposition.origin.x
-                marginForTextLine = cursorposition.origin.y
-            }
-            
-            if let marginForLine = marginForTextLine, lineBreakSize == nil, cursorposition.origin.y > marginForLine {
-                lineBreakSize = cursorposition.origin.y - marginForLine
-            }
-            
-            print(lineBreakSize)
-            if let breakSize = lineBreakSize, let textMargin = marginForText {
-                if cursorposition.origin.y >= ((breakSize * CGFloat(textView.textContainer.maximumNumberOfLines - 1) + textMargin)) {
-                    if text == ("\n") {
-                        return false
-                    }
-                }
-            }
-        }
-        
-        
-        let newText = (textView.text as NSString).replacingCharacters(in: range, with: text)
-        let numberOfChars = newText.count
-        
-        return numberOfChars <= 100 // 30 characters limit
     }
     
-    var marginForText: CGFloat?
-    var marginForTextLine: CGFloat?
-    var lineBreakSize: CGFloat?
-    
-    func trackingCursorPosition() -> CGRect? {
-        if let selectedRange = textView.selectedTextRange {
-            let cursorPosition = textView.offset(from: textView.beginningOfDocument, to: selectedRange.start)
-            if let curpo = textView.position(from: textView.beginningOfDocument, offset: cursorPosition) {
-                //position : position of charactor in textView
-                let position = textView.caretRect(for: curpo)
-                //poC : posotion of charactor in view
-                let poC = textView.convert(position, to: view)
-                print(position)
-                print(poC)
-                return position
-            } else {
-                return nil
-            }
-        } else {
-            return nil
-        }
+    @objc func donePressed() {
+        textView.textView.resignFirstResponder()
     }
 
 }

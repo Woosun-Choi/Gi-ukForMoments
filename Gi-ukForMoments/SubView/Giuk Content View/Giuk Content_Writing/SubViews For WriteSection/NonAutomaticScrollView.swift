@@ -51,6 +51,42 @@ class NonAutomaticScrollView_Skelleton: UIView {
 
 class NonAutomaticScrollView: NonAutomaticScrollView_Skelleton {
     
+    var scrollAvailable: Bool = true
+    
+    var maximumScrollAvailableAmountToTop: CGFloat = 0
+    
+    var maximumScrollAvailableAmountToBottom: CGFloat = 0
+    
+    func resetScollControlState() {
+        scrollAvailable = false
+        maximumScrollAvailableAmountToTop = 0
+        maximumScrollAvailableAmountToBottom = 0
+    }
+    
+    @objc func scrollActive(_ recognizer: UIPanGestureRecognizer) {
+        if scrollAvailable {
+            let transition = recognizer.translation(in: self)
+            let positionY = (transition.y)/10
+            print(positionY)
+            let targetPosition = contentOffSet.offSetBy(dX: 0, dY: (positionY))
+            if targetPosition.y < maximumScrollAvailableAmountToTop && targetPosition.y > maximumScrollAvailableAmountToBottom {
+            scrollToPosition(contentOffSet.offSetBy(dX: 0, dY: (positionY)), animated: false)
+            }
+        }
+    }
+    
+    weak var scrollRegcognizer: UIPanGestureRecognizer!
+    
+    func setRecognizer() {
+        if scrollRegcognizer == nil {
+            let recognizer = UIPanGestureRecognizer(target: self, action: #selector(scrollActive(_:)))
+            recognizer.maximumNumberOfTouches = 1
+            recognizer.minimumNumberOfTouches = 1
+            scrollRegcognizer = recognizer
+            self.addGestureRecognizer(scrollRegcognizer)
+        }
+    }
+    
     override func addSubview(_ view: UIView) {
         if view != contentView {
             contentView.addSubview(view)
@@ -80,6 +116,18 @@ class NonAutomaticScrollView: NonAutomaticScrollView_Skelleton {
         } else {
             return CGSize.zero
         }
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        clipsToBounds = true
+        setRecognizer()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        clipsToBounds = true
+        setRecognizer()
     }
 
 }

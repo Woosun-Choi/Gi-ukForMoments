@@ -8,33 +8,23 @@
 
 import UIKit
 
-class WriteSectionViewController: Giuk_OpenFromFrame_ViewController, ImageSelectAndCropViewDataSource {
+class WriteSectionViewController: Giuk_OpenFromFrame_ViewController, GiukContentView_WritingDatasource {
     
     weak var contentView: Giuk_ContentView_WriteSection!
     
     //MARK: CollectionView RelatedVariables
-    var photoModule = PhotoModule(.all)
+    private var photoModule = PhotoModule(.all)
     
-    var thumbnails : [Thumbnail]? {
+    private var thumbnails : [Thumbnail]? {
         didSet {
             DispatchQueue.main.async {
-                self.contentView.photoControlView.collectionView?.reloadData()
+                self.photoControlView.collectionView?.reloadData()
             }
         }
     }
     
-    var selectedIndex: IndexPath {
-        get {
-            return photoControlView.selectedIndex
-        } set {
-            photoControlView.selectedIndex = newValue
-        }
-    }
-    
-    var isUserSelected: Bool = false
-    
-    var photoControlView: Giuk_ContentView_SubView_ImageSelectAndCropView! {
-        return contentView.photoControlView
+    private var photoControlView: Giuk_ContentView_SubView_ImageSelectAndCropView! {
+        return contentView.writingView.photoControlView
     }
     //end
 
@@ -43,16 +33,15 @@ class WriteSectionViewController: Giuk_OpenFromFrame_ViewController, ImageSelect
         super.viewDidLoad()
         view.backgroundColor = .GiukBackgroundColor_depth_1
         setContentView()
+        contentView.dataSource = self
         photoModule.requestedActionWhenAuthorized = {
             [unowned self] in
             self.thumbnails = self.photoModule.getImageArrayWithThumbnails_AsUIImage()
         }
-        photoControlView.dataSource = self
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        setCloseButton()
         setContentView()
     }
     
@@ -64,7 +53,7 @@ class WriteSectionViewController: Giuk_OpenFromFrame_ViewController, ImageSelect
     
     override func closeButtonAction(_ sender: UIButton) {
         thumbnails = nil
-        photoControlView.resetAllContent()
+        photoControlView.clearAllContent()
         dismiss(animated: true, completion: nil)
     }
     
@@ -81,20 +70,34 @@ class WriteSectionViewController: Giuk_OpenFromFrame_ViewController, ImageSelect
     
     //end
     
+    deinit {
+        contentView = nil
+        print("viewcontroller gone")
+    }
+    
 }
 
 extension WriteSectionViewController {
     
-    //MARK: PhoroControlview datasource
-    func imageSelectAndCropView(_ imageSelectAndCropView: Giuk_ContentView_SubView_ImageSelectAndCropView, numberOfItemsInSection section: Int) -> Int {
+    //MARK: Frame datasource for control TextControlview
+    
+    func writeSectionView_OwnerView(_ writingView: Giuk_ContentView_Writing) -> UIView? {
+        return view
+    }
+    
+    func writeSectionView_ViewCoordinatesInOwnerView(_ writingView: Giuk_ContentView_Writing) -> CGRect {
+        return view.convert(contentView.writingView.frame, from: contentView)
+    }
+    
+    func writeSectionView(_ writingView: Giuk_ContentView_Writing, numberOfImagesInSection section: Int) -> Int {
         return thumbnails?.count ?? 0
     }
     
-    func imageSelectAndCropView(_ imageSelectAndCropView: Giuk_ContentView_SubView_ImageSelectAndCropView, imageForItemAt indexPath: IndexPath) -> UIImage {
-        return thumbnails?[indexPath.row].image ?? UIImage()
+    func writeSectionView(_ writingView: Giuk_ContentView_Writing, thumbnailImageForItemAt indexPath: IndexPath) -> UIImage? {
+        return thumbnails?[indexPath.row].image
     }
     
-    func imageSelectAndCropView(_ imageSelectAndCropView: Giuk_ContentView_SubView_ImageSelectAndCropView, didSelectImageDataAt indexPath: IndexPath) -> Data? {
+    func writeSectionView(_ writingView: Giuk_ContentView_Writing, didSelectImageDataAt indexPath: IndexPath) -> Data? {
         if let thumbIndex = thumbnails?[indexPath.row].createdDate {
             print(thumbIndex)
             let data = photoModule.getOriginalImageFromDate_AsSize(thumbIndex, size: 600)
@@ -104,11 +107,39 @@ extension WriteSectionViewController {
         }
     }
     
-    func imageSelectAndCropView_ShouldPerformActionAfter(_ imageSelectAndCropView: Giuk_ContentView_SubView_ImageSelectAndCropView, didSelectImageDataAt indexPath: IndexPath) -> (() -> Void)? {
+    func writeSectionView_ShouldPerformActionAfter(_ writingView: Giuk_ContentView_Writing) -> (() -> Void)? {
         return {
             self.contentView.checkImageExist()
         }
     }
+    
+//    func writeSectionView_ownerViewController(_ writeSectionView: Giuk_ContentView_WriteSection) -> UIViewController {
+//        return self
+//    }
+//
+//    func writeSectionView(_ writeSectionView: Giuk_ContentView_WriteSection, numberOfImagesInSection section: Int) -> Int {
+//        return thumbnails?.count ?? 0
+//    }
+//
+//    func writeSectionView(_ writeSectionView: Giuk_ContentView_WriteSection, thumbnailImageForItemAt indexPath: IndexPath) -> UIImage? {
+//        return thumbnails?[indexPath.row].image
+//    }
+//
+//    func writeSectionView(_ writeSectionView: Giuk_ContentView_WriteSection, didSelectImageDataAt indexPath: IndexPath) -> Data? {
+//        if let thumbIndex = thumbnails?[indexPath.row].createdDate {
+//            print(thumbIndex)
+//            let data = photoModule.getOriginalImageFromDate_AsSize(thumbIndex, size: 600)
+//            return data
+//        } else {
+//            return nil
+//        }
+//    }
+//
+//    func writeSectionView_ShouldPerformActionAfter(_ writeSectionView: Giuk_ContentView_WriteSection) -> (() -> Void)? {
+//        return {
+//            self.contentView.checkImageExist()
+//        }
+//    }
     //end
 }
 
@@ -152,29 +183,3 @@ extension WriteSectionViewController {
     }
     
 }
-
-//func setOrRepostionBackgroundView() {
-//    if backgroundView == nil {
-//        let newView = generateUIView(view: backgroundView, origin: CGPoint.zero, size: view.bounds.size)
-//        backgroundView = newView
-//        backgroundView.isOpaque = false
-//        backgroundView.backgroundColor = UIColor.init(red: 105/255, green: 106/255, blue: 106/255, alpha: 1)
-//        view.addSubview(backgroundView)
-//    } else {
-//        backgroundView.setNewFrame(view.bounds)
-//    }
-//}
-//
-//func setSubLayer() {
-//    if (view.layer.sublayers?.count ?? 0) > 0 {
-//        let topBackgroundLayer = CALayer()
-//        topBackgroundLayer.frame = topBackgroundFrame
-//        topBackgroundLayer.backgroundColor = UIColor.goyaSemiBlackColor.withAlphaComponent(0.7).cgColor
-//        let bottomBackgroundLayer = CALayer()
-//        bottomBackgroundLayer.frame = bottomBackgroundFrame
-//        bottomBackgroundLayer.isOpaque = false
-//        bottomBackgroundLayer.backgroundColor = UIColor.goyaSemiBlackColor.withAlphaComponent(0.7).cgColor
-//        view.layer.addSublayer(topBackgroundLayer)
-//        view.layer.addSublayer(bottomBackgroundLayer)
-//    }
-//}

@@ -10,6 +10,7 @@
 		A71735F022B3E0D20098B077 /* Giuk_ContentView_WritingTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71735EF22B3E0D20098B077 /* Giuk_ContentView_WritingTextView.swift */; };
 		A71735F222B3FB470098B077 /* CropInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71735F122B3FB470098B077 /* CropInformation.swift */; };
 		A71735F422B3FB6D0098B077 /* CroppedImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71735F322B3FB6D0098B077 /* CroppedImageData.swift */; };
+		A717360322C0D1840098B077 /* Giuk_ContentView_Writing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A717360222C0D1840098B077 /* Giuk_ContentView_Writing.swift */; };
 		A78B0DF6228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0DF5228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift */; };
 		A78B0DF8228D9D2900D0B275 /* UIButton_WithIdentifire.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0DF7228D9D2900D0B275 /* UIButton_WithIdentifire.swift */; };
 		A78B0E0D2292E0B200D0B275 /* DotStylePresentorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0DFE2292E0B200D0B275 /* DotStylePresentorView.swift */; };
@@ -65,6 +66,7 @@
 		A71735EF22B3E0D20098B077 /* Giuk_ContentView_WritingTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_ContentView_WritingTextView.swift; sourceTree = "<group>"; };
 		A71735F122B3FB470098B077 /* CropInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropInformation.swift; sourceTree = "<group>"; };
 		A71735F322B3FB6D0098B077 /* CroppedImageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CroppedImageData.swift; sourceTree = "<group>"; };
+		A717360222C0D1840098B077 /* Giuk_ContentView_Writing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_ContentView_Writing.swift; sourceTree = "<group>"; };
 		A78B0DF5228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_MainFrame_ContainerView.swift; sourceTree = "<group>"; };
 		A78B0DF7228D9D2900D0B275 /* UIButton_WithIdentifire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIButton_WithIdentifire.swift; sourceTree = "<group>"; };
 		A78B0DFE2292E0B200D0B275 /* DotStylePresentorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DotStylePresentorView.swift; sourceTree = "<group>"; };
@@ -136,6 +138,14 @@
 				A71735F322B3FB6D0098B077 /* CroppedImageData.swift */,
 			);
 			path = "Crop Data";
+			sourceTree = "<group>";
+		};
+		A717360122BD070D0098B077 /* Text Control View */ = {
+			isa = PBXGroup;
+			children = (
+				A71735EF22B3E0D20098B077 /* Giuk_ContentView_WritingTextView.swift */,
+			);
+			path = "Text Control View";
 			sourceTree = "<group>";
 		};
 		A78B0DF9228D9D4A00D0B275 /* Giuk SubContainer View */ = {
@@ -299,6 +309,7 @@
 			isa = PBXGroup;
 			children = (
 				A78B0E3D2299464E00D0B275 /* Giuk_ContentView_WriteSection.swift */,
+				A717360222C0D1840098B077 /* Giuk_ContentView_Writing.swift */,
 				A78B0E6122AFF25300D0B275 /* SubViews For WriteSection */,
 			);
 			path = "Giuk Content_Writing";
@@ -359,19 +370,19 @@
 			isa = PBXGroup;
 			children = (
 				A78B0E43229D006B00D0B275 /* NonAutomaticScrollView.swift */,
-				A71735EF22B3E0D20098B077 /* Giuk_ContentView_WritingTextView.swift */,
-				A78B0E6222AFF28200D0B275 /* Photo Controller */,
+				A717360122BD070D0098B077 /* Text Control View */,
+				A78B0E6222AFF28200D0B275 /* Photo Control View */,
 			);
 			path = "SubViews For WriteSection";
 			sourceTree = "<group>";
 		};
-		A78B0E6222AFF28200D0B275 /* Photo Controller */ = {
+		A78B0E6222AFF28200D0B275 /* Photo Control View */ = {
 			isa = PBXGroup;
 			children = (
 				A78B0E5B22AFC63F00D0B275 /* Image Cell */,
 				A78B0E5522AFBFD000D0B275 /* Giuk_ContentView_SubView_ImageSelectAndCropView.swift */,
 			);
-			path = "Photo Controller";
+			path = "Photo Control View";
 			sourceTree = "<group>";
 		};
 		A7A6A5EE228A4CC9001FCA4D = {
@@ -532,6 +543,7 @@
 				A78B0E132292E0B200D0B275 /* TimeCollectionViewer.swift in Sources */,
 				A7A6A61A228B9249001FCA4D /* Giuk_MainFrameViewController.swift in Sources */,
 				A7A6A603228A4CCA001FCA4D /* Gi_ukForMoments.xcdatamodeld in Sources */,
+				A717360322C0D1840098B077 /* Giuk_ContentView_Writing.swift in Sources */,
 				A78B0E122292E0B200D0B275 /* CenteredSquareTypeCollectionViewFlowlayout.swift in Sources */,
 				A78B0E162292E0B200D0B275 /* VerticalLinearCollectionView.swift in Sources */,
 				A78B0E2D2292E1EE00D0B275 /* HashTagItemView.swift in Sources */,
