@@ -11,6 +11,11 @@
 		A71735F222B3FB470098B077 /* CropInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71735F122B3FB470098B077 /* CropInformation.swift */; };
 		A71735F422B3FB6D0098B077 /* CroppedImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71735F322B3FB6D0098B077 /* CroppedImageData.swift */; };
 		A717360322C0D1840098B077 /* Giuk_ContentView_Writing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A717360222C0D1840098B077 /* Giuk_ContentView_Writing.swift */; };
+		A717360522C25E7E0098B077 /* HashTagScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A717360422C25E7E0098B077 /* HashTagScrollView.swift */; };
+		A717360722C491230098B077 /* TagGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A717360622C491230098B077 /* TagGenerator.swift */; };
+		A717360922C5C9D50098B077 /* LabelWithContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A717360822C5C9D50098B077 /* LabelWithContainer.swift */; };
+		A717360B22C5CA000098B077 /* TextFieldWithContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A717360A22C5CA000098B077 /* TextFieldWithContainer.swift */; };
+		A717360D22C5CA740098B077 /* TagInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A717360C22C5CA740098B077 /* TagInformation.swift */; };
 		A78B0DF6228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0DF5228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift */; };
 		A78B0DF8228D9D2900D0B275 /* UIButton_WithIdentifire.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0DF7228D9D2900D0B275 /* UIButton_WithIdentifire.swift */; };
 		A78B0E0D2292E0B200D0B275 /* DotStylePresentorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0DFE2292E0B200D0B275 /* DotStylePresentorView.swift */; };
@@ -31,8 +36,7 @@
 		A78B0E232292E15700D0B275 /* AnalogTypeLcdItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E202292E15700D0B275 /* AnalogTypeLcdItemView.swift */; };
 		A78B0E262292E19300D0B275 /* ImageCroppingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E252292E19300D0B275 /* ImageCroppingView.swift */; };
 		A78B0E282292E1AE00D0B275 /* PhotoModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E272292E1AE00D0B275 /* PhotoModule.swift */; };
-		A78B0E2D2292E1EE00D0B275 /* HashTagItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E2A2292E1EE00D0B275 /* HashTagItemView.swift */; };
-		A78B0E2E2292E1EE00D0B275 /* HashTagScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E2B2292E1EE00D0B275 /* HashTagScrollView.swift */; };
+		A78B0E2D2292E1EE00D0B275 /* HashTagItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E2A2292E1EE00D0B275 /* HashTagItem.swift */; };
 		A78B0E2F2292E1EE00D0B275 /* HashTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E2C2292E1EE00D0B275 /* HashTagView.swift */; };
 		A78B0E342292E1FC00D0B275 /* FrameTransitionDelegate_DismissAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E312292E1FC00D0B275 /* FrameTransitionDelegate_DismissAnimator.swift */; };
 		A78B0E352292E1FC00D0B275 /* FrameTransitionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0E322292E1FC00D0B275 /* FrameTransitionDelegate.swift */; };
@@ -67,6 +71,11 @@
 		A71735F122B3FB470098B077 /* CropInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropInformation.swift; sourceTree = "<group>"; };
 		A71735F322B3FB6D0098B077 /* CroppedImageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CroppedImageData.swift; sourceTree = "<group>"; };
 		A717360222C0D1840098B077 /* Giuk_ContentView_Writing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_ContentView_Writing.swift; sourceTree = "<group>"; };
+		A717360422C25E7E0098B077 /* HashTagScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashTagScrollView.swift; sourceTree = "<group>"; };
+		A717360622C491230098B077 /* TagGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagGenerator.swift; sourceTree = "<group>"; };
+		A717360822C5C9D50098B077 /* LabelWithContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelWithContainer.swift; sourceTree = "<group>"; };
+		A717360A22C5CA000098B077 /* TextFieldWithContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithContainer.swift; sourceTree = "<group>"; };
+		A717360C22C5CA740098B077 /* TagInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagInformation.swift; sourceTree = "<group>"; };
 		A78B0DF5228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_MainFrame_ContainerView.swift; sourceTree = "<group>"; };
 		A78B0DF7228D9D2900D0B275 /* UIButton_WithIdentifire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIButton_WithIdentifire.swift; sourceTree = "<group>"; };
 		A78B0DFE2292E0B200D0B275 /* DotStylePresentorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DotStylePresentorView.swift; sourceTree = "<group>"; };
@@ -87,8 +96,7 @@
 		A78B0E202292E15700D0B275 /* AnalogTypeLcdItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalogTypeLcdItemView.swift; sourceTree = "<group>"; };
 		A78B0E252292E19300D0B275 /* ImageCroppingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCroppingView.swift; sourceTree = "<group>"; };
 		A78B0E272292E1AE00D0B275 /* PhotoModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoModule.swift; sourceTree = "<group>"; };
-		A78B0E2A2292E1EE00D0B275 /* HashTagItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HashTagItemView.swift; sourceTree = "<group>"; };
-		A78B0E2B2292E1EE00D0B275 /* HashTagScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HashTagScrollView.swift; sourceTree = "<group>"; };
+		A78B0E2A2292E1EE00D0B275 /* HashTagItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HashTagItem.swift; sourceTree = "<group>"; };
 		A78B0E2C2292E1EE00D0B275 /* HashTagView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HashTagView.swift; sourceTree = "<group>"; };
 		A78B0E312292E1FC00D0B275 /* FrameTransitionDelegate_DismissAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrameTransitionDelegate_DismissAnimator.swift; sourceTree = "<group>"; };
 		A78B0E322292E1FC00D0B275 /* FrameTransitionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrameTransitionDelegate.swift; sourceTree = "<group>"; };
@@ -146,6 +154,17 @@
 				A71735EF22B3E0D20098B077 /* Giuk_ContentView_WritingTextView.swift */,
 			);
 			path = "Text Control View";
+			sourceTree = "<group>";
+		};
+		A717360E22C6831E0098B077 /* Tag Generator */ = {
+			isa = PBXGroup;
+			children = (
+				A717360622C491230098B077 /* TagGenerator.swift */,
+				A717360C22C5CA740098B077 /* TagInformation.swift */,
+				A717360A22C5CA000098B077 /* TextFieldWithContainer.swift */,
+				A717360822C5C9D50098B077 /* LabelWithContainer.swift */,
+			);
+			path = "Tag Generator";
 			sourceTree = "<group>";
 		};
 		A78B0DF9228D9D4A00D0B275 /* Giuk SubContainer View */ = {
@@ -263,9 +282,10 @@
 		A78B0E292292E1EE00D0B275 /* HashtagScrollView */ = {
 			isa = PBXGroup;
 			children = (
-				A78B0E2A2292E1EE00D0B275 /* HashTagItemView.swift */,
-				A78B0E2B2292E1EE00D0B275 /* HashTagScrollView.swift */,
+				A78B0E2A2292E1EE00D0B275 /* HashTagItem.swift */,
+				A717360422C25E7E0098B077 /* HashTagScrollView.swift */,
 				A78B0E2C2292E1EE00D0B275 /* HashTagView.swift */,
+				A717360E22C6831E0098B077 /* Tag Generator */,
 			);
 			path = HashtagScrollView;
 			sourceTree = "<group>";
@@ -546,7 +566,7 @@
 				A717360322C0D1840098B077 /* Giuk_ContentView_Writing.swift in Sources */,
 				A78B0E122292E0B200D0B275 /* CenteredSquareTypeCollectionViewFlowlayout.swift in Sources */,
 				A78B0E162292E0B200D0B275 /* VerticalLinearCollectionView.swift in Sources */,
-				A78B0E2D2292E1EE00D0B275 /* HashTagItemView.swift in Sources */,
+				A78B0E2D2292E1EE00D0B275 /* HashTagItem.swift in Sources */,
 				A78B0E5422ADE9FD00D0B275 /* StartWithAnimation_ViewController.swift in Sources */,
 				A78B0E232292E15700D0B275 /* AnalogTypeLcdItemView.swift in Sources */,
 				A7A6A61E228B9C1B001FCA4D /* GenericMultiButtonView.swift in Sources */,
@@ -554,6 +574,7 @@
 				A78B0E2F2292E1EE00D0B275 /* HashTagView.swift in Sources */,
 				A78B0E222292E15700D0B275 /* AnalogNumberView.swift in Sources */,
 				A78B0E5F22AFE8F000D0B275 /* ImageFilterModule.swift in Sources */,
+				A717360D22C5CA740098B077 /* TagInformation.swift in Sources */,
 				A71735F022B3E0D20098B077 /* Giuk_ContentView_WritingTextView.swift in Sources */,
 				A78B0E362292E1FC00D0B275 /* FrameTransitionDelegate_PresentingAnimator.swift in Sources */,
 				A78B0E5222AD1CDC00D0B275 /* TextViewTestViewController.swift in Sources */,
@@ -567,7 +588,9 @@
 				A71735F422B3FB6D0098B077 /* CroppedImageData.swift in Sources */,
 				A78B0E212292E15700D0B275 /* AnalogNumberItemView.swift in Sources */,
 				A78B0E48229F6BDC00D0B275 /* Giuk_MainFrame_ViewController.swift in Sources */,
+				A717360B22C5CA000098B077 /* TextFieldWithContainer.swift in Sources */,
 				A78B0E3A2296FB0000D0B275 /* Giuk_MainPage_ViewController.swift in Sources */,
+				A717360922C5C9D50098B077 /* LabelWithContainer.swift in Sources */,
 				A7A6A612228A4EAC001FCA4D /* PublicExtentions.swift in Sources */,
 				A78B0E262292E19300D0B275 /* ImageCroppingView.swift in Sources */,
 				A78B0E1C2292E13900D0B275 /* ColorCollectionViewCell.swift in Sources */,
@@ -576,10 +599,11 @@
 				A78B0E102292E0B200D0B275 /* CenteredCollectionViewFlowLayout.swift in Sources */,
 				A71735F222B3FB470098B077 /* CropInformation.swift in Sources */,
 				A78B0E3C22993FB100D0B275 /* Giuk_ContentView.swift in Sources */,
+				A717360722C491230098B077 /* TagGenerator.swift in Sources */,
 				A78B0E282292E1AE00D0B275 /* PhotoModule.swift in Sources */,
 				A78B0E352292E1FC00D0B275 /* FrameTransitionDelegate.swift in Sources */,
+				A717360522C25E7E0098B077 /* HashTagScrollView.swift in Sources */,
 				A78B0E44229D006B00D0B275 /* NonAutomaticScrollView.swift in Sources */,
-				A78B0E2E2292E1EE00D0B275 /* HashTagScrollView.swift in Sources */,
 				A7A6A5FB228A4CCA001FCA4D /* AppDelegate.swift in Sources */,
 				A78B0E342292E1FC00D0B275 /* FrameTransitionDelegate_DismissAnimator.swift in Sources */,
 				A78B0E0D2292E0B200D0B275 /* DotStylePresentorView.swift in Sources */,

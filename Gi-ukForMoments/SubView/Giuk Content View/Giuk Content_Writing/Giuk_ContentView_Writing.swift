@@ -17,7 +17,7 @@ import UIKit
     @objc func writeSectionView_ShouldPerformActionAfter(_ writingView: Giuk_ContentView_Writing) -> (()->Void)?
 }
 
-class Giuk_ContentView_Writing: NonAutomaticScrollView, ImageSelectAndCropViewDataSource, Giuk_ContentView_WritingTextViewDelegate {
+class Giuk_ContentView_Writing: NonAutomaticScrollView, ImageSelectAndCropViewDataSource, Giuk_ContentView_WritingTextViewDelegate, TagGeneratorDelegate {
     
     weak var dataSource: GiukContentView_WritingDatasource?
     
@@ -38,10 +38,19 @@ class Giuk_ContentView_Writing: NonAutomaticScrollView, ImageSelectAndCropViewDa
     
     weak var textControlView: Giuk_ContentView_WritingTextView!
     
+    weak var tagControllView: TagGenerator!
+    
     var limitNumberOfCharactorsForTextView: Int = 500 {
         didSet {
             textControlView.limitNumberOfCharactors = self.limitNumberOfCharactorsForTextView
         }
+    }
+    
+    var wrotedData: (cropData: CroppedImageData, textData: TextInformation, hashData: TagInformation)? {
+        let cropData = photoControlView.croppedImageData!
+        let textData = textControlView.textData
+        let hashData = TagInformation()
+        return (cropData, textData, hashData)
     }
     
     
@@ -71,6 +80,23 @@ class Giuk_ContentView_Writing: NonAutomaticScrollView, ImageSelectAndCropViewDa
             textControlView.setNewFrame(targetFrame)
         }
     }
+    
+    private func setOrRepositionHashTagScrollView() {
+        let width = bounds.width
+        let height = bounds.height
+        let size = CGSize(width: width, height: height)
+        let origin = CGPoint(x: photoControlView.frame.maxX, y: 0)
+        let newFrame = CGRect(origin: origin, size: size)
+        
+        if tagControllView == nil {
+            let newView = generateUIView(view: tagControllView, frame: newFrame)
+            tagControllView = newView
+            tagControllView.delegate = self
+            addSubview(tagControllView)
+        } else {
+            tagControllView.setNewFrame(newFrame)
+        }
+    }
     //end
     
     
@@ -91,9 +117,15 @@ class Giuk_ContentView_Writing: NonAutomaticScrollView, ImageSelectAndCropViewDa
             UIView.animate(withDuration: 0.25) {
                 self.textControlView.alpha = 1
             }
-        default:
+            if contentOffSet.x != 0 {
+                let position = CGPoint.zero
+                scrollToPosition(position, duration: 0.5)
+            }
+        case .choosingTag:
+            textControlView?.isUserInteractionEnabled = false
             scrollAvailable = false
-            photoControlView.imageCropView.mode = .presentOnly
+            let position = contentOffSet.offSetBy(dX: -tagControllView.frame.width, dY: 0)
+            scrollToPosition(position, duration: 0.5)
         }
     }
     
@@ -171,27 +203,30 @@ class Giuk_ContentView_Writing: NonAutomaticScrollView, ImageSelectAndCropViewDa
     
     
     //MARK: init and update view layout
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    
+    private func setAllSubViews() {
         setOrRepostionPhotoControlView()
         setOrRepositionTextControlView()
+        setOrRepositionHashTagScrollView()
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        setAllSubViews()
     }
     
     override func draw(_ rect: CGRect) {
-        setOrRepostionPhotoControlView()
-        setOrRepositionTextControlView()
+        setAllSubViews()
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setOrRepostionPhotoControlView()
-        setOrRepositionTextControlView()
+        setAllSubViews()
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        setOrRepostionPhotoControlView()
-        setOrRepositionTextControlView()
+        setAllSubViews()
     }
     //end
 

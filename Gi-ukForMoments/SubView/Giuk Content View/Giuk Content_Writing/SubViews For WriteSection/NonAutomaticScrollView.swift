@@ -31,6 +31,17 @@ class NonAutomaticScrollView_Skelleton: UIView {
         }
     }
     
+    func scrollToPosition(_ position: CGPoint, duration: TimeInterval, completion: (()->Void)? = nil) {
+        isUserInteractionEnabled = false
+        UIView.animate(withDuration: duration, animations: {
+            [unowned self] in
+            self.contentView.frame.origin = position
+        }) { [unowned self] (finished) in
+            self.isUserInteractionEnabled = true
+            completion?()
+        }
+    }
+    
     private func setContentView() {
         let view = UIView()
         view.frame = CGRect.zero
@@ -63,18 +74,6 @@ class NonAutomaticScrollView: NonAutomaticScrollView_Skelleton {
         maximumScrollAvailableAmountToBottom = 0
     }
     
-    @objc func scrollActive(_ recognizer: UIPanGestureRecognizer) {
-        if scrollAvailable {
-            let transition = recognizer.translation(in: self)
-            let positionY = (transition.y)/10
-            print(positionY)
-            let targetPosition = contentOffSet.offSetBy(dX: 0, dY: (positionY))
-            if targetPosition.y < maximumScrollAvailableAmountToTop && targetPosition.y > maximumScrollAvailableAmountToBottom {
-            scrollToPosition(contentOffSet.offSetBy(dX: 0, dY: (positionY)), animated: false)
-            }
-        }
-    }
-    
     weak var scrollRegcognizer: UIPanGestureRecognizer!
     
     func setRecognizer() {
@@ -84,6 +83,17 @@ class NonAutomaticScrollView: NonAutomaticScrollView_Skelleton {
             recognizer.minimumNumberOfTouches = 1
             scrollRegcognizer = recognizer
             self.addGestureRecognizer(scrollRegcognizer)
+        }
+    }
+    
+    @objc func scrollActive(_ recognizer: UIPanGestureRecognizer) {
+        if scrollAvailable {
+            let transition = recognizer.translation(in: self)
+            let positionY = (transition.y)/10
+            let targetPosition = contentOffSet.offSetBy(dX: 0, dY: (positionY))
+            if targetPosition.y < maximumScrollAvailableAmountToTop && targetPosition.y > maximumScrollAvailableAmountToBottom {
+                scrollToPosition(contentOffSet.offSetBy(dX: 0, dY: (positionY)), animated: false)
+            }
         }
     }
     

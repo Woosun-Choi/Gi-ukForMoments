@@ -38,6 +38,49 @@ class WriteSectionViewController: Giuk_OpenFromFrame_ViewController, GiukContent
             [unowned self] in
             self.thumbnails = self.photoModule.getImageArrayWithThumbnails_AsUIImage()
         }
+        //setDataToContentView(cropInfo: dumiData_Crop, textInfo: dumiData_Text, tagInfo: dumiData_Tag)
+    }
+    
+    var dumiData_Crop: CroppedImageData {
+        let imageData = UIImage(named: "AppIcon")?.jpegData(compressionQuality: 1)
+        let cropInfo = CropInformation(isHorizontal: false, percentageSizeOfWillCroppedArea: CropInformation.percentageSizeInImage(width: 0.5, height: 0.8), percentagePostionInScrollView: CropInformation.percentagePostionInImage(dX: 0.1, dY: 0.2))
+        let data = CroppedImageData(cropInformation: cropInfo, imageData: imageData!)
+        return data
+    }
+    
+    var dumiData_Text: TextInformation {
+        let data = TextInformation(comment: "안녕하세요 여러분?\n잘 되었는지 확인중입니다.", alignment: "right")
+        return data
+    }
+    
+    var dumiData_Tag: TagInformation {
+        let data = TagInformation(alreadyAdded: ["가","나","다"], library: ["마","바","사","아","자"])
+        return data
+    }
+    
+    func setDataToContentView(cropInfo: CroppedImageData, textInfo: TextInformation, tagInfo: TagInformation) {
+        if cropInfo.cropInformation.isHorizontal {
+            contentView.requieredButtonIndexs.photo = 0
+        } else {
+            contentView.requieredButtonIndexs.photo = 1
+        }
+        contentView.writingView.photoControlView?.croppedImageData = cropInfo
+        
+        switch textInfo.alignment {
+        case "left":
+            contentView.requieredButtonIndexs.write = 0
+        case "center":
+            contentView.requieredButtonIndexs.write = 1
+        case "right":
+            contentView.requieredButtonIndexs.write = 2
+        default:
+            contentView.requieredButtonIndexs.write = 0
+        }
+        contentView.writingView.textControlView?.textData = textInfo
+        
+        contentView.writingView.tagControllView?.tagManager = tagInfo
+        contentView.writingView.tagControllView?.reloadData()
+        
     }
     
     override func viewDidLayoutSubviews() {
@@ -48,6 +91,7 @@ class WriteSectionViewController: Giuk_OpenFromFrame_ViewController, GiukContent
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         photoModule.authorizeChecker()
+        
     }
     //end
     
@@ -99,7 +143,6 @@ extension WriteSectionViewController {
     
     func writeSectionView(_ writingView: Giuk_ContentView_Writing, didSelectImageDataAt indexPath: IndexPath) -> Data? {
         if let thumbIndex = thumbnails?[indexPath.row].createdDate {
-            print(thumbIndex)
             let data = photoModule.getOriginalImageFromDate_AsSize(thumbIndex, size: 600)
             return data
         } else {

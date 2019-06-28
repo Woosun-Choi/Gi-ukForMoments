@@ -8,9 +8,21 @@
 
 import UIKit
 
-struct TextDataForGiuk: Codable {
+struct TextInformation: Codable {
     var comment : String
     var alignment : String
+    
+    var json: Data? {
+        return try? JSONEncoder().encode(self)
+    }
+    
+    init?(json: Data) {
+        if let newValue = try? JSONDecoder().decode(TextInformation.self, from: json) {
+            self = newValue
+        } else {
+            return nil
+        }
+    }
     
     init(comment: String, alignment: String) {
         self.comment = comment
@@ -45,7 +57,7 @@ class Giuk_ContentView_WritingTextView: UIView, UITextViewDelegate {
         }
     }
     
-    var textData : TextDataForGiuk {
+    var textData : TextInformation {
         get {
            return requestTextData()
         } set {
@@ -53,7 +65,7 @@ class Giuk_ContentView_WritingTextView: UIView, UITextViewDelegate {
         }
     }
     
-    private var _textData: TextDataForGiuk? {
+    private var _textData: TextInformation? {
         didSet {
             if let data = _textData {
                 switch data.alignment {
@@ -67,6 +79,9 @@ class Giuk_ContentView_WritingTextView: UIView, UITextViewDelegate {
                     break
                 }
                 textView.text = data.comment
+                if textView.text != "" {
+                    textView.backgroundColor = .goyaYellowWhite
+                }
             }
         }
     }
@@ -156,7 +171,7 @@ class Giuk_ContentView_WritingTextView: UIView, UITextViewDelegate {
     //end
     
     //MARK: Manipulate textData
-    private func requestTextData() -> TextDataForGiuk {
+    private func requestTextData() -> TextInformation {
         let comment = textView.text ?? ""
         var alignment = ""
         switch textView.textAlignment {
@@ -169,7 +184,7 @@ class Giuk_ContentView_WritingTextView: UIView, UITextViewDelegate {
         default:
             break
         }
-        return TextDataForGiuk(comment: comment, alignment: alignment)
+        return TextInformation(comment: comment, alignment: alignment)
     }
     //end
     

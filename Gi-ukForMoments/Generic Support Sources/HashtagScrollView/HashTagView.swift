@@ -8,28 +8,32 @@
 
 import UIKit
 
-class HashTagView: UIView {
+class HashTagView: UIView, HashTagDelegate {
     
-    private var targetWidth : CGFloat?
+    func hashTagItem(_ tagItemView: HashTagItem, selectedTag tag: String) {
+        //
+    }
     
-    var tags : ([String], HashTagItemView.requestedHashTagManagement)? {
+    private var widthLimitForPresentingTags : CGFloat?
+    
+    var tags : [String]? {
         didSet {
             clearHashItem()
             if let _tags = tags {
-                generateTags(_tags.0, type: _tags.1)
+                generateTags(_tags)
             }
         }
     }
     
     var areaWidth : CGFloat? {
         get {
-            if targetWidth == nil {
-                return self.frame.width
+            if widthLimitForPresentingTags == nil {
+                return self.bounds.width
             } else {
-                return targetWidth
+                return widthLimitForPresentingTags
             }
         }
-        set { targetWidth = newValue } //targetView.bounds.width
+        set { widthLimitForPresentingTags = newValue } //targetView.bounds.width
     }
     
     fileprivate struct generalSettings {
@@ -72,24 +76,41 @@ class HashTagView: UIView {
         return CGRect(origin: frame.origin, size: newViewSize)
     }
     
-    func generateTags(_ tags: [String], type: HashTagItemView.requestedHashTagManagement = .fetch) {
+//    func generateTags(_ tags: [String], type: HashTagItemView.requestedHashTagManagement = .fetch) {
+//        clearHashItem()
+//        for item in tags {
+//            let hash = HashTagItemView(limitWidth: widthLimit, tag: item, touchType: type)
+//            self.addSubview(hash)
+//        }
+//        setNeedsLayout()
+//    }
+    
+    func generateTags(_ tags: [String]) {
         clearHashItem()
         for item in tags {
-            let hash = HashTagItemView(limitWidth: widthLimit, tag: item, touchType: type)
+            let hash = HashTagItem(limitWidth: widthLimit, tag: item)
+            hash.delegate = self
             self.addSubview(hash)
         }
         setNeedsLayout()
     }
     
-    func addHashItem(text: String, touchType type: HashTagItemView.requestedHashTagManagement = .fetch) {
-        let hash = HashTagItemView(limitWidth: widthLimit, tag: text, touchType: type)
+//    func addHashItem(text: String, touchType type: HashTagItemView.requestedHashTagManagement = .fetch) {
+//        let hash = HashTagItemView(limitWidth: widthLimit, tag: text, touchType: type)
+//        self.addSubview(hash)
+//        setNeedsLayout()
+//    }
+    
+    func addHashItem(text: String) {
+        let hash = HashTagItem(limitWidth: widthLimit, tag: text)
+        hash.delegate = self
         self.addSubview(hash)
         setNeedsLayout()
     }
     
     func removewHashItem(text: String) {
         for subview in subviews {
-            if let singleView = subview as? HashTagItemView {
+            if let singleView = subview as? HashTagItem {
                 if singleView.tagString == text {
                     singleView.removeFromSuperview()
                 }

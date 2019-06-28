@@ -8,44 +8,23 @@
 
 import UIKit
 
-class TextViewTestViewController: UIViewController, Giuk_ContentView_WritingTextViewDelegate {
+class TextViewTestViewController: UIViewController, TagGeneratorDelegate {
     
-    @IBOutlet weak var textView: Giuk_ContentView_WritingTextView!
+    @IBOutlet weak var tagGenerator: TagGenerator!
     
-    @IBOutlet weak var containerView: UIView!
+    var strings = ["apple","board","comment","deny","elevator","fortune","garden","happyness","orange","purple","apple","board","comment","deny","elevator","fortune","garden","happyness","orange","purple","apple","board","comment","deny","elevator","fortune","garden","happyness","orange","purple","apple","board","comment","deny","elevator","fortune","garden","happyness","orange","purple"]
+    
+    var strings2 = ["a","b","c","d"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        textView.delegate = self
-        //textView.textContainer.lineBreakMode = .byTruncatingTail
-        // Do any additional setup after loading the view.
-        
-//        let keyboardToolbar = UIToolbar()
-//        keyboardToolbar.sizeToFit()
-//        keyboardToolbar.backgroundColor = UIColor.clear
-//        keyboardToolbar.barTintColor = UIColor.darkGray
-//        
-//        let flexibleSapce = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
-//        
-//        let doneButton = UIBarButtonItem(image: UIImage(named:"GiukIcon-Key"), style: .done, target: self, action: #selector(donePressed))
-//        doneButton.tintColor = .goyaWhite
-//        
-//        keyboardToolbar.setItems([flexibleSapce, doneButton], animated: false)
-//        
-//        textView.textView.inputAccessoryView = keyboardToolbar
+        tagGenerator.delegate = self
+        tagGenerator.tagManager = TagInformation(alreadyAdded: strings2, library: strings)
+        tagGenerator.reloadData()
     }
     
-    func writingTextView(_ writingView: Giuk_ContentView_WritingTextView, didChangeSelectionAt rect: CGRect, keyBoardHeight boardHeight: CGFloat) {
-        let convertedPoint = self.view.convert(rect, from: view)
-        print("converted - \(self.view.convert(rect, from: view))")
-        print("convertedPoints maxY \(convertedPoint.maxY)")
-        if convertedPoint.maxY > (self.view.frame.height - boardHeight) {
-            print(true)
-        }
-    }
-    
-    @objc func donePressed() {
-        textView.textView.resignFirstResponder()
+    func tagGenerator_DidEndEditNewTag(_ tagGenerator: TagGenerator, senderTextField: UITextField, text: String) {
+        print(text)
     }
 
 }

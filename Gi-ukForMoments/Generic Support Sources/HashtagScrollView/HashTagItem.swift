@@ -9,18 +9,19 @@
 import UIKit
 
 protocol HashTagDelegate : class {
-    func requestHashTagAction(_ tag: String, editType type: HashTagItemView.requestedHashTagManagement)
+//    func requestHashTagAction(_ tag: String, editType type: HashTagItemView.requestedHashTagManagement)
+    func hashTagItem(_ tagItemView: HashTagItem, selectedTag tag: String)
 }
 
-class HashTagItemView: UIView {
+class HashTagItem: UIView {
     
-    enum requestedHashTagManagement {
-        case delete
-        case removeFromNote
-        case fetch
-        case addToSavingContent
-        case removeFromSavingContent
-    }
+    weak var delegate : HashTagDelegate?
+    
+    weak var tagLabel: UILabel!
+    
+    private var widthLimit : CGFloat?
+    
+    private(set) var tagString : String?
     
     var contentColor = UIColor.lightGray {
         didSet {
@@ -28,27 +29,13 @@ class HashTagItemView: UIView {
         }
     }
     
-    static weak var delegate : HashTagDelegate?
-    
-    private var widthLimit : CGFloat?
-    
-    private(set) var tagString : String?
-    
-    private var _touchType : requestedHashTagManagement!
-    
-    private func addGesture() {
-        let gesture = UITapGestureRecognizer(target: self, action: #selector(returnTagString(_:)))
-        self.addGestureRecognizer(gesture)
-    }
-    
-    @objc private func returnTagString(_ gesture: UIGestureRecognizer) {
-        switch gesture.state {
-        case .ended:
-            if let tag = tagString {
-                HashTagItemView.delegate?.requestHashTagAction(tag, editType: _touchType)
-            }
-        default:
-            break
+    private func setTagLabel() {
+        if tagLabel == nil {
+            let newLable = UILabel()
+            newLable.textColor = generalSettings.textColor
+            newLable.numberOfLines = 1
+            tagLabel = newLable
+            addSubview(tagLabel)
         }
     }
     
@@ -60,13 +47,6 @@ class HashTagItemView: UIView {
         return NSAttributedString(string: string, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle,.font: font])
     }
     
-    private lazy var _tagItem : UILabel = {
-        let label = UILabel()
-        label.textColor = generalSettings.textColor
-        addSubview(label)
-        return label
-    }()
-    
     private func createTagItem() {
         
         guard let tag = tagString else { return }
@@ -74,46 +54,47 @@ class HashTagItemView: UIView {
         let targetString = centeredAttributedString(targetTag, fontSize: generalSettings.fontSize)
         let targetSize = targetString.size()
         
-//        let tagItemString = NSString(string: "# " + tag)
-//        let size = tagItemString.size(withAttributes: [NSAttributedString.Key.font : tagItem.font])
-        
         var width: CGFloat {
-            guard let limit = widthLimit else { return 0 }
             let expectedSize = targetSize.width
-            let actualLimit = limit - (generalSettings.leftAndRightMargins * 2)
-            if expectedSize >= actualLimit {
-                return actualLimit
+            if let limit = widthLimit {
+                let actualLimit = limit - (generalSettings.leftAndRightMargins * 2)
+                if expectedSize >= actualLimit {
+                    return actualLimit
+                } else {
+                    return expectedSize
+                }
             } else {
                 return expectedSize
             }
         }
+        
         let height = targetSize.height
         
         let itemSize = CGSize(width: width, height: height)
         
-        _tagItem.attributedText = targetString
-//        tagItem.text = tagItemString as String
-        _tagItem.frame = CGRect(origin: generalSettings.itemOrigin, size: itemSize)
-        
-        
-        let newFrameWidth = _tagItem.frame.width + (generalSettings.leftAndRightMargins * 2)
-        let newFrameHeight = _tagItem.frame.height + (generalSettings.topAndBottomMargins * 2)
+        let newFrameWidth = itemSize.width + (generalSettings.leftAndRightMargins * 2)
+        let newFrameHeight = itemSize.height + (generalSettings.topAndBottomMargins * 2)
         let newFrameSize = CGSize(width: newFrameWidth, height: newFrameHeight)
         frame = CGRect(origin: self.frame.origin, size: newFrameSize)
         
-        addGesture()
+        tagLabel.frame = CGRect(origin: generalSettings.itemOrigin, size: itemSize)
+        tagLabel.attributedText = targetString
     }
     
-    var viewSize: CGSize {
-        let width = _tagItem.frame.width + (generalSettings.leftAndRightMargins * 2)
-        let height = _tagItem.frame.height + (generalSettings.topAndBottomMargins * 2)
-        return CGSize(width: width, height: height)
+    private func addGesture() {
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(returnTagString(_:)))
+        self.addGestureRecognizer(gesture)
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        backgroundColor = UIColor.clear
-        isOpaque = false
+    @objc private func returnTagString(_ gesture: UIGestureRecognizer) {
+        switch gesture.state {
+        case .ended:
+            if let tag = tagString {
+                delegate?.hashTagItem(self ,selectedTag: tag)
+            }
+        default:
+            break
+        }
     }
     
     override func draw(_ rect: CGRect) {
@@ -122,9 +103,31 @@ class HashTagItemView: UIView {
         contentColor.setFill()
         path.fill()
     }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = UIColor.clear
+        isOpaque = false
+        addGesture()
+        setTagLabel()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        backgroundColor = UIColor.clear
+        isOpaque = false
+        addGesture()
+        setTagLabel()
+    }
 }
 
-extension HashTagItemView {
+extension HashTagItem {
+    
+    var viewSize: CGSize {
+        let width = tagLabel.frame.width + (generalSettings.leftAndRightMargins * 2)
+        let height = tagLabel.frame.height + (generalSettings.topAndBottomMargins * 2)
+        return CGSize(width: width, height: height)
+    }
     
     fileprivate struct generalSettings {
         static var fontSize : CGFloat = 12
@@ -138,11 +141,10 @@ extension HashTagItemView {
         }
     }
     
-    convenience init(limitWidth width: CGFloat, tag: String, touchType: HashTagItemView.requestedHashTagManagement) {
+    convenience init(limitWidth width: CGFloat, tag: String) {
         self.init()
         widthLimit = width
         tagString = tag
-        _touchType = touchType
         createTagItem()
     }
 

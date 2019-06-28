@@ -310,8 +310,6 @@ struct PhotoModule {
         if fetchResault.count > 0 {
             let asset = fetchResault.object(at: index)
             let ratio = CGFloat(Double(asset.pixelHeight)/Double(asset.pixelWidth))
-            print("height: \(asset.pixelHeight) width: \(asset.pixelWidth)")
-            print(ratio)
             let newWidth = targetSize
             let newHeight = newWidth * ratio
             let newSize = CGSize(width: newWidth, height: newHeight)

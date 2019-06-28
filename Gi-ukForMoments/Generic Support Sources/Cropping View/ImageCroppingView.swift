@@ -322,9 +322,8 @@ class ImageCroppingView: UIView, UIScrollViewDelegate {
     }
     //end
     
-    //MARK: Funcstions for ImageView to prepare for cropping
+    //MARK: Functions for ImageView to prepare for cropping
     private func reSizeImageView() {
-        print(imageStatus)
         if imageStatus.ratio > 1 {
             var estimatedHeight = willCropAreaRect.height
             var estimatedWidth : CGFloat {
@@ -448,7 +447,6 @@ class ImageCroppingView: UIView, UIScrollViewDelegate {
     
     private func updateCropInformation() {
         cropInformation = requestImageCropInformation()
-        print(imageScrollView.zoomScale)
     }
     // End
     

@@ -162,12 +162,12 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, GenericMultiButtonViewDat
         switch sender.identifire {
         case "Verti":
             writingView.setImageCropViewOrientationTo(isHorizontal: true)
-            checkImageExist()
             updateRequieredButtonIndex(writingState, sender: sender)
+            checkImageExist()
         case "Horizon":
             writingView.setImageCropViewOrientationTo(isHorizontal: false)
-            checkImageExist()
             updateRequieredButtonIndex(writingState, sender: sender)
+            checkImageExist()
         case "left":
             writingView.textControlView.textView.textAlignment = .left
             updateRequieredButtonIndex(writingState, sender: sender)
@@ -177,10 +177,11 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, GenericMultiButtonViewDat
         case "right":
             writingView.textControlView.textView.textAlignment = .right
             updateRequieredButtonIndex(writingState, sender: sender)
+        case "tag":
+            updateRequieredButtonIndex(writingState, sender: sender)
         default:
             break
         }
-        print(requieredButtonIndexs)
     }
     
     func updateRequieredButtonIndex(_ state: Giuk_ContentView_Writing.WritingState, sender: UIButton_WithIdentifire) {
@@ -209,27 +210,14 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, GenericMultiButtonViewDat
             topButtonView.requieredActionWithButtonIndex(requieredButtonIndexs.photo)
         case .writingComment:
             topButtonView.requieredActionWithButtonIndex(requieredButtonIndexs.write)
-        default:
-            break
+        case .choosingTag:
+            topButtonView.requieredActionWithButtonIndex(0)
         }
     }
     
     func checkWritingState() {
-        switch writingState {
-        case .choosingPhoto:
-            switchButtonStateForWritingState()
-            writingView.checkWritingState()
-        case .writingComment:
-            switchButtonStateForWritingState()
-            writingView.checkWritingState()
-        default:
-            switchButtonStateForWritingState()
-            writingView.checkWritingState()
-            leftNavigationButton.isHidden = false
-            rightNavigationButton.isHidden = false
-            leftNavigationButton.isEnabled = true
-            rightNavigationButton.isEnabled = true
-        }
+        switchButtonStateForWritingState()
+        writingView.checkWritingState()
     }
     
     func switchButtonStateForWritingState() {
@@ -268,18 +256,22 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, GenericMultiButtonViewDat
     }
     
     @objc func navigationButtonPressed(_ sender: UIButton_WithIdentifire) {
-        updateWritingState(sender)
+        changeWritingState(sender)
     }
     
-    func updateWritingState(_ sender: UIButton_WithIdentifire) {
+    func changeWritingState(_ sender: UIButton_WithIdentifire) {
         switch sender.identifire {
         case GiukNavigationButton.leftNavigationButton.rawValue:
             if writingState == .writingComment {
                 writingState = .choosingPhoto
+            } else if writingState == .choosingTag {
+                writingState = .writingComment
             }
         case GiukNavigationButton.rightNavigationButton.rawValue:
             if writingState == .choosingPhoto {
                 writingState = .writingComment
+            } else if writingState == .writingComment {
+                writingState = .choosingTag
             }
         default:
             break
@@ -444,7 +436,7 @@ extension Giuk_ContentView_WriteSection {
             topButtonView.setNewFrame(topButtonViewFrame)
             topButtonView.reloadButtons {
                 [unowned self] in
-                self.topButtonView.requieredActionWithButtonIndex(nil)
+                self.requestButtonActionForRequieredButtonIndexFor(self.writingState)
             }
             
         }
