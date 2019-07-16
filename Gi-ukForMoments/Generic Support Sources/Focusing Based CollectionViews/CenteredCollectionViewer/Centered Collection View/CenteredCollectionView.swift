@@ -40,18 +40,6 @@ class CenteredCollectionView: FocusingIndexBasedCollectionView {
     //MARK: Variables
     var requiredItemIndex: IndexPath?
     
-//    private var focusingIndex : IndexPath? {
-//        didSet {
-//            if let indexRow = focusingIndex?.item {
-//                updateIndexDelegate?.centeredCollectionViewDidUpdateFocusingIndex?(self, withIndexRow: indexRow)
-//            }
-//        }
-//    }
-    
-   // weak var updateIndexDelegate: CenteredCollectionViewDelegate?
-    
-    //var transAnimator = ZoomingStyleTransitioningDelegate()
-    
     weak var ownerViewController: UIViewController?
     
     weak var willPresentedController_fromCell: UIViewController?
@@ -99,6 +87,14 @@ class CenteredCollectionView: FocusingIndexBasedCollectionView {
             requiredItemIndex = nil
         } else {
             checkNowFocusedCell()
+        }
+    }
+    
+    //MARK: overrided scrollview delegate from focusingindexbasedscrollview
+    override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        super.scrollViewDidEndScrollingAnimation(scrollView)
+        if trackingFocusingCellAutomatically {
+            scrollToTargetIndex(index: focusingIndex, animated: true)
         }
     }
     
@@ -240,9 +236,24 @@ extension CenteredCollectionView {
             } else { return }
         }
         
+//        scrollToTargetIndex(index: indexPath, animated: true) {
+//            [unowned self] in
+//            if let focusedCellIndex = self.focusingIndex {
+//                if indexPath == focusedCellIndex {
+//                    generateDetailView()
+//                } else {
+//                    self.checkNowFocusedCell()
+//                }
+//            } else if indexPath.item == 0 {
+//                generateDetailView()
+//            } else if self.focusingIndex == nil && indexPath.item > 0 {
+//                self.checkNowFocusedCell()
+//            }
+//        }
+        
         if let focusedCellIndex = focusingIndex {
             if indexPath == focusedCellIndex {
-                generateDetailView()
+                focusingCollectionViewDelegate?.collectionViewDidSelectFocusedIndex?(self, focusedIndex: indexPath, cell: cell)
             } else {
                 scrollToTargetIndex(index: indexPath, animated: true) {
                     [unowned self] in
@@ -250,7 +261,7 @@ extension CenteredCollectionView {
                 }
             }
         } else if indexPath.item == 0 {
-            generateDetailView()
+            focusingCollectionViewDelegate?.collectionViewDidSelectFocusedIndex?(self, focusedIndex: indexPath, cell: cell)
         } else if focusingIndex == nil && indexPath.item > 0 {
             scrollToTargetIndex(index: indexPath, animated: true) {
                 [unowned self] in

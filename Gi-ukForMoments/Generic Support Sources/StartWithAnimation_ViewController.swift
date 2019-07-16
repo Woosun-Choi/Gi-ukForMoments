@@ -38,7 +38,7 @@ class StartWithAnimation_ViewController: ContentUIViewController {
     
     var initialAnimationTimeDuration: Double = 0.75
     
-    var initialAnimationDelay: Double = 0.5
+    var initialAnimationDelay: Double = 0.75
     
     var requieredBehaviorWhenAuthrizeFailed: (() -> Void)?
     
@@ -48,10 +48,10 @@ class StartWithAnimation_ViewController: ContentUIViewController {
     
     private func animateInitialStage() {
         if initailStage {
-            initailStage = false
             UIView.animate(withDuration: initialAnimationTimeDuration, delay: initialAnimationDelay, options: [.curveEaseInOut], animations: {
                 self.requieredAnimationWithInInitialStage?()
             }, completion: { [unowned self] (finished) in
+                self.initailStage = false
                 self.view.isUserInteractionEnabled = finished
                 self.requieredFunctionWithInInitialStageAnimationCompleted?()
             })

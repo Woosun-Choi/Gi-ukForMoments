@@ -14,18 +14,6 @@ class Giuk_OpenFromFrame_ViewController: ContentUIViewController, FrameTransitio
     
     var closingFunction: (()->Void)?
     
-    func prepareDismissing(_ viewController: UIViewController) {
-        closingFunction?()
-    }
-    
-    func preparePresenting(_ viewController: UIViewController) {
-        closeButton?.alpha = 0
-    }
-    
-    func finishPresenting(_ viewController: UIViewController) {
-        closeButton?.alpha = 1
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setCloseButton()
@@ -37,7 +25,7 @@ class Giuk_OpenFromFrame_ViewController: ContentUIViewController, FrameTransitio
         let originY:CGFloat = topContainerAreaFrame.minY + ((topContainerAreaSize.height - closeButtonSize.height)/2)
         if closeButton == nil {
             let newButton = generateUIView(view: closeButton, origin: CGPoint(x: originX, y: originY), size: closeButtonSize)
-            newButton?.setTitle("✕", for: .normal)
+            newButton?.setImage(UIImage(named: ButtonImageNames.ButtonName_Content_Close), for: .normal)
             newButton?.addTarget(self, action: #selector(closeButtonAction(_:)), for: .touchUpInside)
             newButton?.backgroundColor = .clear
             closeButton = newButton
@@ -49,9 +37,18 @@ class Giuk_OpenFromFrame_ViewController: ContentUIViewController, FrameTransitio
     }
     
     @objc func closeButtonAction(_ sender: UIButton) {
-        closeButton?.alpha = 0
         dismiss(animated: true, completion: nil)
     }
+    
+    //MARK: dismiss animation setting - frametransition datasource
+    func initialAction_FromViewController(_ viewController: UIViewController) {
+        closeButton.alpha = 0
+    }
+    
+    func finalAction_ToViewController(_ viewController: UIViewController) {
+        closingFunction?()
+    }
+    //end
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -75,7 +72,6 @@ extension Giuk_OpenFromFrame_ViewController {
     var topContainerAreaSize: CGSize {
         let width = safeAreaRelatedAreaFrame.width
         let height: CGFloat = view.frame.width*0.08 + (GiukContentFrameFactors.contentMinimumMargin.dY*2)
-        //        let height = max((frame.height - requierAreaSizeForPresentingContent.height)*0.384, 45)
         return CGSize(width: width, height: height)
     }
     

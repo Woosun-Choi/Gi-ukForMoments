@@ -33,8 +33,30 @@ import UIKit
  
  */
 
+struct ImageCropViewDescription {
+    static private let language = Locale.current.languageCode
+    static var notice_Title: String {
+        switch language {
+        case "kor": return "사진을 선택하세요"
+        default : return "choose a moment"
+        }
+    }
+    static var notice_SubTiltle: String {
+        switch language {
+        case "kor": return "\n사진을 확대하거나 축소하며\n위치를 조정하세요"
+        default : return "\nand reposition the photo\nwith zooming in or out"
+        }
+    }
+}
+
+@objc protocol ImageCroppingViewDelegate {
+    @objc optional func imageCroppingView(_ croppingView: ImageCroppingView, newDataImageSetted settedData: Data?)
+    @objc optional func imageCroppingView(_ croppingView: ImageCroppingView, needRepresentedImageData imageData: Data) -> UIImage?
+}
+
 class ImageCroppingView: UIView, UIScrollViewDelegate {
     
+    //MARK: subViews
     weak var imageScrollView: UIScrollView!
     
     weak var croppingView: CroppingArea!
@@ -44,6 +66,10 @@ class ImageCroppingView: UIView, UIScrollViewDelegate {
     weak var noticeLabel: UILabel!
     
     weak var spinner: UIActivityIndicatorView!
+    //end
+    
+    //MARK: variables
+    weak var delegate: ImageCroppingViewDelegate?
     
     enum CroppingViewMode {
         case presentOnly
@@ -56,7 +82,15 @@ class ImageCroppingView: UIView, UIScrollViewDelegate {
         }
     }
     
-    var croppedImageData: CroppedImageData? {
+    var thumbnailData: ThumbnailInformation? {
+        if let thumbData = requestThumbnailDataInEstimateCropArea() {
+            return ThumbnailInformation(thumbnailData: thumbData)
+        } else {
+            return nil
+        }
+    }
+    
+    var croppedImageData: CroppedImageInformation? {
         get {
             return requestCroppedImageData()
         } set {
@@ -67,10 +101,6 @@ class ImageCroppingView: UIView, UIScrollViewDelegate {
     }
     
     var cropInformation: CropInformation?
-    
-    var filterModule: ImageFilterModule?
-    
-    var filterEffect: ImageFilterModule.CIFilterName?
     
     var requiredActionAfterCroppingFinished: ((UIImage) -> Void)?
     
@@ -88,14 +118,17 @@ class ImageCroppingView: UIView, UIScrollViewDelegate {
     private var _image: Data? {
         didSet {
             setNewImage()
+            delegate?.imageCroppingView?(self, newDataImageSetted: self.image)
         }
     }
     
     var willCropAreaRect: CGRect {
         return requiredCroppingAreaFrameInCroppingView ?? (croppingView?.bounds ?? CGRect.zero)
     }
+    //end
     
     //MARK: Computed Variables for cropping
+    //MARK: trouble?
     private var estimateCropArea: CGRect {
         var factor : CGFloat = 0
         if imageStatus.ratio > croppingViewStatus.ratio {
@@ -135,7 +168,7 @@ class ImageCroppingView: UIView, UIScrollViewDelegate {
     }
     //end
     
-    //MARK: Set and Layout views
+    //MARK: Set and Layout subviews
     private func setOrRePositioning_ImageScrollView() {
         if imageScrollView == nil {
             let newView = generateUIView(view: imageScrollView, frame: fullFrame)
@@ -185,18 +218,24 @@ class ImageCroppingView: UIView, UIScrollViewDelegate {
     }
     
     private func setOrRePositioning_NoticeLabel() {
+        let fontSize = valueBetweenMinAndMax(maxValue: DescribingSources.sectionsFontSize.maxFontSize.cgFloat, minValue: DescribingSources.sectionsFontSize.minFontSize.cgFloat, mutableValue: (frame.height * 0.0618))
+        
+        let attributedText = String.generatePlaceHolderMutableAttributedString(fontSize: fontSize, titleText: ImageCropViewDescription.notice_Title, subTitleText: ImageCropViewDescription.notice_SubTiltle)
+        
         if mode == .cropable {
             if noticeLabel == nil {
                 let label = generateUIView(view: noticeLabel, frame: bounds)
-                let fontSize = max(fullFrame.height * 0.05, 14)
-                label?.setLabelAsSDStyleWithSpecificFontSize(type: .medium, fontSize: fontSize)
-                label?.textColor = UIColor.goyaFontColor.withAlphaComponent(0.6)
-                label?.textAlignment = .center
-                label?.text = "select a photo"
                 noticeLabel = label
+                let fontSize = max(fullFrame.height * 0.05, 14)
+                noticeLabel.setLabelAsSDStyleWithSpecificFontSize(type: .medium, fontSize: fontSize)
+                noticeLabel.textColor = .GiukBackgroundColor_depth_1
+                noticeLabel.textAlignment = .center
+                noticeLabel.numberOfLines = 0
+                noticeLabel.attributedText = attributedText
                 addSubview(noticeLabel)
             } else {
                 noticeLabel.setNewFrame(bounds)
+                noticeLabel.attributedText = attributedText
             }
         }
     }
@@ -262,12 +301,16 @@ class ImageCroppingView: UIView, UIScrollViewDelegate {
     
     private func setNewImage() {
         if let imageData = self.image {
-            if let presentImage = UIImage(data: imageData)?.fixOrientation() {
-                if let module = filterModule, let filter = filterEffect {
-                    let targetImage = module.performImageFilter(filter, image: presentImage)
-                    setImageToImageView(targetImage)
-                } else {
-                    setImageToImageView(presentImage)
+            if let image = delegate?.imageCroppingView?(self, needRepresentedImageData: imageData) {
+                setImageToImageView(image)
+            } else {
+                if let presentImage = UIImage(data: imageData)?.fixOrientation() {
+//                    if let module = filterModule, let filter = filterEffect {
+//                        let targetImage = module.performImageFilter(filter, image: presentImage)
+//                        setImageToImageView(targetImage)
+//                    } else {
+                        setImageToImageView(presentImage)
+//                    }
                 }
             }
         } else {
@@ -299,7 +342,6 @@ class ImageCroppingView: UIView, UIScrollViewDelegate {
     private func zoomWithCropInformationData(_ data: CropInformation?) {
         guard let scrollView = imageScrollView else{ return }
         guard let imgView = imageView else {return}
-//        if imgView.frame.size != CGSize.zero {
             let cropAreaWidthFactor = max(fullFrame.width - willCropAreaRect.width, 0)
             let cropAreaHeightFactor = max(fullFrame.height - willCropAreaRect.height, 0)
             if let coordinatedData = data {
@@ -314,11 +356,9 @@ class ImageCroppingView: UIView, UIScrollViewDelegate {
                 } else {
                     scrollView.zoom(to: targetRect, animated: false)
                 }
-                //updateCropInformation()
             } else {
                 return
             }
-//        }
     }
     //end
     
@@ -329,11 +369,11 @@ class ImageCroppingView: UIView, UIScrollViewDelegate {
             var estimatedWidth : CGFloat {
                 return estimatedHeight * imageStatus.ratio
             }
-            if estimatedWidth < willCropAreaRect.width {
-                while estimatedWidth < willCropAreaRect.width {
-                    estimatedHeight += 0.1
-                }
+            
+            while estimatedWidth < willCropAreaRect.width {
+                estimatedHeight += 0.1
             }
+            
             let width = max(estimatedWidth, 0)
             let height = max(estimatedHeight, 0)
             let newSize = CGSize(width: width, height: height)
@@ -343,11 +383,11 @@ class ImageCroppingView: UIView, UIScrollViewDelegate {
             var estimatedHeight : CGFloat {
                 return estimatedWidth / imageStatus.ratio
             }
-            if estimatedHeight < willCropAreaRect.height {
-                while estimatedHeight < willCropAreaRect.height {
-                    estimatedWidth += 0.1
-                }
+            
+            while estimatedHeight < willCropAreaRect.height {
+                estimatedWidth += 0.1
             }
+            
             let width = max(estimatedWidth, 0)
             let height = max(estimatedHeight, 0)
             let newSize = CGSize(width: width, height: height)
@@ -384,7 +424,6 @@ class ImageCroppingView: UIView, UIScrollViewDelegate {
             (expectedOffSetX >= 0) ? (newOffSetX = expectedOffSetX) : (newOffSetX = 0)
             (expectedOffSetY >= 0) ? (newOffSetY = expectedOffSetY) : (newOffSetY = 0)
         }
-        
         if makeImageBeingCentered {
             imageView.frame.origin = CGPoint(x: topEdgeMarginX/2, y: topEdgeMarginY/2)
             imageScrollView.setContentOffset(CGPoint(x: newOffSetX, y: newOffSetY), animated: false)
@@ -439,10 +478,34 @@ class ImageCroppingView: UIView, UIScrollViewDelegate {
         return imageInfo
     }
     
-    func requestCroppedImageData() -> CroppedImageData? {
+    func requestCroppedImageData() -> CroppedImageInformation? {
         guard let data = image else { return nil }
         guard let imageInfo = requestImageCropInformation() else { return nil }
-        return CroppedImageData(cropInformation: imageInfo, imageData: data)
+        return CroppedImageInformation(cropInformation: imageInfo, imageData: data)
+    }
+    
+    private func calculateThumbnailAreaRectAsSquare() -> CGRect {
+        let estimatedSizeFactor = min(estimateCropArea.width, estimateCropArea.height)
+        let esimatedSize = CGSize(width: estimatedSizeFactor, height: estimatedSizeFactor)
+        var isHorizontalCropArea: Bool {
+            return (estimateCropArea.width/estimateCropArea.height > 1)
+        }
+        var thumbnailsRectOrigin = estimateCropArea.origin
+        if isHorizontalCropArea {
+            thumbnailsRectOrigin = thumbnailsRectOrigin.offSetBy(dX: (estimateCropArea.width - estimatedSizeFactor)/2, dY: 0)
+        } else {
+            thumbnailsRectOrigin = thumbnailsRectOrigin.offSetBy(dX: 0, dY: (estimateCropArea.height - estimatedSizeFactor)/2)
+        }
+        return CGRect(origin: thumbnailsRectOrigin, size: esimatedSize)
+    }
+    
+    func requestThumbnailDataInEstimateCropArea() -> Data? {
+        let rect = calculateThumbnailAreaRectAsSquare()
+        guard let targetImage = imageView.image else { return nil }
+        guard let croppedCGImage = targetImage.cgImage?.cropping(to: rect) else { print("image setting error"); return nil }
+        let croppedImage = UIImage(cgImage: croppedCGImage).resizedImageWithinRect(rectSize: CGSize(width: 150, height: 150))
+        let thumbnailData = croppedImage.jpegData(compressionQuality: 1)
+        return thumbnailData
     }
     
     private func updateCropInformation() {
@@ -476,16 +539,14 @@ class ImageCroppingView: UIView, UIScrollViewDelegate {
     //MARK: draw and layoutsubviews
     override func layoutSubviews() {
         super.layoutSubviews()
-        print("imagecropview layoutSubview called")
         configureSubviews()
         refreshImage(cropInformation)
     }
     
     override func draw(_ rect: CGRect) {
-        print("imagecropview draw called")
         configureSubviews()
-        //refreshImage(cropInformation)
-        zoomWithCropInformationData(cropInformation)
+        refreshImage(cropInformation)
+//        zoomWithCropInformationData(cropInformation)
     }
     //end
     
@@ -502,7 +563,7 @@ class ImageCroppingView: UIView, UIScrollViewDelegate {
         imageScrollView.delegate = self
     }
     
-    convenience init(mode: CroppingViewMode, cropData: CroppedImageData?) {
+    convenience init(mode: CroppingViewMode, cropData: CroppedImageInformation?) {
         self.init()
         self.mode = mode
         self.croppedImageData = cropData

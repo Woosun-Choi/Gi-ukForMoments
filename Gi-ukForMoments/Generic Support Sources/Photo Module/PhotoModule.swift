@@ -327,7 +327,7 @@ struct PhotoModule {
     }
     
     //MARK: authorizeChecker
-    func authorizeChecker() {
+    func performAuthorizeChecking() {
         let status = PHPhotoLibrary.authorizationStatus()
 
         if (status == PHAuthorizationStatus.authorized) {

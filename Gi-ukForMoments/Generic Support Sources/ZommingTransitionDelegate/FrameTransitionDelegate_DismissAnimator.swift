@@ -16,21 +16,25 @@ class FrameTransitionDelegate_DismissAnimator: NSObject, UIViewControllerAnimate
     
     convenience init(targetRect: CGRect, setBeforeAnimate: ((UIViewController) -> Void)?, setAfterAnimate: ((UIViewController) -> Void)?) {
         self.init(targetRect: targetRect)
-        convenienceTargetViewOriginSetting = setBeforeAnimate
-        convenienceTargetViewFinalSetting = setAfterAnimate
     }
     
     private var openingFrame: CGRect?
-    
-    var fading: Bool = false
     
     var animationCurveStyle: UIView.AnimationOptions?
     
     var animateDuration: TimeInterval = 0.5
     
-    var convenienceTargetViewOriginSetting : ((UIViewController) -> Void)?
+    var initialActionForController_Dismissed : ((UIViewController) -> Void)?
     
-    var convenienceTargetViewFinalSetting : ((UIViewController) -> Void)?
+    var finalActionForController_Dismissed : ((UIViewController) -> Void)?
+    
+    var initialActionForController_Represented : ((UIViewController) -> Void)?
+    
+    var finalActionForController_Represented : ((UIViewController) -> Void)?
+    
+    var completionActionForController_Represented : ((UIViewController) -> Void)?
+    
+    
     
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return animateDuration
@@ -47,19 +51,20 @@ class FrameTransitionDelegate_DismissAnimator: NSObject, UIViewControllerAnimate
         let animationDuration = transitionDuration(using: transitionContext)
         let finalFrame = transitionContext.finalFrame(for: toViewController)
         
-        convenienceTargetViewOriginSetting?(fromViewController)
+        initialActionForController_Dismissed?(fromViewController)
+        initialActionForController_Represented?(fromViewController)
+        
         toViewController.view.frame = finalFrame
         containerView.addSubview(toViewController.view)
         containerView.addSubview(fromViewController.view)
         
         UIView.animate(withDuration: animationDuration, delay: 0, options: (animationCurveStyle ?? .curveEaseOut), animations: {
-            if self.fading {
-                fromViewController.view.alpha = 0
-            }
             fromViewController.view.frame = originFrame
-            self.convenienceTargetViewFinalSetting?(fromViewController)
+            self.finalActionForController_Dismissed?(fromViewController)
+            self.finalActionForController_Represented?(toViewController)
             fromViewController.view.layoutIfNeeded()
         }) { (finished) in
+            self.completionActionForController_Represented?(toViewController)
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
     }

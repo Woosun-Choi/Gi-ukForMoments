@@ -17,6 +17,37 @@ public func findItemsIndexInArray<T:Comparable>(_ array: [T], item: T) -> Int? {
     return nil
 }
 
+public func randomNumberInRange(_ range: Int) -> Int {
+    let random = arc4random_uniform(UInt32(range))
+    return Int(random)
+}
+
+public func randomColor() -> UIColor {
+    print("random color called")
+    let rColor = CGFloat(randomNumberInRange(255))
+    let gColor = CGFloat(randomNumberInRange(255))
+    let bColor = CGFloat(randomNumberInRange(255))
+    return UIColor(red: rColor/255, green: gColor/255, blue: bColor/255, alpha: 1)
+}
+
+public func randomHashCreate(length: Int) -> String {
+    let base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    var randString = ""
+    
+    for _ in 0..<length {
+        let randNum = Int(arc4random_uniform(UInt32(base.count)))
+        let startString = base.index(base.startIndex, offsetBy: randNum)
+        let endString = base.index(base.startIndex, offsetBy: randNum + 1)
+        randString += String(base[startString ..< endString])
+    }
+    
+    return randString
+}
+
+public func valueBetweenMinAndMax<T: Comparable>(maxValue: T, minValue: T, mutableValue: T) -> T {
+    return max(min(maxValue, mutableValue), minValue)
+}
+
 public func generateUIView<T: UIView>(view: T!, origin: CGPoint, size: CGSize) -> T! {
     if view == nil {
         let container = T()
@@ -151,12 +182,58 @@ extension UIColor {
 }
 
 extension String {
+    
+    func centeredAttributedString(fontSize: CGFloat, type: UIFont.appleSDGothicNeo) -> NSAttributedString {
+        let font = type.font(size: fontSize)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        paragraphStyle.lineBreakMode = .byTruncatingTail
+        return NSAttributedString(string: self, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle,.font: font])
+    }
+    
     func centeredAttributedString(fontSize: CGFloat) -> NSAttributedString {
         let font = UIFont.appleSDGothicNeo.medium.font(size: fontSize)
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         paragraphStyle.lineBreakMode = .byTruncatingTail
         return NSAttributedString(string: self, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle,.font: font])
+    }
+    
+    func centeredAttributedString_Mutable(fontSize: CGFloat, type: UIFont.appleSDGothicNeo) -> NSMutableAttributedString {
+        let font = type.font(size: fontSize)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        paragraphStyle.lineBreakMode = .byTruncatingTail
+        let text = NSMutableAttributedString(string: self, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle,.font: font])
+        return text
+    }
+    
+    func centeredAttributedString_Mutable(fontSize: CGFloat) -> NSMutableAttributedString {
+        let font = UIFont.appleSDGothicNeo.medium.font(size: fontSize)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        paragraphStyle.lineBreakMode = .byTruncatingTail
+        let text = NSMutableAttributedString(string: self, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle,.font: font])
+        return text
+    }
+    
+    static func generatePlaceHolderMutableAttributedString(maxFontSize: CGFloat, minFontSize: CGFloat, estimateFontSize: CGFloat, titleText: String, subTitleText: String?) -> NSMutableAttributedString {
+        let fontSize = valueBetweenMinAndMax(maxValue: maxFontSize, minValue: minFontSize, mutableValue: estimateFontSize)
+        let text = titleText.centeredAttributedString_Mutable(fontSize: fontSize * 1.1, type: .semiBold)
+        if let _subTitleText = subTitleText {
+            let subTitle = _subTitleText.centeredAttributedString_Mutable(fontSize: fontSize * 0.85)
+            text.append(subTitle)
+        }
+        return text
+    }
+    
+    static func generatePlaceHolderMutableAttributedString(fontSize: CGFloat, titleText: String, subTitleText: String?) -> NSMutableAttributedString {
+        let text = titleText.centeredAttributedString_Mutable(fontSize: fontSize * 1.1, type: .semiBold)
+        if let _subTitleText = subTitleText {
+            let subTitle = _subTitleText.centeredAttributedString_Mutable(fontSize: fontSize * 0.85)
+            text.append(subTitle)
+        }
+        return text
     }
 }
 
@@ -203,6 +280,10 @@ extension Int {
     var absValue: Int {
         return Int(abs(Int32(self)))
     }
+    
+    var cgFloat: CGFloat {
+        return CGFloat(self)
+    }
 }
 
 extension Date {
@@ -229,6 +310,15 @@ extension Date {
     
     var month : Int {
         return self.convertWithDateComponents.month!
+    }
+    
+    var monthString : String {
+        let month = self.month
+        if month < 10 {
+            return "0" + String(month)
+        } else {
+            return String(month)
+        }
     }
     
     var year : Int {
@@ -551,8 +641,19 @@ extension UIView {
     
 }
 
-extension UIViewController {
+extension UIButton {
+    func setNewTitleAs(_ title: String, state: UIButton.State = .normal) {
+        if self.currentTitle != title {
+            setTitle(title, for: state)
+        }
+    }
     
+    func setNewImageAs(_ image: UIImage?, state: UIButton.State = .normal) {
+        setImage(image, for: state)
+    }
+}
+
+extension UIViewController {
     func setNewFrame(_ frame: CGRect) {
         self.view.frame = frame
         self.view.setNeedsLayout()

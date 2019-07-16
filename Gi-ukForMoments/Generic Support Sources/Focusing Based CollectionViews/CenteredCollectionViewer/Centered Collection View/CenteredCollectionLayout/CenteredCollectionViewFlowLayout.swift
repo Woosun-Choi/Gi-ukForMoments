@@ -73,7 +73,7 @@ class CenteredCollectionViewFlowLayout: UICollectionViewLayout {
         }
     }
     
-    private var expectedCellSize: CGSize {
+    var expectedCellSize: CGSize {
         if estimateCellSize != nil {
             return recalculateEstimateCellSize()
         } else {
@@ -108,11 +108,11 @@ class CenteredCollectionViewFlowLayout: UICollectionViewLayout {
     var cache: [UICollectionViewLayoutAttributes] = []
     
     var width: CGFloat {
-        return collectionView!.frame.width
+        return collectionView!.frame.width ?? 0
     }
     
     var height: CGFloat {
-        return collectionView!.frame.height
+        return collectionView!.frame.height ?? 0
     }
     
     // Returns the number of items in the collection view

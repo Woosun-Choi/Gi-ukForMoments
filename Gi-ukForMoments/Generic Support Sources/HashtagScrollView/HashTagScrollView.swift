@@ -10,6 +10,7 @@ import UIKit
 
 @objc protocol HashTagScrollViewDelegate {
     @objc optional func hashTagScrollView(_ hashTagScrollView: HashTagScrollView, didSelectItemAt item: Int, tag: String)
+    @objc optional func hashTagScrollView(_ hashTagScrollView: HashTagScrollView, didLongPressedItemAt item: Int, tag: String)
 }
 
 @objc protocol HashTagScrollViewDataSource {
@@ -28,21 +29,24 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
         }
     }
     
-    func hashTagItem(_ tagItemView: HashTagItem, selectedTag tag: String) {
-        if let index = subviews.firstIndex(of: tagItemView) {
-            hashTagScrollViewDelegate?.hashTagScrollView?(self, didSelectItemAt: index, tag: tag)
+    var backgroundLayer: CALayer? {
+        didSet {
+            if self.backgroundLayer != nil {
+                layer.sublayers?.forEach {$0.removeFromSuperlayer()}
+                layer.addSublayer(backgroundLayer!)
+            }
         }
     }
     
+    fileprivate struct generalSettings {
+        static var verticalEdgeMargin : CGFloat = 8
+        static var horizontalEdgeMargin : CGFloat = 8
+        static var itemVerticalSpace : CGFloat = 5
+        static var itemHorizontalSpace : CGFloat = 5
+    }
+    
+    //MARK: Variables
     private var tags : [String]?
-    
-    func reloadData() {
-        tags = dataSource?.hashTagScrollView_tagItems(self)
-        clearHashItem()
-        if let _tags = tags {
-            generateTags(_tags)
-        }
-    }
     
     private var widthLimitForPresentingTags : CGFloat?
     
@@ -57,16 +61,28 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
         set { widthLimitForPresentingTags = newValue }
     }
     
-    fileprivate struct generalSettings {
-        static var verticalEdgeMargin : CGFloat = 8
-        static var horizontalEdgeMargin : CGFloat = 8
-        static var itemVerticalSpace : CGFloat = 5
-        static var itemHorizontalSpace : CGFloat = 5
+    var numberOfTags: Int {
+        return tags?.count ?? 0
     }
     
-    private var estimateHeight : CGFloat {
-        return (subviews.last?.frame.maxY ?? 0) + generalSettings.verticalEdgeMargin
+    var estimatedFontSizeForTagItem: CGFloat {
+        let size = valueBetweenMinAndMax(maxValue: 14, minValue: 12, mutableValue: bounds.height / 10)
+        return size
     }
+    //end
+    
+    //MARK: tag item delegate
+    func hashTagItem(_ tagItemView: HashTagItem, selectedTag tag: String) {
+        if let index = subviews.firstIndex(of: tagItemView) {
+            hashTagScrollViewDelegate?.hashTagScrollView?(self, didSelectItemAt: index, tag: tag)
+        }
+    }
+    func hashTagItem(_ tagItemView: HashTagItem, longPressed tag: String) {
+        if let index = subviews.firstIndex(of: tagItemView) {
+            hashTagScrollViewDelegate?.hashTagScrollView?(self, didLongPressedItemAt: index, tag: tag)
+        }
+    }
+    //end
     
     func clearHashItem() {
         for subview in self.subviews {
@@ -74,10 +90,9 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
         }
     }
     
-    func generateTags(_ tags: [String]) {
-        clearHashItem()
+    private func generateTags(_ tags: [String]) {
         for item in tags {
-            let hash = HashTagItem(limitWidth: estimateWidthLimit, tag: item)
+            let hash = HashTagItem(limitWidth: estimateWidthLimit, tag: item, fontSize: estimatedFontSizeForTagItem)
             hash.delegate = self
             self.addSubview(hash)
         }
@@ -97,17 +112,6 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
         subviews[index].removeFromSuperview()
         updateSubviewsLocation_WithAnimation()
     }
-    
-//    func removewHashItem(with text: String) {
-//        for subview in subviews {
-//            if let singleView = subview as? HashTagItem {
-//                if singleView.tagString == text {
-//                    singleView.removeFromSuperview()
-//                }
-//            }
-//        }
-//        updateSubviewsLocation_WithAnimation()
-//    }
     
     func itemForIndexAt(_ index: Int) -> HashTagItem? {
         if let item = subviews[index] as? HashTagItem {
@@ -157,6 +161,7 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
         }
         
         for subview in self.subviews {
+            subview.setNeedsLayout()
             if round(nowX + subview.frame.width) > round(trailingEdgeLimit) {
                 nowY = subview.frame.height + generalSettings.itemVerticalSpace + nowY
                 nowX = generalSettings.horizontalEdgeMargin
@@ -165,8 +170,32 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
             nowX += (subview.frame.width + generalSettings.itemHorizontalSpace)
         }
         contentSize = newFrame.size
-        
     }
+    
+    //MARK: Update functions
+    func reloadData() {
+        if checkDataIsChanged {
+            tags = dataSource?.hashTagScrollView_tagItems(self)
+            clearHashItem()
+            if let _tags = tags {
+                generateTags(_tags)
+            }
+        }
+    }
+    
+    var checkDataIsChanged: Bool {
+        return (tags != dataSource?.hashTagScrollView_tagItems(self)) ? (true) : (false)
+    }
+    
+    func setNewInsets(verticalEdgeMargin : CGFloat?, horizontalEdgeMargin : CGFloat?, itemVerticalSpace : CGFloat?, itemHorizontalSpace : CGFloat?) {
+        (verticalEdgeMargin != nil) ? (generalSettings.verticalEdgeMargin = verticalEdgeMargin!) : ()
+        (horizontalEdgeMargin != nil) ? (generalSettings.horizontalEdgeMargin = horizontalEdgeMargin!) : ()
+        (itemVerticalSpace != nil) ? (generalSettings.itemVerticalSpace = itemVerticalSpace!) : ()
+        (itemHorizontalSpace != nil) ? (generalSettings.itemHorizontalSpace = itemHorizontalSpace!) : ()
+        setNeedsLayout()
+    }
+    //end
+    
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -177,22 +206,6 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
     
     override func draw(_ rect: CGRect) {
         reloadData()
-    }
-    
-    private var estimateWidthLimit : CGFloat {
-        return widthLimit! - (generalSettings.horizontalEdgeMargin*2)
-    }
-    
-    private var trailingEdgeLimit: CGFloat {
-        return estimateWidthLimit + generalSettings.horizontalEdgeMargin
-    }
-    
-    private var newViewSize: CGSize {
-        return CGSize(width: frame.width, height: estimateHeight)
-    }
-    
-    private var newFrame: CGRect {
-        return CGRect(origin: frame.origin, size: newViewSize)
     }
     
     override init(frame: CGRect) {
@@ -210,5 +223,26 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
         alwaysBounceVertical = true
         clipsToBounds = true
     }
-
+    
+    //MARK: Grid informations
+    private var estimateWidthLimit : CGFloat {
+        return widthLimit! - (generalSettings.horizontalEdgeMargin*2)
+    }
+    
+    private var trailingEdgeLimit: CGFloat {
+        return estimateWidthLimit + generalSettings.horizontalEdgeMargin
+    }
+    
+    private var newViewSize: CGSize {
+        return CGSize(width: frame.width, height: estimateHeight)
+    }
+    
+    private var newFrame: CGRect {
+        return CGRect(origin: frame.origin, size: newViewSize)
+    }
+    
+    private var estimateHeight : CGFloat {
+        return (subviews.last?.frame.maxY ?? 0) + generalSettings.verticalEdgeMargin
+    }
+    //end
 }

@@ -1,5 +1,5 @@
 //
-//  Giuk_Main_Test_ViewController.swift
+//  Giuk_MainFrame_ViewController.swift
 //  Gi-ukForMoments
 //
 //  Created by goya on 30/05/2019.
@@ -7,12 +7,11 @@
 //
 
 import UIKit
+import CoreData
 
-class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateButtonViewButtonDataSource {
-
-    var transitionAnimator = FrameTransitioningDelegate()
+class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateButtonViewButtonDataSource, FrameTransitionDataSource, HashTagScrollViewDataSource, HashTagScrollViewDelegate {
     
-    //MARK: Variables for views
+    //MARK: subviews
     private(set) weak var animationView_Top: AnimateButtonView!
     
     private(set) weak var animationView_Right: AnimateButtonView!
@@ -21,27 +20,23 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     
     private(set) weak var containerView_MainContent: UIView!
     
+    private(set) weak var tagView: HashTagScrollView!
+    //end
+    
+    var container: NSPersistentContainer? = AppDelegate.persistentContainer
+    
+    var context: NSManagedObjectContext {
+        if let context = container?.viewContext {
+            return context
+        } else {
+            return AppDelegate.viewContext
+        }
+    }
+    
     //MARK: Variables for running animations
-    enum AnimationState {
-        case normal
-        case topContainerMode
-        case rightContainerMode
-        case settingMenuContainerMode
-    }
+    var transitionAnimator = FrameTransitioningDelegate()
     
-    enum AnimationCondition {
-        case extended
-        case collapsed
-    }
-    
-    var animationState: AnimationState = .normal
-    
-    var animationCondition: AnimationCondition = .collapsed
-    
-    var runningAnimations = [UIViewPropertyAnimator]()
-    
-    var animationProgressWhenInterrupted: CGFloat = 0
-    
+    var animationLoader = PropertyAnimationLoader()
     //end
 
     //MARK: Variables For Buttons
@@ -62,7 +57,6 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         let allbuttons = buttons[.top]! + buttons[.right]! + buttons[.rightTop]!
         return allbuttons
     }
-    
     //end
     
     override func viewDidLoad() {
@@ -70,7 +64,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         //for authorize - passcode or login
         authorized = true
         
-        //if authorize failed - create a VC for authorize
+        //if authorizing failed - create a VC for authorize
         requieredBehaviorWhenAuthrizeFailed = {
             [unowned self] in
             let newVC = Giuk_OpenFromFrame_ViewController()
@@ -81,15 +75,24 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
             self.openViewControllerFromRect(self.topOpeningFrame, viewController: newVC)
         }
         
-        //else
+        //set variables
         setButtonDataSource()
         transitionAnimator.animationDuration = animationDuration
         transitionAnimator.presentAnimationCurveStyle = .curveEaseOut
         transitionAnimator.dismissAnimationCurveStyle = .curveEaseOut
-        view.backgroundColor = .white
+        view.backgroundColor = .goyaWhite
         setContainers()
+        setTagView()
         setAnimationView()
         setAnimationBehaviorForInitailAnimation()
+        setAnimationBehaviorToAnimationLoader()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if !initailStage && authorized {
+            findAllTags()
+        }
     }
     
     override func viewWillLayoutSubviews() {
@@ -103,31 +106,37 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        if animationCondition == .collapsed {
+        if animationLoader.animationCondition == .collapsed {
             layoutContainers()
             layoutAnimationView()
+            layoutTagView()
         }
     }
     
-    //MARK: Main Button resources
-    
+    //MARK: Main Button datasource
     func containerViewButtonItem(_ containerView: AnimateButtonView) -> [UIButton_WithIdentifire] {
-        if containerView == animationView_Top {
-            return buttons[.top]!
-        } else if containerView == animationView_Right {
-            return buttons[.right]!
-        } else {
-            return buttons[.rightTop]!
+        switch containerView {
+        case animationView_Top :
+            return buttons[.top] ?? []
+        case animationView_Right :
+            return buttons[.right] ?? []
+        case animationView_Setting :
+            return buttons[.rightTop] ?? []
+        default:
+            return []
         }
     }
     
     func containerViewButtonAreaRect(_ containerView: AnimateButtonView) -> CGRect {
-        if containerView == animationView_Top {
+        switch containerView {
+        case animationView_Top :
             return containerView_Top_ButtonAreaFrame
-        } else if containerView == animationView_Right {
+        case animationView_Right :
             return containerView_Right_ButtonAreaFrame
-        } else {
+        case animationView_Setting :
             return containerView_Setting_ButtonAreaFrame
+        default:
+            return CGRect.zero
         }
     }
     
@@ -135,7 +144,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         var controlButtons = [UIButton_WithIdentifire]()
         let addButton = UIButton_WithIdentifire()
         addButton.identifire = buttonLocation.top.rawValue
-        addButton.setImage(UIImage(named: "GiukIcon-Add"), for: .normal)
+        addButton.setImage(UIImage(named: ButtonImageNames.ButtonName_Main_Add), for: .normal)
         addButton.addTarget(target, action: selector, for: forEvent)
         addButton.backgroundColor = .clear
         controlButtons.append(addButton)
@@ -146,7 +155,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         var controlButtons = [UIButton_WithIdentifire]()
         let addButton = UIButton_WithIdentifire()
         addButton.identifire = buttonLocation.right.rawValue
-        addButton.setImage(UIImage(named: "GiukIcon-Key"), for: .normal)
+        addButton.setImage(UIImage(named: ButtonImageNames.ButtonName_Main_Key), for: .normal)
         addButton.addTarget(target, action: selector, for: forEvent)
         addButton.backgroundColor = .clear
         controlButtons.append(addButton)
@@ -169,17 +178,15 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         buttons[.right] = buttonsForRight()
         buttons[.rightTop] = buttonsForRightTop()
     }
-    
     //end
     
-    //MARK: set Sub views - animationViews
-    
+    //MARK: setup Sub views
     private func setContainers() {
         let contentContainer = generateUIView(view: containerView_MainContent, origin: contentAreaOrigin_Start, size: contentAreaSize)
         containerView_MainContent = contentContainer
         containerView_MainContent.isOpaque = false
         containerView_MainContent.backgroundColor = .clear
-        exepctedMainView.addSubview(containerView_MainContent)
+        mainContainer.addSubview(containerView_MainContent)
     }
     
     private func layoutContainers() {
@@ -192,14 +199,14 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         animationView_Top.layer.backgroundColor = animationView_InitailBackgroundColor.cgColor
         animationView_Top.dataSource = self
         animationView_Top.isOpaque = false
-        exepctedMainView.addSubview(animationView_Top)
+        mainContainer.addSubview(animationView_Top)
         
         let rightAnimationView = generateUIView(view: animationView_Right, frame: rightAnimationViewFrame)
         animationView_Right = rightAnimationView
         animationView_Right.layer.backgroundColor = animationView_InitailBackgroundColor.cgColor
         animationView_Right.dataSource = self
         animationView_Right.isOpaque = false
-        exepctedMainView.addSubview(animationView_Right)
+        mainContainer.addSubview(animationView_Right)
         
         let settingAnimationView = generateUIView(view: animationView_Setting, frame: settingAnimationViewStartFrame)
         animationView_Setting = settingAnimationView
@@ -207,7 +214,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         animationView_Setting.buttonAlignType = .negativeAligned
         animationView_Setting.dataSource = self
         animationView_Setting.isOpaque = false
-        exepctedMainView.addSubview(animationView_Setting)
+        mainContainer.addSubview(animationView_Setting)
     }
     
     private func layoutAnimationView() {
@@ -215,17 +222,15 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         animationView_Right?.setNewFrame(rightAnimationViewFrame)
         animationView_Setting?.setNewFrame(settingAnimationViewStartFrame)
     }
-    
     //end
     
     //MARK: Initial animation behavior
-    
     func setAnimationBehaviorForInitailAnimation() {
         requieredAnimationWithInInitialStage = { [unowned self] in
-            if self.animationCondition == .collapsed {
+            if self.animationLoader.animationCondition == .collapsed {
                 self.layoutContainers()
                 self.layoutAnimationView()
-                self.view.backgroundColor = .goyaDarkWhite
+                self.view.backgroundColor = .goyaYellowWhite
                 self.animationView_Top.setNewFrame(
                     self.initialAnimationFrameFor_TopAnimationView(self.initialAnimationFrame_Big)
                         .offSetBy(dX: self.fixedOriginXForInitialAnimation, dY: 0)
@@ -245,19 +250,23 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
                 self.allButtons.forEach({ (button) in
                     button.alpha = 1
                 })
-            }, completion: nil)
+                self.tagView.alpha = 1
+            }, completion: {(finished) in
+                self.findAllTags()
+            })
         }
     }
     //end
     
     //MARK: Presenting ViewController for Button Identifire
-    
     func viewControllerForButtonIdentifire(_ identifire: String) -> Giuk_OpenFromFrame_ViewController? {
         switch identifire {
         case buttonLocation.top.rawValue:
-            return WriteSectionViewController()
+            let newVC = WriteSectionViewController()
+            newVC.isEditOnly = false
+            return newVC
         case buttonLocation.right.rawValue:
-            let newVC = Giuk_OpenFromFrame_ViewController()
+            let newVC = WriteSectionViewController()
             newVC.view.backgroundColor = .GiukBackgroundColor_depth_1
             return newVC
         case buttonLocation.rightTop.rawValue:
@@ -288,162 +297,223 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         present(viewController, animated: true)
     }
     
-    func closingActionWhenPresentedViewControllerDismissed() {
-        animationState = .normal
-        animationCondition = .collapsed
-        startInteractiveTransition(state: animationState, duration: animationDuration)
-        endTransition()
+    private func openViewControllerFromRect(_ rect: CGRect, viewController: UIViewController, duration: TimeInterval) {
+        transitionAnimator.setOpeningFrameWithRect(rect)
+        transitionAnimator.animationDuration = duration
+        viewController.transitioningDelegate = transitionAnimator
+        present(viewController, animated: true)
     }
     
     private func requestedViewControllerWithButtonIdentifire(_ identifire: String) -> Giuk_OpenFromFrame_ViewController? {
         var newVC : Giuk_OpenFromFrame_ViewController?
         func setFrameViewControllerClosingFunction(_ controller: Giuk_OpenFromFrame_ViewController?) {
             controller?.closingFunction = {
-                [unowned self] in
-                self.closingActionWhenPresentedViewControllerDismissed()
+                [weak self] in
+                self?.closingActionWhenPresentedViewControllerDismissed()
             }
         }
         newVC = viewControllerForButtonIdentifire(identifire)
         setFrameViewControllerClosingFunction(newVC)
         return newVC
     }
+    
+    func closingActionWhenPresentedViewControllerDismissed() {
+        performAnimationWithState(.normal, duration: animationDuration)
+    }
+    //end
+    
+    //MARK: Presneting ViewController AnimationSettings - frametransitiondatasource
+    func completionAction_ToViewController(_ viewController: UIViewController) {
+        if let controller = viewController as? WriteSectionViewController {
+            UIView.animate(withDuration: 0.3) {
+                controller.writingSection.alpha = 1
+                controller.closeButton.alpha = 1
+            }
+        } else if let controller = viewController as? GiukViewerViewController {
+            UIView.animate(withDuration: 0.3) {
+                controller.collectionView.alpha = 1
+                controller.closeButton.alpha = 1
+            }
+        }
+    }
+    
+    func initialAction_ToViewController(_ viewController: UIViewController) {
+        if let controller = viewController as? WriteSectionViewController {
+            controller.writingSection.alpha = 0
+            controller.closeButton.alpha = 0
+        } else if let controller = viewController as? GiukViewerViewController{
+            controller.collectionView.alpha = 0
+            controller.closeButton.alpha = 0
+        }
+    }
     //end
     
     //MARK: Container trigger button action
     @objc private func handleOntap(_ sender: UIButton_WithIdentifire) {
         let identifire = sender.identifire
-        setAnimateStateForButtonIdentifire(identifire)
         if let newVC = requestedViewControllerWithButtonIdentifire(identifire) {
             openViewControllerFromRect(openingFrameForButtonIdentifire(identifire), viewController: newVC)
         }
-        startInteractiveTransition(state: self.animationState, duration: animationDuration)
-        endTransition()
-    }
-    
-    private func backToNormalStateAction() {
-        animationState = .normal
-        animationCondition = .collapsed
-        startInteractiveTransition(state: self.animationState, duration: animationDuration)
-        endTransition()
+        setAnimateStateForButtonIdentifire(identifire)
+        performAnimationWithState(self.animationLoader.animationState)
     }
     
     func setAnimateStateForButtonIdentifire(_ identifire: String) {
-        switch identifire {
-        case buttonLocation.top.rawValue:
-            if animationState == .normal {
-                animationState = .topContainerMode
-                animationCondition = .extended
-            } else {
-                return
+        if animationLoader.animationState == .normal {
+            switch identifire {
+            case buttonLocation.top.rawValue:
+                animationLoader.animationState = .topContainerMode
+            case buttonLocation.right.rawValue:
+                animationLoader.animationState = .rightContainerMode
+            case buttonLocation.rightTop.rawValue:
+                animationLoader.animationState = .settingMenuContainerMode
+            default:
+                break
             }
-        case buttonLocation.right.rawValue:
-            if animationState == .normal {
-                animationState = .rightContainerMode
-                animationCondition = .extended
-            } else {
-                return
-            }
-        case buttonLocation.rightTop.rawValue:
-            if animationState == .normal {
-                animationState = .settingMenuContainerMode
-                animationCondition = .extended
-            } else {
-                return
-            }
-        default:
-            break
         }
     }
     //end
     
-    //MARK: testing codes
+    //MARK: testing core data
+    private func setTagView() {
+        let newTagView = generateUIView(view: tagView, frame: containerView_MainContent.bounds)
+        tagView = newTagView
+        tagView.hashTagScrollViewDelegate = self
+        tagView.dataSource = self
+        containerView_MainContent.addSubview(tagView)
+    }
+    
+    private func layoutTagView() {
+        tagView?.setNewFrame(containerView_MainContent.bounds)
+    }
+    
+    func findAllTags() {
+        tags = Tag.findAllTags(context: AppDelegate.viewContext)
+    }
+    
+    var tags: [String]? {
+        didSet {
+            tagView.reloadData()
+        }
+    }
+    
+    func hashTagScrollView_tagItems(_ hashTagScrollView: HashTagScrollView) -> [String]? {
+        return tags
+    }
+    
+    func hashTagScrollView(_ hashTagScrollView: HashTagScrollView, didSelectItemAt item: Int, tag: String) {
+        let identifire = "right"
+        setAnimateStateForButtonIdentifire(identifire)
+        let newVC = GiukViewerViewController()
+        newVC.closingFunction = {
+            [weak self] in
+            self?.closingActionWhenPresentedViewControllerDismissed()
+        }
+        newVC.view.backgroundColor = .GiukBackgroundColor_depth_1
+        
+        //should create tag on main vc? or just passing tagString to present vc.. hm...
+        let targetTag = Tag.findTagFromTagName(context: context, tagName: tag)
+        newVC.tag = targetTag
+        openViewControllerFromRect(openingFrameForButtonIdentifire(identifire), viewController: newVC)
+        animationLoader.startInteractiveTransition(state: self.animationLoader.animationState, duration: animationDuration)
+        animationLoader.endTransition()
+    }
+    
+    func hashTagScrollView(_ hashTagScrollView: HashTagScrollView, didLongPressedItemAt item: Int, tag: String) {
+        let alert = UIAlertController(title: "DELETE “\(tag)”", message: "related giuk could be deleted together\nif it has no links to other tags", preferredStyle: .alert)
+        let confirmButton = UIAlertAction(title: "Delete", style: .destructive) { (action) in
+            let context = self.context
+            Tag.findTagFromTagName(context: context, tagName: tag)?.delete(context: context) {
+                [weak self] in
+                self?.findAllTags()
+            }
+        }
+        let cancelButton = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        alert.addAction(cancelButton)
+        alert.addAction(confirmButton)
+        
+        present(alert, animated: true)
+    }
+    //end
 }
 
+
+
 extension Giuk_MainFrame_ViewController {
-    //MARK: Running animation part
-    func startInteractiveTransition(state: AnimationState, duration: TimeInterval, completion: (()->Void)? = nil) {
-        if runningAnimations.isEmpty {
-            animationTranstionIfNeeded(state: state, duration: duration, completion: completion)
-        }
-        for animator in runningAnimations {
-            animator.pauseAnimation()
-            animationProgressWhenInterrupted = animator.fractionComplete
-        }
-    }
-    
-    func updateTranstion(fractionCompleted: CGFloat) {
-        for animator in runningAnimations {
-            animator.fractionComplete = fractionCompleted + animationProgressWhenInterrupted
-        }
-    }
-    
-    func endTransition(completion: (()->Void)? = nil) {
-        for animator in runningAnimations {
-            animator.continueAnimation(withTimingParameters: nil, durationFactor: 0)
-        }
-        completion?()
-    }
-    
-    func animationTranstionIfNeeded(state: AnimationState, duration: TimeInterval, completion: (()->Void)? = nil) {
-        if runningAnimations.isEmpty {
-            
+    //MARK: set animation part
+    func setAnimationBehaviorToAnimationLoader() {
+        animationLoader.settings_BeforeAnimationStarts = {
+            [unowned self] (state) in
             self.containerView_MainContent.isUserInteractionEnabled = false
             
             if state != .normal {
                 self.allButtons.forEach{ $0.alpha = 0 }
             }
-            
-//            let frameAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1)
-//            let frameAnimator = UIViewPropertyAnimator(duration: duration, curve: .easeInOut)
-            let frameAnimator = UIViewPropertyAnimator(duration: duration, curve: .easeOut) {
-                [unowned self] in
-                switch state {
-                case .normal :
-                    self.animationView_Top.frame = self.topAnimationViewStartFrame
-                    self.animationView_Right.frame = self.rightAnimationViewStartFrame
-                    self.animationView_Setting.frame = self.settingAnimationViewStartFrame
-                    
-                    self.containerView_MainContent.frame.origin = self.contentAreaOrigin_Start
-                    
-                case .topContainerMode :
-                    self.animationView_Top.frame = self.animationViewAnimatedFrame_Extended
-                    self.animationView_Right.frame = self.rightAnimationViewAnimatedFrame_Collapsed
-                    self.animationView_Setting.frame = self.settingAnimationViewAnimatedFrame_Collapsed_TopAnimationViewExtendedCase
-                    
-                    self.containerView_MainContent.frame.origin = self.contentAreaOrigin_Collapsed_TopContainerExtended
-                    
-                case .rightContainerMode :
-                    self.animationView_Top.frame = self.topAnimationViewAnimatedFrame_Collapsed
-                    self.animationView_Right.frame = self.animationViewAnimatedFrame_Extended
-                    self.animationView_Setting.frame = self.settingAnimationViewAnimatedFrame_Collapsed_RightAnimationViewExtendedCase
-                    
-                    self.containerView_MainContent.frame.origin = self.contentAreaOrigin_Collapsed_RightContainerExtended
-                    
-                case .settingMenuContainerMode:
-                    self.animationView_Top.frame = self.animationViewAnimatedFrame_Extended
-                    self.animationView_Right.frame = self.animationViewAnimatedFrame_Extended
-                    self.animationView_Setting.frame = self.animationViewAnimatedFrame_Extended
-                    
-                    self.containerView_MainContent.frame.origin = self.contentAreaOrigin_Collapsed_SettingContainerExtended
-                }
+        }
+        
+        animationLoader.settings_Animations = {
+            [unowned self] (state) in
+            print("animationcalled")
+            switch state {
+            case .normal :
+                self.animationView_Top.frame = self.topAnimationViewStartFrame
+                self.animationView_Right.frame = self.rightAnimationViewStartFrame
+                self.animationView_Setting.frame = self.settingAnimationViewStartFrame
+                
+                self.containerView_MainContent.frame.origin = self.contentAreaOrigin_Start
+                
+            case .topContainerMode :
+                self.animationView_Top.frame = self.animationViewAnimatedFrame_Extended
+                self.animationView_Right.frame = self.rightAnimationViewAnimatedFrame_Collapsed
+                self.animationView_Setting.frame = self.settingAnimationViewAnimatedFrame_Collapsed_TopAnimationViewExtendedCase
+                
+                self.containerView_MainContent.frame.origin = self.contentAreaOrigin_Collapsed_TopContainerExtended
+                
+            case .rightContainerMode :
+                self.animationView_Top.frame = self.topAnimationViewAnimatedFrame_Collapsed
+                self.animationView_Right.frame = self.animationViewAnimatedFrame_Extended
+                self.animationView_Setting.frame = self.settingAnimationViewAnimatedFrame_Collapsed_RightAnimationViewExtendedCase
+                
+                self.containerView_MainContent.frame.origin = self.contentAreaOrigin_Collapsed_RightContainerExtended
+                
+            case .settingMenuContainerMode:
+                self.animationView_Top.frame = self.animationViewAnimatedFrame_Extended
+                self.animationView_Right.frame = self.animationViewAnimatedFrame_Extended
+                self.animationView_Setting.frame = self.animationViewAnimatedFrame_Extended
+                
+                self.containerView_MainContent.frame.origin = self.contentAreaOrigin_Collapsed_SettingContainerExtended
             }
-            
-            frameAnimator.startAnimation()
-            runningAnimations.append(frameAnimator)
-            
-            //when animation ended
-            frameAnimator.addCompletion { [unowned self] (_) in
-                self.runningAnimations.removeAll()
-                if state == .normal {
-                    UIView.animate(withDuration: 0.25, animations: {
-                        self.allButtons.forEach{ $0.alpha = 1 }
-                    })
-                }
-                completion?()
+        }
+        
+        animationLoader.settings_Completion = {
+            [unowned self] (state) in
+            self.containerView_MainContent.isUserInteractionEnabled = true
+            if state == .normal {
+                UIView.animate(withDuration: 0.25, animations: {
+                    self.allButtons.forEach{ $0.alpha = 1 }
+                })
             }
-            //
         }
     }
+    
+    //MARK: animation functions
+    private func performAnimationWithState(_ state: PropertyAnimationLoader.AnimationState) {
+        animationLoader.animationState = state
+        animationLoader.startInteractiveTransition(state: animationLoader.animationState, duration: animationDuration)
+        animationLoader.endTransition()
+    }
+    
+    private func performAnimationWithState(_ state: PropertyAnimationLoader.AnimationState, duration: TimeInterval) {
+        animationLoader.animationState = state
+        animationLoader.startInteractiveTransition(state: animationLoader.animationState, duration: duration)
+        animationLoader.endTransition()
+    }
+    
+    private func backToNormalState() {
+        performAnimationWithState(.normal)
+    }
+    //end
     //end
 }
 
@@ -451,7 +521,7 @@ extension Giuk_MainFrame_ViewController {
     
     //MARK: Computed Frame resource part
     
-    //MARK: frame for initial animation
+    //MARK: Grid for initial animation
     var initialAnimationFrame_small: CGRect {
         let viewFrame = view.frame
         let height = viewFrame.height * 0.1618
@@ -466,7 +536,6 @@ extension Giuk_MainFrame_ViewController {
     var initialAnimationFrame_Big: CGRect {
         let ratioFactor: CGFloat = 50/(50 - 23.177)
         let expectedFactor = (fullFrameSize.height - estimateTopContainerHeight)
-        
         let height = expectedFactor * ratioFactor
         let width = height*3/4
         let size = CGSize(width: width, height: height)
@@ -500,11 +569,7 @@ extension Giuk_MainFrame_ViewController {
     //end
     
     
-    //MARK: AnimationView setting values
-    var exepctedMainView: UIView! {
-        return view
-    }
-    
+    //MARK: Animation values
     var animationDuration: TimeInterval {
         return 0.5
     }
@@ -539,9 +604,13 @@ extension Giuk_MainFrame_ViewController {
     }
     //end
     
-    //anchor factors
+    //MARK: Basic Grid values
+    var mainContainer: UIView! {
+        return view
+    }
+    
     var fullFrameSize: CGSize {
-        return exepctedMainView?.frame.size ?? CGSize.zero
+        return mainContainer?.frame.size ?? CGSize.zero
     }
     
     var fullFrameRatio: CGFloat {
@@ -565,7 +634,7 @@ extension Giuk_MainFrame_ViewController {
     }
     
     var rightAnimationViewAreaWidth: CGFloat {
-        return topAnimationViewAreaHeight * 0.618
+        return topAnimationViewAreaHeight * 0.75
     }
     
     var estimateTopContainerHeight: CGFloat {
@@ -656,7 +725,7 @@ extension Giuk_MainFrame_ViewController {
     
     var rightOpeningFrame: CGRect {
         let estimateHeight = fullFrameSize.height - estimateTopContainerHeight
-        let estimateWidth = estimateHeight / fullViewRatio
+        let estimateWidth = estimateHeight * fullViewRatio
         return CGRect(x: fullFrameSize.width, y: estimateTopContainerHeight, width: estimateWidth, height: estimateHeight)
     }
     

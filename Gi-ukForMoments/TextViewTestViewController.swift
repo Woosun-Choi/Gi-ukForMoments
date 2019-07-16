@@ -23,7 +23,7 @@ class TextViewTestViewController: UIViewController, TagGeneratorDelegate {
         tagGenerator.reloadData()
     }
     
-    func tagGenerator_DidEndEditNewTag(_ tagGenerator: TagGenerator, senderTextField: UITextField, text: String) {
+    func tagGenerator_DidEndEditNewTag(_ tagGenerator: TagGenerator, senderTextField: UITextField, text: String?) {
         print(text)
     }
 

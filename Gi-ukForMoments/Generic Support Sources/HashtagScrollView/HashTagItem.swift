@@ -8,12 +8,20 @@
 
 import UIKit
 
-protocol HashTagDelegate : class {
-//    func requestHashTagAction(_ tag: String, editType type: HashTagItemView.requestedHashTagManagement)
-    func hashTagItem(_ tagItemView: HashTagItem, selectedTag tag: String)
+@objc protocol HashTagDelegate: class {
+    @objc optional func hashTagItem(_ tagItemView: HashTagItem, selectedTag tag: String)
+    @objc optional func hashTagItem(_ tagItemView: HashTagItem, longPressed tag: String)
 }
 
 class HashTagItem: UIView {
+    
+    var fontSize: CGFloat = 12 {
+        didSet {
+            setNeedsLayout()
+        }
+    }
+    
+    var printOutFrameInformation: Bool = false
     
     weak var delegate : HashTagDelegate?
     
@@ -23,7 +31,7 @@ class HashTagItem: UIView {
     
     private(set) var tagString : String?
     
-    var contentColor = UIColor.lightGray {
+    var contentColor = UIColor.goyaFontColor {
         didSet {
             setNeedsDisplay()
         }
@@ -47,23 +55,35 @@ class HashTagItem: UIView {
         return NSAttributedString(string: string, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle,.font: font])
     }
     
-    private func createTagItem() {
+    private func createTagItem(_ withHashMark: Bool = false) {
         
         guard let tag = tagString else { return }
-        let targetTag = "# " + tag
-        let targetString = centeredAttributedString(targetTag, fontSize: generalSettings.fontSize)
+        var targetTag = tag
+        if withHashMark {
+            targetTag = "# " + tag
+        }
+        let targetString = centeredAttributedString(targetTag, fontSize: fontSize)
         let targetSize = targetString.size()
         
         var width: CGFloat {
             let expectedSize = targetSize.width
-            if let limit = widthLimit {
+            if let limit = widthLimit, limit > 0 {
                 let actualLimit = limit - (generalSettings.leftAndRightMargins * 2)
                 if expectedSize >= actualLimit {
+                    if printOutFrameInformation {
+                        print("limit = \(limit), actualLimit = \(actualLimit)")
+                    }
                     return actualLimit
                 } else {
+                    if printOutFrameInformation {
+                        print("limit = \(limit), expextedsize = \(expectedSize)")
+                    }
                     return expectedSize
                 }
             } else {
+                if printOutFrameInformation {
+                    print("limit = nil, expextedsize = \(expectedSize)")
+                }
                 return expectedSize
             }
         }
@@ -82,19 +102,39 @@ class HashTagItem: UIView {
     }
     
     private func addGesture() {
-        let gesture = UITapGestureRecognizer(target: self, action: #selector(returnTagString(_:)))
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(tapGestureActivated(_:)))
         self.addGestureRecognizer(gesture)
     }
     
-    @objc private func returnTagString(_ gesture: UIGestureRecognizer) {
+    private func addPressGesture() {
+        let gesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressGestureActivated(_:)))
+        addGestureRecognizer(gesture)
+    }
+    
+    @objc private func longPressGestureActivated(_ gesture: UILongPressGestureRecognizer) {
         switch gesture.state {
-        case .ended:
+        case .began:
             if let tag = tagString {
-                delegate?.hashTagItem(self ,selectedTag: tag)
+                delegate?.hashTagItem?(self, longPressed: tag)
             }
         default:
             break
         }
+    }
+    
+    @objc private func tapGestureActivated(_ gesture: UITapGestureRecognizer) {
+        switch gesture.state {
+        case .ended:
+            if let tag = tagString {
+                delegate?.hashTagItem?(self ,selectedTag: tag)
+            }
+        default:
+            break
+        }
+    }
+    
+    override func layoutSubviews() {
+        createTagItem()
     }
     
     override func draw(_ rect: CGRect) {
@@ -109,6 +149,7 @@ class HashTagItem: UIView {
         backgroundColor = UIColor.clear
         isOpaque = false
         addGesture()
+        addPressGesture()
         setTagLabel()
     }
     
@@ -117,6 +158,7 @@ class HashTagItem: UIView {
         backgroundColor = UIColor.clear
         isOpaque = false
         addGesture()
+        addPressGesture()
         setTagLabel()
     }
 }
@@ -131,8 +173,8 @@ extension HashTagItem {
     
     fileprivate struct generalSettings {
         static var fontSize : CGFloat = 12
-        static var textColor = UIColor.white
-        static var textBackground = UIColor.lightGray.cgColor
+        static var textColor = UIColor.goyaWhite
+        static var textBackground = UIColor.GiukBackgroundColor_depth_1.cgColor
         static var leftAndRightMargins : CGFloat = 8
         static var topAndBottomMargins : CGFloat = 5
         static var cornerRadiusRatio : CGFloat = 1
@@ -147,12 +189,20 @@ extension HashTagItem {
         tagString = tag
         createTagItem()
     }
+    
+    convenience init(limitWidth width: CGFloat, tag: String, fontSize: CGFloat) {
+        self.init()
+        self.widthLimit = width
+        self.tagString = tag
+        self.fontSize = fontSize
+        createTagItem()
+    }
 
     convenience init(limitWidth width: CGFloat, tag: String, fontSize: CGFloat = 11, textColor: UIColor = UIColor.white, backgroundColor: CGColor = UIColor.lightGray.cgColor, leftAndRightMargins: CGFloat = 8, topAndBottomMargins: CGFloat = 5, cornerRadiusRatio: CGFloat = 100) {
         self.init()
         widthLimit = width
         tagString = tag
-        generalSettings.fontSize = fontSize
+        self.fontSize = fontSize
         generalSettings.textColor = textColor
         generalSettings.textBackground = backgroundColor
         generalSettings.leftAndRightMargins = leftAndRightMargins

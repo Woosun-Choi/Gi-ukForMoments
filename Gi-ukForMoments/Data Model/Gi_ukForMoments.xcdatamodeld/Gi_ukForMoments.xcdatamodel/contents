@@ -1,4 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <elements/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14490.99" systemVersion="18E226" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Giuk" representedClassName=".Giuk" syncable="YES" codeGenerationType="category">
+        <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="identifire" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="image" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Image" inverseName="giuk" inverseEntity="Image" syncable="YES"/>
+        <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="giuks" inverseEntity="Tag" syncable="YES"/>
+        <relationship name="text" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Text" inverseName="giuk" inverseEntity="Text" syncable="YES"/>
+        <relationship name="thumbnail" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ThumbnailImage" inverseName="giuk" inverseEntity="ThumbnailImage" syncable="YES"/>
+    </entity>
+    <entity name="Image" representedClassName=".Image" syncable="YES" codeGenerationType="category">
+        <attribute name="imageData" optional="YES" attributeType="Binary" syncable="YES"/>
+        <relationship name="giuk" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Giuk" inverseName="image" inverseEntity="Giuk" syncable="YES"/>
+    </entity>
+    <entity name="Tag" representedClassName=".Tag" syncable="YES" codeGenerationType="category">
+        <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="giukIndex" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="tagName" attributeType="String" syncable="YES"/>
+        <relationship name="giuks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Giuk" inverseName="tags" inverseEntity="Giuk" syncable="YES"/>
+    </entity>
+    <entity name="Text" representedClassName=".Text" syncable="YES" codeGenerationType="category">
+        <attribute name="textData" optional="YES" attributeType="Binary" syncable="YES"/>
+        <relationship name="giuk" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Giuk" inverseName="text" inverseEntity="Giuk" syncable="YES"/>
+    </entity>
+    <entity name="ThumbnailImage" representedClassName=".ThumbnailImage" syncable="YES" codeGenerationType="category">
+        <attribute name="thumbnailImageData" optional="YES" attributeType="Binary" syncable="YES"/>
+        <relationship name="giuk" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Giuk" inverseName="thumbnail" inverseEntity="Giuk" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Tag" positionX="-1653.2890625" positionY="-686.28125" width="128" height="103"/>
+        <element name="Giuk" positionX="-2059.91796875" positionY="-786.52734375" width="128" height="133"/>
+        <element name="Image" positionX="-1852.8515625" positionY="-463.7265625" width="128" height="73"/>
+        <element name="Text" positionX="-1802.265625" positionY="-554.21484375" width="128" height="73"/>
+        <element name="ThumbnailImage" positionX="-1913.15625" positionY="-370.546875" width="128" height="73"/>
+    </elements>
 </model>

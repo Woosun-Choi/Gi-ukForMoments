@@ -48,7 +48,7 @@
                                 </constraints>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" red="0.95294117647058818" green="0.95294117647058818" blue="0.95294117647058818" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="BnT-54-Wfh" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="a2L-vp-ypF"/>
                             <constraint firstItem="BnT-54-Wfh" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="uqH-PI-b66"/>
