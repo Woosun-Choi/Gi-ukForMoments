@@ -11,6 +11,16 @@ import CoreData
 
 class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateButtonViewButtonDataSource, FrameTransitionDataSource, HashTagScrollViewDataSource, HashTagScrollViewDelegate {
     
+    //MARK: screenversion?
+    var isFullScreenVersion: Bool = true {
+        didSet {
+            UIView.animate(withDuration: 0.25) {
+                [unowned self] in
+                self.viewDidLayoutSubviews()
+            }
+        }
+    }
+    
     //MARK: subviews
     private(set) weak var animationView_Top: AnimateButtonView!
     
@@ -22,6 +32,10 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     
     private(set) weak var tagView: HashTagScrollView!
     //end
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     
     var container: NSPersistentContainer? = AppDelegate.persistentContainer
     
@@ -101,6 +115,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
             allButtons.forEach { (button) in
                 button.alpha = 0
             }
+            tagView.alpha = 0
         }
     }
     
@@ -159,7 +174,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         addButton.addTarget(target, action: selector, for: forEvent)
         addButton.backgroundColor = .clear
         controlButtons.append(addButton)
-        return controlButtons
+        return []
     }
     
     func buttonsForRightTop(target: Any = self ,selector: Selector = #selector(handleOntap(_:)), forEvent: UIControl.Event = .touchUpInside) -> [UIButton_WithIdentifire] {
@@ -170,7 +185,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         addButton.addTarget(target, action: selector, for: forEvent)
         addButton.backgroundColor = .clear
         controlButtons.append(addButton)
-        return controlButtons
+        return []
     }
     
     private func setButtonDataSource() {
@@ -198,6 +213,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         animationView_Top = topAnimationView
         animationView_Top.layer.backgroundColor = animationView_InitailBackgroundColor.cgColor
         animationView_Top.dataSource = self
+        animationView_Top.buttonAlignType = .centered
         animationView_Top.isOpaque = false
         mainContainer.addSubview(animationView_Top)
         
@@ -331,8 +347,9 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
             }
         } else if let controller = viewController as? GiukViewerViewController {
             UIView.animate(withDuration: 0.3) {
-                controller.collectionView.alpha = 1
+                controller.giukPresentCollectionView.alpha = 1
                 controller.closeButton.alpha = 1
+                controller.editButton?.alpha = 1
             }
         }
     }
@@ -342,8 +359,9 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
             controller.writingSection.alpha = 0
             controller.closeButton.alpha = 0
         } else if let controller = viewController as? GiukViewerViewController{
-            controller.collectionView.alpha = 0
+            controller.giukPresentCollectionView.alpha = 0
             controller.closeButton.alpha = 0
+            controller.editButton?.alpha = 0
         }
     }
     //end
@@ -380,6 +398,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         tagView = newTagView
         tagView.hashTagScrollViewDelegate = self
         tagView.dataSource = self
+//        tagView.backgroundColor = UIColor(patternImage: UIImage(named: "GiukBackground")!)
         containerView_MainContent.addSubview(tagView)
     }
     
@@ -391,9 +410,19 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         tags = Tag.findAllTags(context: AppDelegate.viewContext)
     }
     
-    var tags: [String]? {
+    var _tags: [String]? {
         didSet {
-            tagView.reloadData()
+            tagView.reloadData(animate: true, duration: 0.45)
+        }
+    }
+    
+    var tags: [String]? {
+        get {
+            return _tags
+        } set {
+            if newValue != _tags {
+                _tags = newValue
+            }
         }
     }
     
@@ -460,30 +489,33 @@ extension Giuk_MainFrame_ViewController {
                 self.animationView_Top.frame = self.topAnimationViewStartFrame
                 self.animationView_Right.frame = self.rightAnimationViewStartFrame
                 self.animationView_Setting.frame = self.settingAnimationViewStartFrame
-                
-                self.containerView_MainContent.frame.origin = self.contentAreaOrigin_Start
+                self.containerView_MainContent.frame = self.contentAreaFrame_start
+//                self.containerView_MainContent.frame.origin = self.contentAreaOrigin_Start
                 
             case .topContainerMode :
                 self.animationView_Top.frame = self.animationViewAnimatedFrame_Extended
                 self.animationView_Right.frame = self.rightAnimationViewAnimatedFrame_Collapsed
                 self.animationView_Setting.frame = self.settingAnimationViewAnimatedFrame_Collapsed_TopAnimationViewExtendedCase
-                
-                self.containerView_MainContent.frame.origin = self.contentAreaOrigin_Collapsed_TopContainerExtended
+                self.containerView_MainContent.frame = self.contentAreaFrame_Collapsed_TopContainerExtended
+//                self.containerView_MainContent.frame.origin = self.contentAreaOrigin_Collapsed_TopContainerExtended
                 
             case .rightContainerMode :
                 self.animationView_Top.frame = self.topAnimationViewAnimatedFrame_Collapsed
                 self.animationView_Right.frame = self.animationViewAnimatedFrame_Extended
                 self.animationView_Setting.frame = self.settingAnimationViewAnimatedFrame_Collapsed_RightAnimationViewExtendedCase
+                self.containerView_MainContent.frame = self.contentAreaFrame_Collapsed_RightContainerExtended
                 
-                self.containerView_MainContent.frame.origin = self.contentAreaOrigin_Collapsed_RightContainerExtended
+//                self.containerView_MainContent.frame.origin = self.contentAreaOrigin_Collapsed_RightContainerExtended
                 
             case .settingMenuContainerMode:
                 self.animationView_Top.frame = self.animationViewAnimatedFrame_Extended
                 self.animationView_Right.frame = self.animationViewAnimatedFrame_Extended
                 self.animationView_Setting.frame = self.animationViewAnimatedFrame_Extended
-                
-                self.containerView_MainContent.frame.origin = self.contentAreaOrigin_Collapsed_SettingContainerExtended
+                self.containerView_MainContent.frame = self.contentAreaFrame_Collapsed_SettingContainerExtended
+//                self.containerView_MainContent.frame.origin = self.contentAreaOrigin_Collapsed_SettingContainerExtended
             }
+            
+            self.tagView.frame = self.containerView_MainContent.bounds
         }
         
         animationLoader.settings_Completion = {
@@ -630,11 +662,15 @@ extension Giuk_MainFrame_ViewController {
     }
     
     var topAnimationViewAreaHeight: CGFloat {
-        return max(fullFrameSize.height * 0.0818, 50)
+        return max(fullFrameSize.height * 0.0818, 45)
     }
     
     var rightAnimationViewAreaWidth: CGFloat {
-        return topAnimationViewAreaHeight * 0.75
+        if isFullScreenVersion {
+            return 0
+        } else {
+            return topAnimationViewAreaHeight * 0.618
+        }
     }
     
     var estimateTopContainerHeight: CGFloat {
@@ -744,6 +780,18 @@ extension Giuk_MainFrame_ViewController {
         return CGSize(width: width, height: height)
     }
     
+    var contentAreaSize_TopContainerExtended: CGSize {
+        let width: CGFloat = view.frame.width
+        let height: CGFloat = contentAreaSize.height
+        return CGSize(width: width, height: height)
+    }
+    
+    var contentAreaSize_RightContainerExtended: CGSize {
+        let width: CGFloat = contentAreaSize.width
+        let height: CGFloat = view.frame.height
+        return CGSize(width: width, height: height)
+    }
+    
     var contentAreaOrigin_Start: CGPoint {
         let originY: CGFloat = view.frame.height - contentAreaSize.height
         return CGPoint(x: 0, y: originY)
@@ -754,7 +802,7 @@ extension Giuk_MainFrame_ViewController {
     }
     
     var contentAreaOrigin_Collapsed_RightContainerExtended: CGPoint {
-        return CGPoint(x: -contentAreaSize.width, y: contentAreaOrigin_Start.y)
+        return CGPoint(x: -contentAreaSize.width, y: 0)
     }
     
     var contentAreaOrigin_Collapsed_SettingContainerExtended: CGPoint {
@@ -763,17 +811,41 @@ extension Giuk_MainFrame_ViewController {
         return CGPoint(x: originX, y: originY)
     }
     
+    var contentAreaFrame_start: CGRect {
+        return CGRect(origin: contentAreaOrigin_Start, size: contentAreaSize)
+    }
+    
+    var contentAreaFrame_Collapsed_TopContainerExtended: CGRect {
+        return CGRect(origin: contentAreaOrigin_Collapsed_TopContainerExtended, size: contentAreaSize_TopContainerExtended)
+    }
+    
+    var contentAreaFrame_Collapsed_RightContainerExtended: CGRect {
+        return CGRect(origin: contentAreaOrigin_Collapsed_RightContainerExtended, size: contentAreaSize_RightContainerExtended)
+    }
+    
+    var contentAreaFrame_Collapsed_SettingContainerExtended: CGRect {
+        return CGRect(origin: contentAreaOrigin_Collapsed_SettingContainerExtended, size: contentAreaSize)
+    }
+    
     //Button area frames
     
     var estimateButtonMarign: CGFloat {
         return 5
     }
     
+    var estimateTopButtonMarign: CGFloat {
+        return 10
+    }
+    
+    var estimateButtonSizeFactor: CGFloat {
+        return containerView_Right_ButtonAreaFrame.width
+    }
+    
     var containerView_Top_ButtonAreaFrame: CGRect {
-        let topTriggerSizeHeight = min(CGFloat(45), (topAnimationViewAreaHeight - (estimateButtonMarign*2)))
-        let topTriggerSizeWidth = fullFrameSize.width - rightAnimationViewAreaWidth - (estimateButtonMarign*2) - 16
-        let topTriggerOriginX = estimateButtonMarign + 8
-        let topTriggrtOriginY = animationView_Top.bounds.height - estimateButtonMarign - topTriggerSizeHeight
+        let topTriggerSizeHeight = min(CGFloat(40), (topAnimationViewAreaHeight - (estimateTopButtonMarign*2)))
+        let topTriggerSizeWidth = fullFrameSize.width - rightAnimationViewAreaWidth - (estimateTopButtonMarign*2) - 16
+        let topTriggerOriginX = estimateTopButtonMarign + 8
+        let topTriggrtOriginY = animationView_Top.bounds.height - estimateTopButtonMarign - topTriggerSizeHeight
         return CGRect(origin: CGPoint(x: topTriggerOriginX, y: topTriggrtOriginY), size: CGSize(width: topTriggerSizeWidth, height: topTriggerSizeHeight))
     }
     

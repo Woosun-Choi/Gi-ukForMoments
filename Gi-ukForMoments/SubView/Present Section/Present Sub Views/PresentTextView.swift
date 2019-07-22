@@ -12,7 +12,7 @@ class PresentTextView: UIView {
     
     weak var backgroundView: UIView!
     
-    weak var textView: UITextView!
+    weak var textView: adad!
     
     var textData: TextInformation? {
         didSet {
@@ -28,10 +28,14 @@ class PresentTextView: UIView {
                     break
                 }
                 textView.text = data.comment
-                sizeToFitTextView()
+                if isCenteredPresenting {
+                    sizeToFitTextView()
+                }
             }
         }
     }
+    
+    var isCenteredPresenting: Bool = false
     
     var estimateMarginForTextView: CGFloat = 10 {
         didSet {
@@ -51,6 +55,12 @@ class PresentTextView: UIView {
         }
     }
     
+    class adad: UITextView {
+        override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+            return true
+        }
+    }
+    
     private func setOrRepositionTextView() {
         if textView == nil {
             let newView = generateUIView(view: textView, frame: estimateArea_TextView)
@@ -65,23 +75,27 @@ class PresentTextView: UIView {
             textView.isSelectable = false
             backgroundView.addSubview(textView)
         } else {
-            if textView.text == "" {
-                textView.setNewFrame(estimateArea_TextView)
-            } else {
+            if isCenteredPresenting {
                 sizeToFitTextView()
+            } else {
+                textView.setNewFrame(estimateArea_TextView)
             }
         }
     }
     
     private func sizeToFitTextView() {
-        textView.frame.size.width = estimateArea_TextView.width
-        textView.sizeToFit()
-        if textView.frame.height < estimateArea_TextView.height {
-            let requierdRepositionY: CGFloat = (estimateArea_TextView.height - textView.frame.height)/2
-            textView.frame.origin = estimateArea_TextView.origin.offSetBy(dX: 0, dY: requierdRepositionY)
+        if textView.text != "" {
             textView.frame.size.width = estimateArea_TextView.width
+            textView.sizeToFit()
+            if textView.frame.height < estimateArea_TextView.height {
+                let requierdRepositionY: CGFloat = (estimateArea_TextView.height - textView.frame.height)/2
+                textView.frame.origin = estimateArea_TextView.origin.offSetBy(dX: 0, dY: requierdRepositionY)
+                textView.frame.size.width = estimateArea_TextView.width
+            } else {
+                textView.frame = estimateArea_TextView
+            }
         } else {
-            textView.frame = estimateArea_TextView
+            textView.setNewFrame(estimateArea_TextView)
         }
     }
     

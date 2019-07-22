@@ -25,14 +25,14 @@ class CenteredSquareTypeCollectionViewFlowlayout: UICollectionViewFlowLayout {
     }
     
     private var width: CGFloat {
-        return collectionView!.frame.width
+        return collectionView!.frame.width.preventNaN
     }
     
     private var height: CGFloat {
-        return collectionView!.frame.height
+        return collectionView!.frame.height.preventNaN
     }
     
-    private var estimateCellSize: CGSize {
+    var estimateCellSize: CGSize {
         if isHorizontal {
             let expectedWidth = ((self.width - contentMinimumMargin*2)/numberOfCellsInLine).absValue
             let expectedHeight = (self.height - (contentMinimumMargin*2)).absValue
@@ -52,16 +52,28 @@ class CenteredSquareTypeCollectionViewFlowlayout: UICollectionViewFlowLayout {
         }
     }
     
+    var expectedNumberOfCellsInLine: Int {
+        if width > 0 && height > 0 {
+            if isHorizontal {
+                return Int((width/height).preventNaN)
+            } else {
+                return Int((height/width).preventNaN)
+            }
+        } else {
+            return 5
+        }
+    }
+    
     private var numberOfCellsInLine: CGFloat {
         if isHorizontal {
-            let expectedNumberOfCellsInLine = Int(width/height)
+            let expectedNumberOfCellsInLine = self.expectedNumberOfCellsInLine
             if (expectedNumberOfCellsInLine % 2) == 1 {
                 return CGFloat(expectedNumberOfCellsInLine)
             } else {
                 return CGFloat(expectedNumberOfCellsInLine + 1)
             }
         } else {
-            let expectedNumberOfCellsInLine = Int(height/width)
+            let expectedNumberOfCellsInLine = self.expectedNumberOfCellsInLine
             if (expectedNumberOfCellsInLine % 2) == 1 {
                 return CGFloat(expectedNumberOfCellsInLine)
             } else {
@@ -102,18 +114,28 @@ class CenteredSquareTypeCollectionViewFlowlayout: UICollectionViewFlowLayout {
         return expectedCellSizeFactor * 0.3
     }
     
+    var leftOverMargin: CGFloat {
+        return contentMinimumMargin + requiredMarginForMakeCellEndedInCenter
+    }
+    
     func postionOfCellForIndexpath(_ index: IndexPath) -> CGPoint {
         if index.row == 0 {
             return CGPoint(x: 0, y: 0)
         } else {
             if isHorizontal {
-                let positionX = (estimateCellSize.width + cellMinimumMargin)*CGFloat(index.item) + contentMinimumMargin
+                let positionX = cache[index.item].frame.origin.x - leftOverMargin
+                //(estimateCellSize.width + cellMinimumMargin)*CGFloat(index.item) + contentMinimumMargin
                 return CGPoint(x: positionX, y: 0)
             } else {
-                let positionY = (estimateCellSize.height + cellMinimumMargin)*CGFloat(index.item) + contentMinimumMargin
+                let positionY = cache[index.item].frame.origin.y - leftOverMargin
+                //(estimateCellSize.height + cellMinimumMargin)*CGFloat(index.item) + contentMinimumMargin
                 return CGPoint(x: 0, y: positionY)
             }
         }
+    }
+    
+    override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        return cache[indexPath.item]
     }
 }
 

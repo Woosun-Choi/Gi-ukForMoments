@@ -58,7 +58,7 @@ class WriteSectionViewController: Giuk_OpenFromFrame_ViewController, GiukContent
     private var thumbnails : [Thumbnail]? {
         didSet {
             DispatchQueue.main.async {
-                self.photoControlView?.updateLayoutsAndReloadData()
+                self.photoControlView?.updateLayoutsAndReloadData(animate: true, duration: 0.45)
             }
         }
     }
@@ -143,14 +143,17 @@ class WriteSectionViewController: Giuk_OpenFromFrame_ViewController, GiukContent
     
     //MARK: closeButtonAction
     override func closeButtonAction(_ sender: UIButton) {
-        UIView.animate(withDuration: 0.25, animations: {
-            self.closeButton.alpha = 0
-            self.writingSection?.alpha = 0
-        }) { (finished) in
-            self.thumbnails = nil
-            self.photoControlView?.clearAllContent()
-            self.dismiss(animated: true, completion: nil)
-        }
+        self.thumbnails = nil
+        self.photoControlView?.clearAllContent()
+        super.closeButtonAction(sender)
+//        UIView.animate(withDuration: 0.25, animations: {
+//            self.closeButton.alpha = 0
+//            self.writingSection?.alpha = 0
+//        }) { (finished) in
+//            self.thumbnails = nil
+//            self.photoControlView?.clearAllContent()
+//            self.dismiss(animated: true, completion: nil)
+//        }
     }
     //end
     
@@ -200,7 +203,7 @@ extension WriteSectionViewController {
     
     func writingView(_ writingView: Giuk_ContentView_Writing, didSelectImageDataAt indexPath: IndexPath) -> Data? {
         if let thumbIndex = thumbnails?[indexPath.row].createdDate {
-            let data = photoModule.getOriginalImageFromDate_AsSize(thumbIndex, size: 1200)
+            let data = photoModule.getOriginalImageFromDate_AsSize(thumbIndex, size: 1000)
             return data
         } else {
             return nil
@@ -236,74 +239,10 @@ extension WriteSectionViewController {
         }
     }
     //end
-    
-//    func writeSectionView_ownerViewController(_ writeSectionView: Giuk_ContentView_WriteSection) -> UIViewController {
-//        return self
-//    }
-//
-//    func writeSectionView(_ writeSectionView: Giuk_ContentView_WriteSection, numberOfImagesInSection section: Int) -> Int {
-//        return thumbnails?.count ?? 0
-//    }
-//
-//    func writeSectionView(_ writeSectionView: Giuk_ContentView_WriteSection, thumbnailImageForItemAt indexPath: IndexPath) -> UIImage? {
-//        return thumbnails?[indexPath.row].image
-//    }
-//
-//    func writeSectionView(_ writeSectionView: Giuk_ContentView_WriteSection, didSelectImageDataAt indexPath: IndexPath) -> Data? {
-//        if let thumbIndex = thumbnails?[indexPath.row].createdDate {
-//            print(thumbIndex)
-//            let data = photoModule.getOriginalImageFromDate_AsSize(thumbIndex, size: 600)
-//            return data
-//        } else {
-//            return nil
-//        }
-//    }
-//
-//    func writeSectionView_ShouldPerformActionAfter(_ writeSectionView: Giuk_ContentView_WriteSection) -> (() -> Void)? {
-//        return {
-//            self.contentView.checkImageExist()
-//        }
-//    }
-    //end
 }
 
 extension WriteSectionViewController {
     
     //MARK: Frmae sources
-    var topBackgroundFrame: CGRect {
-        let width = view.frame.width
-        let heigth = bottomContainerAreaFrame.minY
-        let size = CGSize(width: width, height: heigth)
-        let origin = CGPoint.zero
-        return CGRect(origin: origin, size: size)
-    }
-    
-    var bottomBackgroundFrame: CGRect {
-        let width = view.frame.width
-        let height = view.frame.height - bottomContainerAreaFrame.minY
-        let size = CGSize(width: width, height: height)
-        let originX: CGFloat = 0
-        let originY = bottomContainerAreaFrame.minY
-        let origin = CGPoint(x: originX, y: originY)
-        return CGRect(origin: origin, size: size)
-    }
-    
-    var topBackgroundPath: UIBezierPath {
-        let width = view.frame.width
-        let heigth = bottomContainerAreaFrame.minY
-        let size = CGSize(width: width, height: heigth)
-        let origin = CGPoint.zero
-        return UIBezierPath(rect: CGRect(origin: origin, size: size))
-    }
-    
-    var bottomBackgroundPath: UIBezierPath {
-        let width = view.frame.width
-        let height = view.frame.height - bottomContainerAreaFrame.minY
-        let size = CGSize(width: width, height: height)
-        let originX: CGFloat = 0
-        let originY = bottomContainerAreaFrame.minY
-        let origin = CGPoint(x: originX, y: originY)
-        return UIBezierPath(rect: CGRect(origin: origin, size: size))
-    }
     
 }

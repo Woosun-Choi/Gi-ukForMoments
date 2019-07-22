@@ -14,9 +14,10 @@ import UIKit
  Using : Inherite FocusingIndexBaseCollectionView instead UICollectionView
  */
 @objc protocol FocusingIndexBasedCollectionViewDelegate: class {
-    @objc optional func collectionViewDidUpdateFocusingIndex(_ collectionView: UICollectionView, with: IndexPath)
+    @objc optional func collectionViewDidUpdateFocusingIndex(_ collectionView: UICollectionView, with indexPath: IndexPath)
     @objc optional func collectionViewDidEndScrollToIndex(_ collectionView: UICollectionView, finished: Bool)
     @objc optional func collectionViewDidSelectFocusedIndex(_ collectionView: UICollectionView, focusedIndex: IndexPath, cell: UICollectionViewCell)
+    @objc optional func collectionViewScrollingState(_ collectionView: UICollectionView, scrolling: Bool)
 }
 
 class FocusingIndexBasedCollectionView: UICollectionView, UICollectionViewDelegate {
@@ -42,10 +43,12 @@ class FocusingIndexBasedCollectionView: UICollectionView, UICollectionViewDelega
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+//        print("focusedCell end decelerating")
         focusingCollectionViewDelegate?.collectionViewDidEndScrollToIndex?(self, finished: true)
     }
     
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+//        print("focusedCell end scrolling animation")
         focusingCollectionViewDelegate?.collectionViewDidEndScrollToIndex?(self, finished: true)
     }
 }

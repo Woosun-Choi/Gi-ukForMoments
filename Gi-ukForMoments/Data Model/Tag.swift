@@ -153,6 +153,18 @@ class Tag: NSManagedObject {
         }
     }
     
+    func removeGiukFromTag(context: NSManagedObjectContext, giuk: Giuk) {
+        self.removeGiukFromIndex(giuk: giuk)
+        self.removeFromGiuks(giuk)
+        if giuk.tags?.count == 0 {
+            context.delete(giuk)
+        }
+        if self.giuks?.count == 0 {
+            context.delete(self)
+        }
+        try? context.save()
+    }
+    
     static func deleteOrRemoveFromGiuk(_ context: NSManagedObjectContext ,tag: String, giukData giuk: Giuk) {
         let request : NSFetchRequest<Tag> = Tag.fetchRequest()
         let predicate = NSPredicate(format: "tagName == %@", tag)

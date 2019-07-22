@@ -176,16 +176,26 @@ class Giuk_ContentView_SubView_ImageSelectAndCropView: UIView, UICollectionViewD
         setOrRepostionPlaceHolder_CollectionView()
     }
     
-    func updateLayoutsAndReloadData() {
+    func updateLayoutsAndReloadData(animate: Bool = false, duration: TimeInterval = 0) {
         updateLayouts()
         if collectionView != nil {
-            collectionView.reloadData()
-            if collectionView.numberOfItems(inSection: 0) > 0 {
-                if let index = selectedIndex {
-                    collectionView.scrollToItem(at: index, at: .centeredVertically, animated: false)
+            if animate {
+                collectionView.reloadDataWithFadingAnimation(duration) {
+                    if self.collectionView.numberOfItems(inSection: 0) > 0 {
+                        if let index = self.selectedIndex {
+                            self.collectionView.scrollToItem(at: index, at: .centeredVertically, animated: false)
+                        }
+                    }
                 }
+            } else {
+                collectionView.reloadData()
+                if collectionView.numberOfItems(inSection: 0) > 0 {
+                    if let index = selectedIndex {
+                        collectionView.scrollToItem(at: index, at: .centeredVertically, animated: false)
+                    }
+                }
+                //            checkDataAndSetPlaceHolderToBe()
             }
-//            checkDataAndSetPlaceHolderToBe()
         }
         
     }

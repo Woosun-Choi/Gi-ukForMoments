@@ -37,7 +37,12 @@ class Giuk_OpenFromFrame_ViewController: ContentUIViewController, FrameTransitio
     }
     
     @objc func closeButtonAction(_ sender: UIButton) {
-        dismiss(animated: true, completion: nil)
+//        dismiss(animated: true, completion: nil)
+        UIView.animate(withDuration: 0.25, animations: {
+            self.view.subviews.forEach { $0.alpha = 0}
+        }) { (finished) in
+            self.dismiss(animated: true, completion: nil)
+        }
     }
     
     //MARK: dismiss animation setting - frametransition datasource
@@ -85,6 +90,16 @@ extension Giuk_OpenFromFrame_ViewController {
         let originX: CGFloat = 0
         let originY: CGFloat = safeAreaRelatedAreaFrame.minY
         return CGRect(origin: CGPoint(x: originX, y: originY), size: topContainerAreaSize)
+    }
+    
+    var fullContentFrame: CGRect {
+        let width = view.bounds.width
+        let height = safeAreaRelatedAreaFrame.height - topContainerAreaSize.height
+        let size = CGSize(width: width, height: height)
+        let originX: CGFloat = 0
+        let originY = topContainerAreaFrame.maxY
+        let origin = CGPoint(x: originX, y: originY)
+        return CGRect(origin: origin, size: size)
     }
     
     var contentAreaFrame: CGRect {

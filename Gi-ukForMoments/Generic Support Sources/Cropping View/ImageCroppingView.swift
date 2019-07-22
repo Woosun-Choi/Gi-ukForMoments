@@ -44,7 +44,7 @@ struct ImageCropViewDescription {
     static var notice_SubTiltle: String {
         switch language {
         case "kor": return "\n사진을 확대하거나 축소하며\n위치를 조정하세요"
-        default : return "\nand reposition the photo\nwith zooming in or out"
+        default : return "\nzooming and scrolling\nto crop the photo"//"\nand reposition the photo\nwith zooming in or out"
         }
     }
 }
@@ -173,7 +173,7 @@ class ImageCroppingView: UIView, UIScrollViewDelegate {
         if imageScrollView == nil {
             let newView = generateUIView(view: imageScrollView, frame: fullFrame)
             newView?.minimumZoomScale = 1
-            newView?.maximumZoomScale = 5
+            newView?.maximumZoomScale = 3
             newView?.showsVerticalScrollIndicator = false
             newView?.showsHorizontalScrollIndicator = false
             newView?.backgroundColor = UIColor.clear

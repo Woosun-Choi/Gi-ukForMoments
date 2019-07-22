@@ -8,6 +8,10 @@
 
 import UIKit
 
+@objc protocol aaa : FocusingIndexBasedCollectionViewDelegate {
+    
+}
+
 class CenteredCollectionView: FocusingIndexBasedCollectionView {
     
     //MARK: IBInspectableValues
@@ -40,12 +44,6 @@ class CenteredCollectionView: FocusingIndexBasedCollectionView {
     //MARK: Variables
     var requiredItemIndex: IndexPath?
     
-    weak var ownerViewController: UIViewController?
-    
-    weak var willPresentedController_fromCell: UIViewController?
-    
-    var willPredentedControllerAction_fromCell: ((UIViewController) -> Void)?
-    
     var trackingFocusingCellAutomatically: Bool = false
     
     var flowLayouts : UICollectionViewLayout {
@@ -77,7 +75,7 @@ class CenteredCollectionView: FocusingIndexBasedCollectionView {
     
     override func reloadData() {
         super.reloadData()
-        checkNowFocusedCell()
+        scrollWhenRequiredIndexExist()
     }
     
     private func scrollWhenRequiredIndexExist() {
@@ -86,7 +84,7 @@ class CenteredCollectionView: FocusingIndexBasedCollectionView {
             focusingIndex = requiredItemIndex
             requiredItemIndex = nil
         } else {
-            checkNowFocusedCell()
+            checkNowFocusedCell(collectionView: self)
         }
     }
     
@@ -96,95 +94,15 @@ class CenteredCollectionView: FocusingIndexBasedCollectionView {
         if trackingFocusingCellAutomatically {
             scrollToTargetIndex(index: focusingIndex, animated: true)
         }
+        focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: false)
     }
-    
 }
 
 extension CenteredCollectionView {
     
-    private func checkNowFocusedCell() {
-        if let layout = self.flowLayouts as? CenteredCollectionViewFlowLayout {
-            let scrollView = self as UIScrollView
-            var fixedPosition : CGFloat {
-                if layout.isHorizontal {
-                    return self.bounds.height/2
-                } else {
-                    return self.bounds.width/2
-                }
-            }
-            var mutablePosition : CGFloat {
-                if layout.isHorizontal {
-                    return scrollView.contentOffset.x + layout.draggingOffSet
-                } else {
-                    return scrollView.contentOffset.y + layout.draggingOffSet
-                }
-            }
-            
-            if isHorizontal {
-                guard let item = indexPathForItem(at: CGPoint(x: mutablePosition, y: fixedPosition))
-                    else {
-                        focusingIndex = nil
-                        return
-                }
-                focusingIndex = item
-            } else {
-                guard let item = indexPathForItem(at: CGPoint(x: fixedPosition, y: mutablePosition))
-                    else {
-                        focusingIndex = nil
-                        return
-                }
-                focusingIndex = item
-            }
-        } else {
-            focusingIndex = nil
-        }
-    }
-    
-    fileprivate func checkWillFocusedCell(_ scrollView: UIScrollView, direction: CGFloat) {
-        if let layout = self.flowLayouts as? CenteredCollectionViewFlowLayout {
-            var targetIndex : IndexPath?
-            var fixedPosition : CGFloat {
-                if layout.isHorizontal {
-                    return self.bounds.height/2
-                } else {
-                    return self.bounds.width/2
-                }
-            }
-            
-            var mutablePosition : CGFloat {
-                if layout.isHorizontal {
-                    if direction > 0 {
-                        return (scrollView.contentOffset.x) + (layout.draggingOffSet - layout.cellDraggingOffSet)
-                    } else if direction < 0 {
-                        return ((scrollView.contentOffset.x) + (layout.draggingOffSet + layout.cellDraggingOffSet))
-                    } else {
-                        return (scrollView.contentOffset.x) + (layout.draggingOffSet)
-                    }
-                } else {
-                    if direction > 0 {
-                        return scrollView.contentOffset.y + (layout.draggingOffSet - layout.cellDraggingOffSet)
-                    } else if direction < 0 {
-                        return scrollView.contentOffset.y + (layout.draggingOffSet + layout.cellDraggingOffSet)
-                    } else {
-                        return scrollView.contentOffset.y + (layout.draggingOffSet)
-                    }
-                }
-            }
-            
-            if layout.isHorizontal {
-                targetIndex = self.indexPathForItem(at: CGPoint(x: mutablePosition, y: fixedPosition))
-            } else {
-                targetIndex = self.indexPathForItem(at: CGPoint(x: fixedPosition, y: mutablePosition))
-            }
-            
-            if targetIndex != nil {
-                focusingIndex = targetIndex
-            }
-        }
-    }
-    
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         trackingFocusingCellAutomatically = true
+        focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: true)
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -199,21 +117,151 @@ extension CenteredCollectionView {
         }
     }
     
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if trackingFocusingCellAutomatically {
-            let translation = scrollView.panGestureRecognizer.translation(in: self)
-            if let layOut = self.flowLayouts as? CenteredCollectionViewFlowLayout {
-                if layOut.isHorizontal {
-                    checkWillFocusedCell(scrollView, direction: translation.x)
-                } else {
-                    checkWillFocusedCell(scrollView, direction: translation.y)
+    //MARK: focuing part
+    var focusingArea: CGRect {
+        if isHorizontal {
+            let _width = bounds.width * 0.8
+            let _height = bounds.height
+            let size = CGSize(width: _width, height: _height)
+            let originX = (bounds.origin.x + (bounds.width) - _width)
+            let originY = (bounds.origin.y)
+            let origin = CGPoint(x: originX, y: originY)
+            return CGRect(origin: origin, size: size)
+        } else {
+            let _width = bounds.width
+            let _height = bounds.height * 0.8
+            let size = CGSize(width: _width, height: _height)
+            let originX = (bounds.origin.x)
+            let originY = ((bounds.origin.y) + (bounds.height) - _height)
+            let origin = CGPoint(x: originX, y: originY)
+            return CGRect(origin: origin, size: size)
+        }
+    }
+    
+    
+    
+    func checkFrameIsInFocusingArea(_ frame: CGRect?) -> Bool {
+        if let targetFrame = frame {
+            return focusingArea.intersects(targetFrame)
+        } else {
+            return false
+        }
+    }
+    
+    func cellFrame(collectionView: UICollectionView, cell: UICollectionViewCell) -> CGRect? {
+        guard let indexPath = collectionView.indexPath(for: cell) else {
+            assert(true, "cell missing")
+            return nil }
+        guard let attributes = collectionView.layoutAttributesForItem(at: indexPath) else {
+            assert(true, "attribute missing")
+            return nil }
+        return attributes.frame
+    }
+    
+    func checkCellIsInFocusingArea(collectionView: UICollectionView ,cell: UICollectionViewCell) -> (matching: Bool, index: IndexPath?) {
+        let cellInfo = self.informationOfCell(cell: cell)
+        let cellFrame = cellInfo.attributeCellFrame
+        let cellIndex = cellInfo.index
+        return (checkFrameIsInFocusingArea(cellFrame), cellIndex)
+    }
+    
+    func checkWillFocusedCell(collectionView: UICollectionView) {
+        let velocity = collectionView.panGestureRecognizer.velocity(in: collectionView)
+        for cell in collectionView.visibleCells {
+            let cellIsInFocusingArea = checkCellIsInFocusingArea(collectionView: collectionView, cell: cell)
+            if velocity.x > 0 {
+                if cellIsInFocusingArea.matching {
+                    if let index = cellIsInFocusingArea.index {
+                        if focusingIndex == nil {
+                            focusingIndex = index
+                        } else {
+                            if (focusingIndex != cellIsInFocusingArea.index) && focusingIndex!.item > index.item {
+                                focusingIndex = index
+                            }
+                        }
+                    }
+                }
+            } else if velocity.x < 0 {
+                if cellIsInFocusingArea.matching {
+                    if let index = cellIsInFocusingArea.index {
+                        if focusingIndex == nil {
+                            focusingIndex = index
+                        } else {
+                            if (focusingIndex != cellIsInFocusingArea.index) && focusingIndex!.item < index.item {
+                                focusingIndex = index
+                            }
+                        }
+                    }
                 }
             }
         }
     }
     
+    func checkNowFocusedCell(collectionView: UICollectionView) {
+        for cell in collectionView.visibleCells {
+            let cellIsInFocusingArea = checkCellIsInFocusingArea(collectionView: collectionView, cell: cell)
+            if cellIsInFocusingArea.matching {
+                if let index = cellIsInFocusingArea.index {
+                    focusingIndex = index
+                }
+            }
+        }
+    }
+    
+    fileprivate func animateCell(cellFrame: CGRect, contentOffSet: CGFloat) -> CATransform3D? {
+        let angleFromX = Double(((cellFrame.origin.x - contentOffSet)) / 5)
+        let angle = CGFloat((angleFromX * Double.pi) / 180.0)
+        var transform = CATransform3DIdentity
+        transform.m34 = -1.0/1000
+        let rotation = CATransform3DRotate(transform, angle, 0, 1, 0)
+        
+        let factor = (cellFrame.origin.x - contentOffSet)/cellFrame.width * 100
+        
+        if angleFromX < 0 {
+            var scaleFromX = (1000 + (factor)*3) / 1000
+            let scaleMax: CGFloat = 1.0
+            let scaleMin: CGFloat = 0.6
+            if scaleFromX > scaleMax {
+                scaleFromX = scaleMax
+            }
+            if scaleFromX < scaleMin {
+                scaleFromX = scaleMin
+            }
+            let scale = CATransform3DScale(CATransform3DIdentity, scaleFromX, scaleFromX, 1)
+            return CATransform3DConcat(rotation, scale)
+        } else {
+            var scaleFromX = (1000 - (factor)*3) / 1000
+            let scaleMax: CGFloat = 1.0
+            let scaleMin: CGFloat = 0.6
+            if scaleFromX > scaleMax {
+                scaleFromX = scaleMax
+            }
+            if scaleFromX < scaleMin {
+                scaleFromX = scaleMin
+            }
+            let scale = CATransform3DScale(CATransform3DIdentity, scaleFromX, scaleFromX, 1)
+            return CATransform3DConcat(rotation, scale)
+        }
+    }
+    //end
+    
+    func updateTransform() {
+        for cell in self.visibleCells {
+            if let _cellFrame = self.attributeFrameOfCell(cell: cell) {
+                if let transform = animateCell(cellFrame: _cellFrame, contentOffSet: self.contentOffset.x) {
+                    cell.layer.transform = transform
+                }
+            }
+        }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        checkWillFocusedCell(collectionView: self)
+    }
+    
     func scrollToTargetIndex(index : IndexPath?, animated: Bool, completion: (()->Void)? = nil) {
         guard let _index = index else {return}
+        focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: true)
         let scrollView = self as UIScrollView
         if let layOut = self.flowLayouts as? CenteredCollectionViewFlowLayout {
             scrollView.setContentOffset(layOut.positionOfCellForIndexpath(_index), animated: animated)
@@ -225,88 +273,114 @@ extension CenteredCollectionView {
         print("centered collectionview \(indexPath) cell selected")
         guard let cell = collectionView.cellForItem(at: indexPath) else
         { return }
-        
-        func generateDetailView() {
-            setTransitionAnimatorFromCell(collectionView, indexPath: indexPath)
-            if let detailViewController = willPresentedController_fromCell {
-                //detailViewController.transitioningDelegate = transAnimator
-                detailViewController.modalPresentationStyle = .custom
-                willPredentedControllerAction_fromCell?(detailViewController)
-                ownerViewController?.present(detailViewController, animated: true, completion: nil)
-            } else { return }
-        }
-        
-//        scrollToTargetIndex(index: indexPath, animated: true) {
-//            [unowned self] in
-//            if let focusedCellIndex = self.focusingIndex {
-//                if indexPath == focusedCellIndex {
-//                    generateDetailView()
-//                } else {
-//                    self.checkNowFocusedCell()
-//                }
-//            } else if indexPath.item == 0 {
-//                generateDetailView()
-//            } else if self.focusingIndex == nil && indexPath.item > 0 {
-//                self.checkNowFocusedCell()
-//            }
-//        }
-        
         if let focusedCellIndex = focusingIndex {
             if indexPath == focusedCellIndex {
                 focusingCollectionViewDelegate?.collectionViewDidSelectFocusedIndex?(self, focusedIndex: indexPath, cell: cell)
             } else {
-                scrollToTargetIndex(index: indexPath, animated: true) {
-                    [unowned self] in
-                    self.checkNowFocusedCell()
-                }
+                focusingIndex = indexPath
+                scrollToTargetIndex(index: indexPath, animated: true)
             }
-        } else if indexPath.item == 0 {
-            focusingCollectionViewDelegate?.collectionViewDidSelectFocusedIndex?(self, focusedIndex: indexPath, cell: cell)
-        } else if focusingIndex == nil && indexPath.item > 0 {
-            scrollToTargetIndex(index: indexPath, animated: true) {
-                [unowned self] in
-                self.checkNowFocusedCell()
-            }
-        }
-    }
-    
-    private func setTransitionAnimatorFromCell(_ collectionView: UICollectionView, indexPath: IndexPath) {
-        let attributes = collectionView.layoutAttributesForItem(at: indexPath)
-        let attributesFrame = attributes?.frame
-        let frameToOpenFrom = collectionView.convert(attributesFrame!, to: collectionView.superview)
-        //transAnimator.setOpeningFrameWithRect(frameToOpenFrom)
-    }
-}
-
-
-extension UICollectionView {
-    
-    func generateCenteredLayout(displayType_isHorizontal: Bool, displayType_isFullscreen: Bool, contentMinimumMargin: CGFloat, estimateCellSize: CGSize? = nil) {
-        let layout = CenteredCollectionViewFlowLayout()
-        if displayType_isHorizontal {
-            layout.isHorizontal = displayType_isHorizontal
-            layout.isFullscreen = displayType_isFullscreen
-            layout.minimumMargin = contentMinimumMargin
-            layout.estimateCellSize = estimateCellSize
-            self.alwaysBounceHorizontal = true
-            self.alwaysBounceVertical = false
         } else {
-            layout.isHorizontal = displayType_isHorizontal
-            layout.isFullscreen = displayType_isFullscreen
-            layout.minimumMargin = contentMinimumMargin
-            layout.estimateCellSize = estimateCellSize
-            self.alwaysBounceHorizontal = false
-            self.alwaysBounceVertical = true
+            focusingIndex = indexPath
+            scrollToTargetIndex(index: indexPath, animated: true)
         }
-        
-        self.collectionViewLayout = layout
-        self.reloadData()
-    }
-    
-    func setVerticalPopUpCollectionViewLayout() {
-        let layout = VerticalSpotlightCollectionViewFlowLayout()
-        self.collectionViewLayout = layout
-        self.showsVerticalScrollIndicator = false
-        self.showsHorizontalScrollIndicator = false
     }
 }
+
+//private func setTransitionAnimatorFromCell(_ collectionView: UICollectionView, indexPath: IndexPath) {
+//    let attributes = collectionView.layoutAttributesForItem(at: indexPath)
+//    let attributesFrame = attributes?.frame
+//    let frameToOpenFrom = collectionView.convert(attributesFrame!, to: collectionView.superview)
+//    //transAnimator.setOpeningFrameWithRect(frameToOpenFrom)
+//}
+
+//func generateDetailView() {
+//    setTransitionAnimatorFromCell(collectionView, indexPath: indexPath)
+//    if let detailViewController = willPresentedController_fromCell {
+//        //detailViewController.transitioningDelegate = transAnimator
+//        detailViewController.modalPresentationStyle = .custom
+//        willPredentedControllerAction_fromCell?(detailViewController)
+//        ownerViewController?.present(detailViewController, animated: true, completion: nil)
+//    } else { return }
+//}
+
+//private func checkNowFocusedCell() {
+//    if let layout = self.flowLayouts as? CenteredCollectionViewFlowLayout {
+//        let scrollView = self as UIScrollView
+//        var fixedPosition : CGFloat {
+//            if layout.isHorizontal {
+//                return self.bounds.height/2
+//            } else {
+//                return self.bounds.width/2
+//            }
+//        }
+//        var mutablePosition : CGFloat {
+//            if layout.isHorizontal {
+//                return scrollView.contentOffset.x + layout.draggingOffSet
+//            } else {
+//                return scrollView.contentOffset.y + layout.draggingOffSet
+//            }
+//        }
+//
+//        if isHorizontal {
+//            guard let item = indexPathForItem(at: CGPoint(x: mutablePosition, y: fixedPosition))
+//                else {
+//                    focusingIndex = nil
+//                    return
+//            }
+//            focusingIndex = item
+//        } else {
+//            guard let item = indexPathForItem(at: CGPoint(x: fixedPosition, y: mutablePosition))
+//                else {
+//                    focusingIndex = nil
+//                    return
+//            }
+//            focusingIndex = item
+//        }
+//    } else {
+//        focusingIndex = nil
+//    }
+//}
+
+//fileprivate func checkWillFocusedCell(_ scrollView: UIScrollView, direction: CGFloat) {
+//    if let layout = self.flowLayouts as? CenteredCollectionViewFlowLayout {
+//        var targetIndex : IndexPath?
+//        var fixedPosition : CGFloat {
+//            if layout.isHorizontal {
+//                return self.bounds.height/2
+//            } else {
+//                return self.bounds.width/2
+//            }
+//        }
+//
+//        var mutablePosition : CGFloat {
+//            if layout.isHorizontal {
+//                if direction > 0 {
+//                    return (scrollView.contentOffset.x) + (layout.draggingOffSet - layout.cellDraggingOffSet)
+//                } else if direction < 0 {
+//                    return ((scrollView.contentOffset.x) + (layout.draggingOffSet + layout.cellDraggingOffSet))
+//                } else {
+//                    return (scrollView.contentOffset.x) + (layout.draggingOffSet)
+//                }
+//            } else {
+//                if direction > 0 {
+//                    return scrollView.contentOffset.y + (layout.draggingOffSet - layout.cellDraggingOffSet)
+//                } else if direction < 0 {
+//                    return scrollView.contentOffset.y + (layout.draggingOffSet + layout.cellDraggingOffSet)
+//                } else {
+//                    return scrollView.contentOffset.y + (layout.draggingOffSet)
+//                }
+//            }
+//        }
+//
+//        if layout.isHorizontal {
+//            targetIndex = self.indexPathForItem(at: CGPoint(x: mutablePosition, y: fixedPosition))
+//        } else {
+//            targetIndex = self.indexPathForItem(at: CGPoint(x: fixedPosition, y: mutablePosition))
+//        }
+//
+//        if targetIndex != nil {
+//            focusingIndex = targetIndex
+//        }
+//    }
+//}

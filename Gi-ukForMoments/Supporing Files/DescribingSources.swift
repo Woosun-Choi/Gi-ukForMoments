@@ -26,7 +26,7 @@ struct DescribingSources {
         static var notice_SubTiltle: String {
             switch DescribingSources.language {
             case "kor": return "\n사진을 확대하거나 축소하며\n위치를 조정하세요"
-            default : return "\nreposition the photo\nwith zooming in or out"
+            default : return "\nzooming and scrolling\nto crop the photo"//"\nreposition the photo\nwith zooming in or out"
             }
         }
         static var placeHolder_Tilte: String {
@@ -53,22 +53,28 @@ struct DescribingSources {
         static var notice_SubTiltle: String {
             switch DescribingSources.language {
             case "kor": return "\n500자 이하로 작성\n할 수 있습니다"
-            default : return "\ncomment can be written\nunder 500 letters"
+            default : return "\ncan be written under 500 letters"
             }
         }
     }
     
     struct choosingTagSection {
+        static var choosingTagTilte: String {
+            switch DescribingSources.language {
+            case "kor": return "앨범"
+            default : return "ALBUM"
+            }
+        }
         static var notice_Title: String {
             switch DescribingSources.language {
-            case "kor": return "기억마크를 만드세요"
-            default : return "add a giuk mark"
+            case "kor": return "앨범을 추가하세요"
+            default : return "add album"
             }
         }
         static var notice_SubTiltle: String {
             switch DescribingSources.language {
-            case "kor": return "\n최소한 하나이상의 마크를 만들어야 합니다"
-            default : return "\nneeds at least one \nor more mark to save"
+            case "kor": return "\n최소한 하나이상의 앨범을 선택해야 합니다"
+            default : return "\nneeds one or more album, to save"
             }
         }
     }

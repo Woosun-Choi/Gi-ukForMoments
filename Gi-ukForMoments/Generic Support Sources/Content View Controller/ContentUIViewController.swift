@@ -65,28 +65,28 @@ class ContentUIViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if describingControllerLifeCycle {
-            print("view will appear - \n safeAreaRect : \(safeAreaRelatedAreaFrame)\n viewFrame: \(view.frame)")
+            print("view will appear")
         }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if describingControllerLifeCycle {
-            print("view did appear - \n safeAreaRect : \(safeAreaRelatedAreaFrame)\n viewFrame: \(view.frame)")
+            print("view did appear")
         }
     }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         if describingControllerLifeCycle {
-            print("view will layout subviews - \n safeAreaRect : \(safeAreaRelatedAreaFrame)\n viewFrame: \(view.frame)")
+            print("view will layout subviews")
         }
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if describingControllerLifeCycle {
-            print("view did subviews - \n safeAreaRect : \(safeAreaRelatedAreaFrame)\n viewFrame: \(view.frame)")
+            print("view did subviews")
         }
     }
     

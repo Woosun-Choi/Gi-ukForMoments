@@ -64,11 +64,6 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
     var numberOfTags: Int {
         return tags?.count ?? 0
     }
-    
-    var estimatedFontSizeForTagItem: CGFloat {
-        let size = valueBetweenMinAndMax(maxValue: 14, minValue: 12, mutableValue: bounds.height / 10)
-        return size
-    }
     //end
     
     //MARK: tag item delegate
@@ -173,12 +168,26 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
     }
     
     //MARK: Update functions
-    func reloadData() {
-        if checkDataIsChanged {
-            tags = dataSource?.hashTagScrollView_tagItems(self)
-            clearHashItem()
-            if let _tags = tags {
-                generateTags(_tags)
+    func reloadData(animate: Bool = false, duration: TimeInterval = 0) {
+        if animate {
+            self.alpha = 0
+            if checkDataIsChanged {
+                tags = dataSource?.hashTagScrollView_tagItems(self)
+                clearHashItem()
+                if let _tags = tags {
+                    generateTags(_tags)
+                }
+            }
+            UIView.animate(withDuration: duration) {
+                self.alpha = 1
+            }
+        } else {
+            if checkDataIsChanged {
+                tags = dataSource?.hashTagScrollView_tagItems(self)
+                clearHashItem()
+                if let _tags = tags {
+                    generateTags(_tags)
+                }
             }
         }
     }
@@ -223,7 +232,9 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
         alwaysBounceVertical = true
         clipsToBounds = true
     }
-    
+}
+
+extension HashTagScrollView {
     //MARK: Grid informations
     private var estimateWidthLimit : CGFloat {
         return widthLimit! - (generalSettings.horizontalEdgeMargin*2)
@@ -243,6 +254,11 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
     
     private var estimateHeight : CGFloat {
         return (subviews.last?.frame.maxY ?? 0) + generalSettings.verticalEdgeMargin
+    }
+    
+    var estimatedFontSizeForTagItem: CGFloat {
+        let size = valueBetweenMinAndMax(maxValue: 14, minValue: 12, mutableValue: bounds.height / 10)
+        return size
     }
     //end
 }

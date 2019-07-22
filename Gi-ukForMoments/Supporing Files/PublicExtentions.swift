@@ -276,6 +276,16 @@ extension CGPoint {
     }
 }
 
+extension Double {
+    var absValue: Double {
+        if self < 0 {
+            return -self
+        } else {
+            return self
+        }
+    }
+}
+
 extension Int {
     var absValue: Int {
         return Int(abs(Int32(self)))
@@ -659,6 +669,72 @@ extension UIViewController {
         self.view.setNeedsLayout()
     }
 }
+
+extension UICollectionView {
+    
+    func generateCenteredLayout(displayType_isHorizontal: Bool, displayType_isFullscreen: Bool, contentMinimumMargin: CGFloat, estimateCellSize: CGSize? = nil) {
+        let layout = CenteredCollectionViewFlowLayout()
+        if displayType_isHorizontal {
+            layout.isHorizontal = displayType_isHorizontal
+            layout.isFullscreen = displayType_isFullscreen
+            layout.minimumMargin = contentMinimumMargin
+            layout.estimateCellSize = estimateCellSize
+            self.alwaysBounceHorizontal = true
+            self.alwaysBounceVertical = false
+        } else {
+            layout.isHorizontal = displayType_isHorizontal
+            layout.isFullscreen = displayType_isFullscreen
+            layout.minimumMargin = contentMinimumMargin
+            layout.estimateCellSize = estimateCellSize
+            self.alwaysBounceHorizontal = false
+            self.alwaysBounceVertical = true
+        }
+        
+        self.collectionViewLayout = layout
+        self.reloadData()
+    }
+    
+    func setVerticalPopUpCollectionViewLayout() {
+        let layout = VerticalSpotlightCollectionViewFlowLayout()
+        self.collectionViewLayout = layout
+        self.showsVerticalScrollIndicator = false
+        self.showsHorizontalScrollIndicator = false
+    }
+    
+    func informationOfCell(cell: UICollectionViewCell) -> (index: IndexPath?, attributeCellFrame: CGRect?) {
+        if let index = self.indexPath(for: cell) {
+            let attributes = self.layoutAttributesForItem(at: index)
+            return (index, attributes?.frame)
+        } else {
+            return (nil, nil)
+        }
+    }
+    
+    func attributeFrameOfCell(cell: UICollectionViewCell) -> CGRect? {
+        if let index = self.indexPath(for: cell) {
+            let attributes = self.layoutAttributesForItem(at: index)
+            return attributes?.frame
+        } else {
+            return nil
+        }
+    }
+    
+    func attributeFrameOfCell(indexPath: IndexPath) -> CGRect? {
+        let attributes = self.layoutAttributesForItem(at: indexPath)
+        return attributes?.frame
+    }
+    
+    func reloadDataWithFadingAnimation(_ duration: TimeInterval, completion: (()->Void)? = nil) {
+        self.alpha = 0
+        reloadData()
+        UIView.animate(withDuration: duration, animations: {
+            self.alpha = 1
+        }) { (finished) in
+            completion?()
+        }
+    }
+}
+
 
 extension UIImage {
     /// Returns a image that fills in newSize

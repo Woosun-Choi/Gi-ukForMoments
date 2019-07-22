@@ -31,7 +31,9 @@ class CenteredCollectionViewFlowLayout: UICollectionViewLayout {
             if index.row == 0 {
                 return CGPoint(x: 0, y: 0)
             } else {
-                let positionX = ((requiredEdgeMarginForAlignCellsToCenter) + (expectedCellSizeFactor))*CGFloat(index.item)
+                
+                let positionX = cache[index.item].frame.origin.x - requiredEdgeMarginForAlignCellsToCenter
+                //((requiredEdgeMarginForAlignCellsToCenter) + (expectedCellSizeFactor))*CGFloat(index.item)
                 //let positionX = (width*CGFloat(index.item))
                 return CGPoint(x: positionX, y: 0)
             }
@@ -39,7 +41,8 @@ class CenteredCollectionViewFlowLayout: UICollectionViewLayout {
             if index.row == 0 {
                 return CGPoint(x: 0, y: 0)
             } else {
-                let positionY = ((requiredEdgeMarginForAlignCellsToCenter) + (expectedCellSizeFactor))*CGFloat(index.item)
+                let positionY = cache[index.item].frame.origin.y - requiredEdgeMarginForAlignCellsToCenter
+                //((requiredEdgeMarginForAlignCellsToCenter) + (expectedCellSizeFactor))*CGFloat(index.item)
                 return CGPoint(x: 0, y: positionY)
             }
         }
@@ -108,11 +111,19 @@ class CenteredCollectionViewFlowLayout: UICollectionViewLayout {
     var cache: [UICollectionViewLayoutAttributes] = []
     
     var width: CGFloat {
-        return collectionView!.frame.width ?? 0
+        return collectionView?.frame.width ?? 0
     }
     
     var height: CGFloat {
-        return collectionView!.frame.height ?? 0
+        return collectionView?.frame.height ?? 0
+    }
+    
+    var maxIndex: Int {
+        if numberOfItemsInSection(0) > 0 {
+            return numberOfItemsInSection(0) - 1
+        } else {
+            return 0
+        }
     }
     
     // Returns the number of items in the collection view
@@ -123,6 +134,10 @@ class CenteredCollectionViewFlowLayout: UICollectionViewLayout {
     
     private var numberOfSections: Int {
         return collectionView?.numberOfSections ?? 1
+    }
+    
+    override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        return cache[indexPath.item]
     }
     
 }
@@ -153,6 +168,7 @@ extension CenteredCollectionViewFlowLayout {
     
     override func prepare() {
         cache.removeAll(keepingCapacity: false)
+        
         let cellSize = expectedCellSize
         
         var fixedPositionAchor: CGFloat {
@@ -185,20 +201,40 @@ extension CenteredCollectionViewFlowLayout {
             return CGRect(origin: expectedPositionOfCell, size: cellSize)
         }
         
-        for section in 0..<numberOfSections {
-            for item in 0..<numberOfItemsInSection(section) {
-                let indexPath = IndexPath(item: item, section: 0)
-                let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
-                attributes.zIndex = item
-                attributes.frame = frame
-                cache.append(attributes)
-                if isHorizontal {
-                    positionAnchor = frame.maxX + requiredEdgeMarginForAlignCellsToCenter
-                } else {
-                    positionAnchor = frame.maxY + requiredEdgeMarginForAlignCellsToCenter
+//        if cache.count != numberOfItemsInSection(0) {
+        
+            for section in 0..<numberOfSections {
+                for item in 0..<numberOfItemsInSection(section) {
+                    let indexPath = IndexPath(item: item, section: 0)
+                    let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
+                    attributes.zIndex = maxIndex - item
+                    attributes.frame = frame
+                    cache.append(attributes)
+                    if isHorizontal {
+                        positionAnchor = frame.maxX + requiredEdgeMarginForAlignCellsToCenter
+                    } else {
+                        positionAnchor = frame.maxY + requiredEdgeMarginForAlignCellsToCenter
+                    }
                 }
             }
-        }
+//        }
+        
+//        cache.removeAll(keepingCapacity: false)
+//
+//        for section in 0..<numberOfSections {
+//            for item in 0..<numberOfItemsInSection(section) {
+//                let indexPath = IndexPath(item: item, section: 0)
+//                let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
+//                attributes.zIndex = item
+//                attributes.frame = frame
+//                cache.append(attributes)
+//                if isHorizontal {
+//                    positionAnchor = frame.maxX + requiredEdgeMarginForAlignCellsToCenter
+//                } else {
+//                    positionAnchor = frame.maxY + requiredEdgeMarginForAlignCellsToCenter
+//                }
+//            }
+//        }
         
     }
     

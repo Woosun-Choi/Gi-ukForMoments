@@ -14,9 +14,12 @@ class GiukViewerCollectionViewCell: UICollectionViewCell {
     
     var giuk: Giuk? {
         didSet {
-            if let data = self.giuk?.createWrotedDataFromGiuk([]) {
+            if let data = self.giuk?.createWrotedDataFromGiuk() {
                 viewer?.imageData = data.croppedData
                 viewer?.textData = data.textData
+            } else {
+                viewer?.imageData = nil
+                viewer?.textData = nil
             }
         }
     }
@@ -50,8 +53,6 @@ class GiukViewerCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        viewer.imageData = nil
-        viewer.textData = nil
         giuk = nil
     }
     

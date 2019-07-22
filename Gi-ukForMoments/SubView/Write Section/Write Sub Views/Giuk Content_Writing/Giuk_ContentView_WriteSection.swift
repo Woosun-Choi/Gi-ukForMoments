@@ -135,7 +135,7 @@ class Giuk_ContentView_WriteSection: Giuk_ContentView, GenericMultiButtonViewDat
         
         let buttonA = initialButtonItemForTopButton(estimateButtonItemFontSize)
         buttonA.identifire = "tag"
-        buttonA.setTitle("GIUKMARK", for: .normal)
+        buttonA.setTitle(DescribingSources.choosingTagSection.choosingTagTilte, for: .normal)
         buttons.append(buttonA)
         
         return buttons

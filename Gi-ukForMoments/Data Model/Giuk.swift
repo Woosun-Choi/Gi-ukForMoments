@@ -154,7 +154,7 @@ class Giuk: NSManagedObject {
         case fetchingFailed
     }
     
-    func createWrotedDataFromGiuk(_ libraryOfTags: [String]) -> CreatedData? {
+    func createWrotedDataFromGiuk(_ libraryOfTags: [String] = []) -> CreatedData? {
         guard let identifire = self.identifire, let createdDate = self.createdDate, let _imageData = self.image?.imageData,
             let _thumbData = self.thumbnail?.thumbnailImageData ,let _textData = self.text?.textData, let tags = self.tags?.allObjects as? [Tag] else { return nil }
        // print("\(tags.map{$0.tagName})")
@@ -171,6 +171,31 @@ class Giuk: NSManagedObject {
         
         let data = CreatedData(thumbnailData: thumbData!, croppedData: imageData!, textData: textData!, tagData: tagData, identifire: identifire, createdDate: createdDate)
         return data
+    }
+    
+    func deleteGiuk(context: NSManagedObjectContext) {
+        if let tags = self.tags?.allObjects as? [Tag] {
+            for tag in tags {
+                tag.removeGiukFromIndex(giuk: self)
+                tag.removeFromGiuks(self)
+            }
+            context.delete(self)
+        } else {
+            context.delete(self)
+        }
+        try? context.save()
+    }
+    
+    func deleteGiukFromTag(context:NSManagedObjectContext, tag: Tag) {
+        tag.removeGiukFromIndex(giuk: self)
+        tag.removeFromGiuks(self)
+        if self.tags?.count == 0 {
+            context.delete(self)
+        }
+        if tag.giuks?.count == 0 {
+            context.delete(tag)
+        }
+        try? context.save()
     }
 
 }
