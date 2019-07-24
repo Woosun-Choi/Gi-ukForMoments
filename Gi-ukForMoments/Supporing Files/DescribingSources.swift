@@ -7,6 +7,11 @@
 //
 
 import Foundation
+import UIKit
+
+struct SizeSources {
+    static var tagItemMinimumSize: CGSize = CGSize(width: 50, height: 30)
+}
 
 struct DescribingSources {
     static private let language = Locale.current.languageCode
@@ -14,6 +19,67 @@ struct DescribingSources {
     struct sectionsFontSize {
         static let maxFontSize : Int = 16
         static let minFontSize : Int = 14
+    }
+    
+    struct MainTagView {
+        
+        static func centeredImageSource() -> NSMutableAttributedString {
+            let iconsSize = CGRect(x: 0, y: 0, width: 30, height: 30)
+            let attachment = NSTextAttachment()
+            let imageTemplate = UIImage(named: ButtonImageNames.ButtonName_Main_Giuk)?.withRenderingMode_alwaysTemplate
+            attachment.image = imageTemplate
+            attachment.bounds = iconsSize
+            let stringImage = NSAttributedString(attachment: attachment)
+            let blankString = NSAttributedString(string: " ")
+            
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.alignment = .center
+            paragraphStyle.lineBreakMode = .byTruncatingTail
+            
+            let frame = NSMutableAttributedString(string: " ", attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            frame.append(NSMutableAttributedString(attributedString: stringImage))
+            frame.append(NSMutableAttributedString(attributedString: blankString))
+            
+            return frame
+        }
+        
+        static var notice_Title: String {
+            switch DescribingSources.language {
+            case "kor": return "\n기억을 만드세요"
+            default : return "\ncreate new 'Gi-uk'"
+            }
+        }
+        static var notice_SubTiltle: String {
+            switch DescribingSources.language {
+            case "kor": return "\n상단에있는 버튼을 눌러\n새로운 기억을 만드세요"
+            default : return "\ncreate by pressing\nthe button on the top"
+            }
+        }
+        
+        static var deleteTag_notice_Title: String {
+            switch DescribingSources.language {
+            case "kor": return "삭제"
+            default : return "DELETE"
+            }
+        }
+        static var deleteTag_notice_SubTiltle: String {
+            switch DescribingSources.language {
+            case "kor": return "연관된 기억이 다른 앨범에 연결되있지 않다면,\n기억도 함께 지워집니다."
+            default : return "related Gi-uk could be deleted together\nif it has no links to other tags"
+            }
+        }
+        static var delete_Title_DeleteAction: String {
+            switch DescribingSources.language {
+            case "kor": return "삭제"
+            default : return "delete"
+            }
+        }
+        static var delete_Title_CancelAction: String {
+            switch DescribingSources.language {
+            case "kor": return "취소"
+            default : return "cancel"
+            }
+        }
     }
     
     struct imageCropSection {
@@ -75,6 +141,41 @@ struct DescribingSources {
             switch DescribingSources.language {
             case "kor": return "\n최소한 하나이상의 앨범을 선택해야 합니다"
             default : return "\nneeds one or more album, to save"
+            }
+        }
+    }
+    
+    struct deleteSection {
+        static var delete_Title: String {
+            switch DescribingSources.language {
+            case "kor": return "삭제"
+            default : return "Delete"
+            }
+        }
+        
+        static var delete_SubTitle: String {
+            switch DescribingSources.language {
+            case "kor": return "앨범에서 빼거나 삭제합니다"
+            default : return "remove Giuk from album or delete"
+            }
+        }
+        
+        static var delete_Title_DeleteAction: String {
+            switch DescribingSources.language {
+            case "kor": return "삭제(모든앨범에서 제거)"
+            default : return "delete from storage"
+            }
+        }
+        static var delete_Title_RemoveAction: String {
+            switch DescribingSources.language {
+            case "kor": return "이 앨범에서 빼기"
+            default : return "remove from this album"
+            }
+        }
+        static var delete_Title_CancelAction: String {
+            switch DescribingSources.language {
+            case "kor": return "취소"
+            default : return "cancel"
             }
         }
     }

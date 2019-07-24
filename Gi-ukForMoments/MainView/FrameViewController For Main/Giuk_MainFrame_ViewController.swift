@@ -30,7 +30,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     
     private(set) weak var containerView_MainContent: UIView!
     
-    private(set) weak var tagView: HashTagScrollView!
+    private(set) weak var tagView: GiukHashtagScrollView!
     //end
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -73,6 +73,20 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     }
     //end
     
+    //MARK: Variable for tags
+    var _tags: [String]?
+    
+    var tags: [String]? {
+        get {
+            return _tags
+        } set {
+            if newValue != _tags {
+                updateTagsWithReloading(newTags: newValue, reload: true)
+            }
+        }
+    }
+    //end
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         //for authorize - passcode or login
@@ -90,11 +104,13 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         }
         
         //set variables
-        setButtonDataSource()
         transitionAnimator.animationDuration = animationDuration
         transitionAnimator.presentAnimationCurveStyle = .curveEaseOut
         transitionAnimator.dismissAnimationCurveStyle = .curveEaseOut
         view.backgroundColor = .goyaWhite
+        
+        //set subviews
+        setButtonDataSource()
         setContainers()
         setTagView()
         setAnimationView()
@@ -159,7 +175,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         var controlButtons = [UIButton_WithIdentifire]()
         let addButton = UIButton_WithIdentifire()
         addButton.identifire = buttonLocation.top.rawValue
-        addButton.setImage(UIImage(named: ButtonImageNames.ButtonName_Main_Add), for: .normal)
+        addButton.setImage(UIImage(named: ButtonImageNames.ButtonName_Main_Giuk), for: .normal)
         addButton.addTarget(target, action: selector, for: forEvent)
         addButton.backgroundColor = .clear
         controlButtons.append(addButton)
@@ -206,6 +222,21 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     
     private func layoutContainers() {
         containerView_MainContent?.setNewFrame(contentAreaOrigin_Start, size: contentAreaSize)
+    }
+    
+    private func setTagView() {
+        let newTagView = generateUIView(view: tagView, frame: containerView_MainContent.bounds)
+        tagView = newTagView
+        tagView.hashTagScrollViewDelegate = self
+        tagView.dataSource = self
+        tagView.tagItemCornerRadius_Percent = 20
+        tagView.itemMinSize = SizeSources.tagItemMinimumSize
+        //        tagView.backgroundColor = UIColor(patternImage: UIImage(named: "GiukBackground")!)
+        containerView_MainContent.addSubview(tagView)
+    }
+    
+    private func layoutTagView() {
+        tagView?.setNewFrame(containerView_MainContent.bounds)
     }
     
     private func setAnimationView() {
@@ -274,7 +305,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     }
     //end
     
-    //MARK: Presenting ViewController for Button Identifire
+    //MARK: Will Presented ViewController for Button Identifire
     func viewControllerForButtonIdentifire(_ identifire: String) -> Giuk_OpenFromFrame_ViewController? {
         switch identifire {
         case buttonLocation.top.rawValue:
@@ -338,7 +369,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     }
     //end
     
-    //MARK: Presneting ViewController AnimationSettings - frametransitiondatasource
+    //MARK: Will Presneted ViewController AnimationSettings - frametransitiondatasource
     func completionAction_ToViewController(_ viewController: UIViewController) {
         if let controller = viewController as? WriteSectionViewController {
             UIView.animate(withDuration: 0.3) {
@@ -347,7 +378,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
             }
         } else if let controller = viewController as? GiukViewerViewController {
             UIView.animate(withDuration: 0.3) {
-                controller.giukPresentCollectionView.alpha = 1
+                controller.presentCollectionView.alpha = 1
                 controller.closeButton.alpha = 1
                 controller.editButton?.alpha = 1
             }
@@ -359,14 +390,14 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
             controller.writingSection.alpha = 0
             controller.closeButton.alpha = 0
         } else if let controller = viewController as? GiukViewerViewController{
-            controller.giukPresentCollectionView.alpha = 0
+            controller.presentCollectionView.alpha = 0
             controller.closeButton.alpha = 0
             controller.editButton?.alpha = 0
         }
     }
     //end
     
-    //MARK: Container trigger button action
+    //MARK: ViewController present button action - animationView's button action
     @objc private func handleOntap(_ sender: UIButton_WithIdentifire) {
         let identifire = sender.identifire
         if let newVC = requestedViewControllerWithButtonIdentifire(identifire) {
@@ -391,41 +422,24 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         }
     }
     //end
+}
+
+extension Giuk_MainFrame_ViewController {
     
-    //MARK: testing core data
-    private func setTagView() {
-        let newTagView = generateUIView(view: tagView, frame: containerView_MainContent.bounds)
-        tagView = newTagView
-        tagView.hashTagScrollViewDelegate = self
-        tagView.dataSource = self
-//        tagView.backgroundColor = UIColor(patternImage: UIImage(named: "GiukBackground")!)
-        containerView_MainContent.addSubview(tagView)
-    }
-    
-    private func layoutTagView() {
-        tagView?.setNewFrame(containerView_MainContent.bounds)
-    }
-    
+    //MARK: Tag related function
     func findAllTags() {
         tags = Tag.findAllTags(context: AppDelegate.viewContext)
     }
     
-    var _tags: [String]? {
-        didSet {
-            tagView.reloadData(animate: true, duration: 0.45)
+    func updateTagsWithReloading(newTags: [String]? ,reload: Bool) {
+        _tags = newTags
+        if reload {
+            tagView.reloadData(animate: true, duration: animationDuration)
         }
     }
+    //end
     
-    var tags: [String]? {
-        get {
-            return _tags
-        } set {
-            if newValue != _tags {
-                _tags = newValue
-            }
-        }
-    }
-    
+    //MARK: TagView delegate methods
     func hashTagScrollView_tagItems(_ hashTagScrollView: HashTagScrollView) -> [String]? {
         return tags
     }
@@ -449,15 +463,17 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     }
     
     func hashTagScrollView(_ hashTagScrollView: HashTagScrollView, didLongPressedItemAt item: Int, tag: String) {
-        let alert = UIAlertController(title: "DELETE “\(tag)”", message: "related giuk could be deleted together\nif it has no links to other tags", preferredStyle: .alert)
-        let confirmButton = UIAlertAction(title: "Delete", style: .destructive) { (action) in
+        let title = DescribingSources.MainTagView.deleteTag_notice_Title + tag
+        let alert = UIAlertController(title: title, message: DescribingSources.MainTagView.deleteTag_notice_SubTiltle, preferredStyle: .alert)
+        let confirmButton = UIAlertAction(title: DescribingSources.MainTagView.delete_Title_DeleteAction, style: .destructive) { (action) in
             let context = self.context
             Tag.findTagFromTagName(context: context, tagName: tag)?.delete(context: context) {
                 [weak self] in
-                self?.findAllTags()
+                self?.tagView.removeHashItem(at: item)
+                self?._tags?.remove(at: item)
             }
         }
-        let cancelButton = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let cancelButton = UIAlertAction(title: DescribingSources.MainTagView.delete_Title_CancelAction, style: .cancel, handler: nil)
         
         alert.addAction(cancelButton)
         alert.addAction(confirmButton)
@@ -465,9 +481,8 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         present(alert, animated: true)
     }
     //end
+    
 }
-
-
 
 extension Giuk_MainFrame_ViewController {
     //MARK: set animation part

@@ -116,7 +116,7 @@ extension PresentGiukView {
     var estimateAreaForWriting: CGRect {
         if isHorizontal {
             let width = frame.width
-            let height = frame.height - estimateAreaOfImageCorpView.height
+            let height = (frame.height - estimateAreaOfImageCorpView.height).absValue
             let size = CGSize(width: width, height: height)
             let originX : CGFloat = 0
             let originY = estimateAreaOfImageCorpView.maxY
@@ -124,7 +124,7 @@ extension PresentGiukView {
             return CGRect(origin: origin, size: size)
         } else {
             let height = frame.height
-            let width = frame.width - estimateAreaOfImageCorpView.width
+            let width = (frame.width - estimateAreaOfImageCorpView.width).absValue
             let size = CGSize(width: width, height: height)
             let origin = CGPoint(x: 0, y: 0)
             return CGRect(origin: origin, size: size)

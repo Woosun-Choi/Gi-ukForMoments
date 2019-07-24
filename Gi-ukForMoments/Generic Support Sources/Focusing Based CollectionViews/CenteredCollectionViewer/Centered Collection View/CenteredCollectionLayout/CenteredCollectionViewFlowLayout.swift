@@ -31,7 +31,6 @@ class CenteredCollectionViewFlowLayout: UICollectionViewLayout {
             if index.row == 0 {
                 return CGPoint(x: 0, y: 0)
             } else {
-                
                 let positionX = cache[index.item].frame.origin.x - requiredEdgeMarginForAlignCellsToCenter
                 //((requiredEdgeMarginForAlignCellsToCenter) + (expectedCellSizeFactor))*CGFloat(index.item)
                 //let positionX = (width*CGFloat(index.item))
@@ -207,7 +206,7 @@ extension CenteredCollectionViewFlowLayout {
                 for item in 0..<numberOfItemsInSection(section) {
                     let indexPath = IndexPath(item: item, section: 0)
                     let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
-                    attributes.zIndex = maxIndex - item
+                    attributes.zIndex = item
                     attributes.frame = frame
                     cache.append(attributes)
                     if isHorizontal {

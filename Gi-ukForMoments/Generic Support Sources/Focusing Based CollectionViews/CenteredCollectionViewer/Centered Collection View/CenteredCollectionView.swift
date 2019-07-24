@@ -8,17 +8,80 @@
 
 import UIKit
 
-@objc protocol aaa : FocusingIndexBasedCollectionViewDelegate {
-    
-}
-
 class CenteredCollectionView: FocusingIndexBasedCollectionView {
     
-    //MARK: IBInspectableValues
+    //MARK: Variables
     @IBInspectable var isHorizontal: Bool = true
+    
     @IBInspectable var isFullscreen: Bool = true
+    
     @IBInspectable var contentMinimumMargin: CGFloat = 0
-    //End
+    
+    var requiredItemIndex: IndexPath?
+    
+    var flowLayouts : UICollectionViewLayout {
+        return self.collectionViewLayout
+    }
+    //end
+    
+    override func reloadData() {
+        super.reloadData()
+        focusingIndex = nil
+        scrollWhenRequiredIndexExist()
+    }
+    
+    func scrollToTargetIndex(index : IndexPath?, animated: Bool, completion: (()->Void)? = nil) {
+        guard let _index = index else {return}
+        let scrollView = self as UIScrollView
+        if let layOut = self.flowLayouts as? CenteredCollectionViewFlowLayout {
+            scrollView.setContentOffset(layOut.positionOfCellForIndexpath(_index), animated: animated)
+        }
+        completion?()
+    }
+    
+    //MARK: update layouts
+    private func scrollWhenRequiredIndexExist() {
+        if let _ = focusingIndex {
+        } else {
+            checkNowCenteredFocusedCell(collectionView: self)
+            if let currentFocused = focusingIndex {
+                scrollToTargetIndex(index: currentFocused, animated: false)
+            }
+        }
+    }
+    
+    override var frame: CGRect {
+        didSet {
+            //if frame size changed. relayout with now focused cell get centered.
+            if frame.size != oldValue.size {
+                if requiredItemIndex == nil {
+                    requiredItemIndex = focusingIndex
+                    if let nowIndex = focusingIndex {
+                        scrollToTargetIndex(index: nowIndex, animated: false)
+                    }
+                } else {
+                    scrollWhenRequiredIndexExist()
+                }
+            }
+        }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        scrollWhenRequiredIndexExist()
+    }
+    
+    override func draw(_ rect: CGRect) {
+        scrollWhenRequiredIndexExist()
+    }
+    //end
+    
+    //MARK: overrided scrollview delegate from focusingindexbasedscrollview
+    override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        super.scrollViewDidEndScrollingAnimation(scrollView)
+//        scrollToTargetIndex(index: focusingIndex, animated: true)
+        focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: false)
+    }
     
     //MARK: init Methodes
     convenience init(frame: CGRect, isHorizontal: Bool, isFullscreen: Bool, contentMinimumMargin: CGFloat = 0) {
@@ -39,91 +102,35 @@ class CenteredCollectionView: FocusingIndexBasedCollectionView {
         layer.masksToBounds = true
         self.backgroundColor = .clear
     }
-    
-    
-    //MARK: Variables
-    var requiredItemIndex: IndexPath?
-    
-    var trackingFocusingCellAutomatically: Bool = false
-    
-    var flowLayouts : UICollectionViewLayout {
-        return self.collectionViewLayout
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        if trackingFocusingCellAutomatically == false {
-            scrollWhenRequiredIndexExist()
-        }
-    }
-    
-    override var frame: CGRect {
-        didSet {
-            //if frame size changed. relayout with now focused cell get centered.
-            if frame.size != oldValue.size {
-                trackingFocusingCellAutomatically = false
-                if requiredItemIndex == nil {
-                    requiredItemIndex = focusingIndex
-                }
-            }
-        }
-    }
-    
-    override func draw(_ rect: CGRect) {
-        scrollWhenRequiredIndexExist()
-    }
-    
-    override func reloadData() {
-        super.reloadData()
-        scrollWhenRequiredIndexExist()
-    }
-    
-    private func scrollWhenRequiredIndexExist() {
-        if requiredItemIndex != nil {
-            scrollToTargetIndex(index: requiredItemIndex, animated: false)
-            focusingIndex = requiredItemIndex
-            requiredItemIndex = nil
-        } else {
-            checkNowFocusedCell(collectionView: self)
-        }
-    }
-    
-    //MARK: overrided scrollview delegate from focusingindexbasedscrollview
-    override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        super.scrollViewDidEndScrollingAnimation(scrollView)
-        if trackingFocusingCellAutomatically {
-            scrollToTargetIndex(index: focusingIndex, animated: true)
-        }
-        focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: false)
-    }
 }
 
 extension CenteredCollectionView {
     
+    //MARK: scrollview delegates
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        trackingFocusingCellAutomatically = true
         focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: true)
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if trackingFocusingCellAutomatically {
-            scrollToTargetIndex(index: focusingIndex, animated: true)
-        }
+        scrollToTargetIndex(index: focusingIndex, animated: true)
     }
     
     func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
-        if trackingFocusingCellAutomatically {
-            scrollToTargetIndex(index: focusingIndex, animated: true)
-        }
+        scrollToTargetIndex(index: focusingIndex, animated: true)
     }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        checkWillFocusedCell(collectionView: self)
+    }
+    //end
     
     //MARK: focuing part
     var focusingArea: CGRect {
         if isHorizontal {
-            let _width = bounds.width * 0.8
+            let _width = bounds.width * 0.7
             let _height = bounds.height
             let size = CGSize(width: _width, height: _height)
-            let originX = (bounds.origin.x + (bounds.width) - _width)
+            let originX = (contentOffset.x + ((bounds.width - _width)/2))
             let originY = (bounds.origin.y)
             let origin = CGPoint(x: originX, y: originY)
             return CGRect(origin: origin, size: size)
@@ -137,8 +144,6 @@ extension CenteredCollectionView {
             return CGRect(origin: origin, size: size)
         }
     }
-    
-    
     
     func checkFrameIsInFocusingArea(_ frame: CGRect?) -> Bool {
         if let targetFrame = frame {
@@ -208,6 +213,38 @@ extension CenteredCollectionView {
         }
     }
     
+    //MARK: check centeredCell
+    func checkAreaSizeInFocusingArea(_ frame: CGRect?) -> CGFloat {
+        if let targetFrame = frame {
+            let value = focusingArea.intersection(targetFrame).areaSize
+            return value
+        } else {
+            return 0
+        }
+    }
+    
+    func areaSizeOfCellInFocusingArea(collectionView: UICollectionView ,cell: UICollectionViewCell) -> (size: CGFloat, index: IndexPath?) {
+        let cellInfo = self.informationOfCell(cell: cell)
+        let cellFrame = cellInfo.attributeCellFrame
+        let cellIndex = cellInfo.index
+        return (checkAreaSizeInFocusingArea(cellFrame), cellIndex)
+    }
+    
+    func checkNowCenteredFocusedCell(collectionView: UICollectionView) {
+        var indexs = [(size: CGFloat, index: IndexPath?)]()
+        
+        for cell in collectionView.visibleCells {
+            let cellIsInFocusingArea = areaSizeOfCellInFocusingArea(collectionView: collectionView, cell: cell)
+            indexs.append(cellIsInFocusingArea)
+        }
+        
+        indexs.sort{ $0.size > $1.size }
+        
+        focusingIndex = indexs.first?.index
+    }
+    //end
+    
+    //MARK: 3D presenting cell method
     fileprivate func animateCell(cellFrame: CGRect, contentOffSet: CGFloat) -> CATransform3D? {
         let angleFromX = Double(((cellFrame.origin.x - contentOffSet)) / 5)
         let angle = CGFloat((angleFromX * Double.pi) / 180.0)
@@ -243,7 +280,6 @@ extension CenteredCollectionView {
             return CATransform3DConcat(rotation, scale)
         }
     }
-    //end
     
     func updateTransform() {
         for cell in self.visibleCells {
@@ -254,21 +290,9 @@ extension CenteredCollectionView {
             }
         }
     }
+    //end
     
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        checkWillFocusedCell(collectionView: self)
-    }
-    
-    func scrollToTargetIndex(index : IndexPath?, animated: Bool, completion: (()->Void)? = nil) {
-        guard let _index = index else {return}
-        focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: true)
-        let scrollView = self as UIScrollView
-        if let layOut = self.flowLayouts as? CenteredCollectionViewFlowLayout {
-            scrollView.setContentOffset(layOut.positionOfCellForIndexpath(_index), animated: animated)
-        }
-        completion?()
-    }
-    
+    //MARK: collectionView delegate
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print("centered collectionview \(indexPath) cell selected")
         guard let cell = collectionView.cellForItem(at: indexPath) else
@@ -278,10 +302,12 @@ extension CenteredCollectionView {
                 focusingCollectionViewDelegate?.collectionViewDidSelectFocusedIndex?(self, focusedIndex: indexPath, cell: cell)
             } else {
                 focusingIndex = indexPath
+                focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: true)
                 scrollToTargetIndex(index: indexPath, animated: true)
             }
         } else {
             focusingIndex = indexPath
+            focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: true)
             scrollToTargetIndex(index: indexPath, animated: true)
         }
     }

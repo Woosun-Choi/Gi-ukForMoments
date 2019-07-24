@@ -31,15 +31,17 @@ class Tag: NSManagedObject {
             for giuk in containedGiuk {
                 if giuk.tags?.count == 1 {
                     context.delete(giuk)
-                    context.delete(self)
                     print("giuk and tag deleted")
                 } else {
                     giuk.removeFromTags(self)
-                    context.delete(self)
                     print("tag deleted alone")
                 }
             }
+            context.delete(self)
+        } else if self.giuks?.count == 0{
+            context.delete(self)
         }
+        try? context.save()
         completion?()
     }
     

@@ -46,19 +46,43 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
     }
     
     //MARK: Variables
-    private var tags : [String]?
+    private(set) var tags : [String]?
     
     private var widthLimitForPresentingTags : CGFloat?
     
     var widthLimit : CGFloat? {
         get {
             if widthLimitForPresentingTags == nil {
-                return self.bounds.width
+                return self.bounds.width - (generalSettings.itemHorizontalSpace * 2)
             } else {
                 return widthLimitForPresentingTags
             }
         }
         set { widthLimitForPresentingTags = newValue }
+    }
+    
+    var tagItemCornerRadius_Percent: CGFloat = 100 {
+        didSet {
+            reloadData()
+        }
+    }
+    
+    var tagItemMinHeight: CGFloat = 35 {
+        didSet {
+            reloadData()
+        }
+    }
+    
+    var itemMinSize: CGSize = CGSize(width: 10, height: 10) {
+        didSet {
+            reloadData()
+        }
+    }
+    //end
+    
+    //MARK: Computed Variables
+    var checkDataIsChanged: Bool {
+        return (tags != dataSource?.hashTagScrollView_tagItems(self)) ? (true) : (false)
     }
     
     var numberOfTags: Int {
@@ -79,19 +103,26 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
     }
     //end
     
-    func clearHashItem() {
-        for subview in self.subviews {
-            subview.removeFromSuperview()
+    //MARK: Public functions
+    
+    func itemForIndexAt(_ index: Int) -> HashTagItem? {
+        if let item = subviews[index] as? HashTagItem {
+            return item
+        } else {
+            return nil
         }
     }
     
-    private func generateTags(_ tags: [String]) {
-        for item in tags {
-            let hash = HashTagItem(limitWidth: estimateWidthLimit, tag: item, fontSize: estimatedFontSizeForTagItem)
-            hash.delegate = self
-            self.addSubview(hash)
+    func itemForTagName(_ tagName: String) -> HashTagItem? {
+        var result : HashTagItem?
+        if let items = subviews as? [HashTagItem] {
+            for item in items {
+                if item.tagString == tagName {
+                    result = item
+                }
+            }
         }
-        setNeedsLayout()
+        return result
     }
     
     func addHashItem(text: String) {
@@ -108,66 +139,26 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
         updateSubviewsLocation_WithAnimation()
     }
     
-    func itemForIndexAt(_ index: Int) -> HashTagItem? {
-        if let item = subviews[index] as? HashTagItem {
-            return item
-        } else {
-            return nil
+    func removeHashItem(for tagName: String) {
+        guard let currentTags = tags else { return }
+        var targetIndex : Int?
+        for tag in currentTags {
+            if tag == tagName {
+                targetIndex = currentTags.firstIndex(of: tagName)
+            }
         }
+        guard let selectedIndex = targetIndex else { return }
+        tags?.remove(at: selectedIndex)
+        subviews[selectedIndex].removeFromSuperview()
+        updateSubviewsLocation_WithAnimation()
     }
     
-    private func updateSubviewsLocation_WithAnimation() {
-        var shouldUpdatedItems = [UIView]()
-        var newFrameOrigins = [CGPoint]()
-        var nowX = generalSettings.horizontalEdgeMargin
-        var nowY = generalSettings.verticalEdgeMargin
-        
-        var nowOffSet : CGPoint {
-            return CGPoint(x: nowX, y: nowY)
-        }
-        
+    func clearHashItem() {
         for subview in self.subviews {
-            if round(nowX + subview.frame.width) > round(trailingEdgeLimit) {
-                nowY = subview.frame.height + generalSettings.itemVerticalSpace + nowY
-                nowX = generalSettings.horizontalEdgeMargin
-            }
-            if subview.frame.origin != nowOffSet {
-                shouldUpdatedItems.append(subview)
-                newFrameOrigins.append(nowOffSet)
-            }
-            nowX += (subview.frame.width + generalSettings.itemHorizontalSpace)
+            subview.removeFromSuperview()
         }
-        
-        UIView.animate(withDuration: 0.25) {
-            for index in shouldUpdatedItems.indices {
-                shouldUpdatedItems[index].frame.origin = newFrameOrigins[index]
-            }
-        }
-        
-        contentSize = newFrame.size
     }
     
-    private func updateSubviewsLocation() {
-        var nowX = generalSettings.horizontalEdgeMargin
-        var nowY = generalSettings.verticalEdgeMargin
-        
-        var nowOffSet : CGPoint {
-            return CGPoint(x: nowX, y: nowY)
-        }
-        
-        for subview in self.subviews {
-            subview.setNeedsLayout()
-            if round(nowX + subview.frame.width) > round(trailingEdgeLimit) {
-                nowY = subview.frame.height + generalSettings.itemVerticalSpace + nowY
-                nowX = generalSettings.horizontalEdgeMargin
-            }
-            subview.frame.origin = nowOffSet
-            nowX += (subview.frame.width + generalSettings.itemHorizontalSpace)
-        }
-        contentSize = newFrame.size
-    }
-    
-    //MARK: Update functions
     func reloadData(animate: Bool = false, duration: TimeInterval = 0) {
         if animate {
             self.alpha = 0
@@ -192,10 +183,6 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
         }
     }
     
-    var checkDataIsChanged: Bool {
-        return (tags != dataSource?.hashTagScrollView_tagItems(self)) ? (true) : (false)
-    }
-    
     func setNewInsets(verticalEdgeMargin : CGFloat?, horizontalEdgeMargin : CGFloat?, itemVerticalSpace : CGFloat?, itemHorizontalSpace : CGFloat?) {
         (verticalEdgeMargin != nil) ? (generalSettings.verticalEdgeMargin = verticalEdgeMargin!) : ()
         (horizontalEdgeMargin != nil) ? (generalSettings.horizontalEdgeMargin = horizontalEdgeMargin!) : ()
@@ -205,6 +192,73 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
     }
     //end
     
+    //MARK: Private functions
+    private func generateTags(_ tags: [String]) {
+        for item in tags {
+//            let hash = HashTagItem(limitWidth: estimateWidthLimit, tag: item, fontSize: estimatedFontSizeForTagItem)
+//            let hash = HashTagItem(limitWidth: estimateWidthLimit, tag: item, fontSize: estimatedFontSizeForTagItem, itemMinHeight: tagItemMinHeight)
+            let hash = HashTagItem(limitWidth: estimateWidthLimit, tag: item, fontSize: estimatedFontSizeForTagItem, itemMinSize: itemMinSize)
+            hash.cornerRadiusRatio = tagItemCornerRadius_Percent
+            hash.delegate = self
+            self.addSubview(hash)
+        }
+        setNeedsLayout()
+    }
+    
+    private func updateSubviewsLocation_WithAnimation(completion: ((Bool) -> Void)? = nil) {
+        var shouldUpdatedItems = [UIView]()
+        var newFrameOrigins = [CGPoint]()
+        var nowX = generalSettings.horizontalEdgeMargin
+        var nowY = generalSettings.verticalEdgeMargin
+        
+        var nowOffSet : CGPoint {
+            return CGPoint(x: nowX, y: nowY)
+        }
+        
+        for subview in self.subviews {
+            if round(nowX + subview.frame.width) > round(trailingEdgeLimit) {
+                nowY = subview.frame.height + generalSettings.itemVerticalSpace + nowY
+                nowX = generalSettings.horizontalEdgeMargin
+            }
+            if subview.frame.origin != nowOffSet {
+                shouldUpdatedItems.append(subview)
+                newFrameOrigins.append(nowOffSet)
+            }
+            nowX += (subview.frame.width + generalSettings.itemHorizontalSpace)
+        }
+        
+        UIView.animate(withDuration: 0.25, animations: {
+            for index in shouldUpdatedItems.indices {
+                shouldUpdatedItems[index].frame.origin = newFrameOrigins[index]
+            }
+        }) { (finished) in
+            self.setNeedsLayout()
+            completion?(finished)
+        }
+        
+        contentSize = newFrame.size
+    }
+    
+    private func updateSubviewsLocation() {
+        var nowX = generalSettings.horizontalEdgeMargin
+        var nowY = generalSettings.verticalEdgeMargin
+        
+        var nowOffSet : CGPoint {
+            return CGPoint(x: nowX, y: nowY)
+        }
+        
+        for subview in self.subviews {
+            subview.setNeedsLayout()
+            if round(nowX + subview.frame.width) > round(trailingEdgeLimit) {
+                nowY = subview.frame.height + generalSettings.itemVerticalSpace + nowY
+                nowX = generalSettings.horizontalEdgeMargin
+            }
+            subview.frame.origin = nowOffSet
+            nowX += (subview.frame.width + generalSettings.itemHorizontalSpace)
+        }
+        contentSize = newFrame.size
+    }
+    //end
     
     override func layoutSubviews() {
         super.layoutSubviews()

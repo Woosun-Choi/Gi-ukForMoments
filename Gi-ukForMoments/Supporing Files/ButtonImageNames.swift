@@ -9,9 +9,11 @@
 import Foundation
 
 struct ButtonImageNames {
+    static let ButtonName_Main_Giuk: String = "GiukIcon-Giuk"
     static let ButtonName_Main_Add: String = "GiukIcon-Add"
     static let ButtonName_Main_Key: String = "GiukIcon-Key"
     static let ButtonName_Main_Setting: String = ""
+    static let ButtonName_Content_Delete: String = "GiukIcon-Delete"
     static let ButtonName_Content_TagAdd: String = "GiukIcon-Add-Small"
     static let ButtonName_Content_Close: String = "GiukIcon-Close"
     static let ButtonName_Content_RightArrow: String = "GiukIcon-RightArrow"

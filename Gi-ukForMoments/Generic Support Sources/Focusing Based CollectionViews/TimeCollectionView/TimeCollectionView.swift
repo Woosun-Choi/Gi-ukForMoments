@@ -16,99 +16,93 @@ import UIKit
 
 class TimeCollectionView: FocusingIndexBasedCollectionView {
     
-    override var dataSource: UICollectionViewDataSource? {
-        didSet {
-            //setOriginState()
-        }
-    }
-    
     var is3DPresentingCell : Bool = true
     
-//    weak var pointerView: UIView!
-//
-//    func setPointerView() {
-//        if pointerView == nil {
-//            let newView = generateUIView(view: pointerView, frame: focusingArea)
-//            pointerView = newView
-//            pointerView.backgroundColor = .red
-//            addSubview(pointerView)
-//        } else {
-//            pointerView?.setNewFrame(focusingArea)
-//        }
-//    }
-    
     var requiredItemIndex: IndexPath?
+    
+    var scrollActivated: Bool = false
     
     private var maxIndex: IndexPath {
         let max = self.numberOfItems(inSection: 0)
         return IndexPath(item: max - 1, section: 0)
     }
     
-//    var trackingFocusingCellAutomatically: Bool = false
-    
     private var flowLayout: UICollectionViewLayout {
         return self.collectionViewLayout
     }
     
-    override var frame: CGRect {
-        didSet {
-            //if frame size changed. relayout with now focused cell get centered.
-            if frame.size != oldValue.size {
-//                trackingFocusingCellAutomatically = false
-                if requiredItemIndex == nil {
-                    requiredItemIndex = focusingIndex
-                    scrollWhenRequiredIndexExist()
-                }
-            }
-        }
-    }
-    
-    private func setOriginState() {
+    func setStartIndexToLastIndex() {
         self.requiredItemIndex = maxIndex
     }
     
     func setStartState(with index: IndexPath, completion:(()->Void)? = nil) {
-//        self.trackingFocusingCellAutomatically = false
         self.requiredItemIndex = index
         self.reloadData()
-        //self.trackingFocusingCellAutomatically = true
         completion?()
     }
     
-    private func scrollWhenRequiredIndexExist() {
-        if requiredItemIndex != nil {
-            scrollToTargetIndex(index: requiredItemIndex, animated: false)
-            focusingIndex = requiredItemIndex
-            requiredItemIndex = nil
-        } else {
-            checkNowFocusedCell(collectionView: self)
-            (is3DPresentingCell) ? updateTransform() : ()
+    func scrollToTargetIndex(index : IndexPath?, animated: Bool, completion: (()->Void)? = nil) {
+        guard let _index = index else {return}
+        scrollActivated = true
+        if let layOut = self.flowLayout as? CenteredSquareTypeCollectionViewFlowlayout {
+            let scrollView = self as UIScrollView
+            scrollView.setContentOffset(layOut.postionOfCellForIndexpath(_index), animated: animated)
+            completion?()
         }
     }
     
     override func reloadData() {
         super.reloadData()
+        focusingIndex = nil
         scrollWhenRequiredIndexExist()
     }
     
-    //MARK: override delegate
+    //MARK: overrided delegate
     override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         super.scrollViewDidEndScrollingAnimation(scrollView)
         focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: false)
     }
     //end
     
+    //MARK: Layout updates
+    private func scrollWhenRequiredIndexExist() {
+        if let _ = focusingIndex {
+        } else {
+            checkNowCenteredFocusedCell(collectionView: self)
+            if let currentFocused = focusingIndex {
+                scrollToTargetIndex(index: currentFocused, animated: false)
+            }
+            (is3DPresentingCell) ? updateTransform() : ()
+        }
+    }
+    
+    override var frame: CGRect {
+        didSet {
+            //if frame size changed. relayout with now focused cell get centered.
+            if frame.size != oldValue.size {
+                if requiredItemIndex == nil {
+                    requiredItemIndex = focusingIndex
+                    if let nowIndex = focusingIndex {
+                        scrollToTargetIndex(index: nowIndex, animated: false)
+                    }
+                } else {
+                    scrollWhenRequiredIndexExist()
+                }
+            }
+        }
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
-//        if trackingFocusingCellAutomatically == false {
             scrollWhenRequiredIndexExist()
-//        }
     }
     
     override func draw(_ rect: CGRect) {
         scrollWhenRequiredIndexExist()
     }
+    //end
     
+    //MARK: init methods
     override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: frame, collectionViewLayout: layout)
         (self.collectionViewLayout is CenteredSquareTypeCollectionViewFlowlayout) ? () : (self.collectionViewLayout = CenteredSquareTypeCollectionViewFlowlayout())
@@ -128,37 +122,29 @@ class TimeCollectionView: FocusingIndexBasedCollectionView {
         self.showsHorizontalScrollIndicator = false
         fatalError("init(coder:) has not been implemented")
     }
+    //end
 }
 
 extension TimeCollectionView {
     
+    //MARK: scrollview delegates
     func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
-//        if trackingFocusingCellAutomatically {
-            scrollToTargetIndex(index: focusingIndex, animated: true)
-//        }
+        scrollToTargetIndex(index: focusingIndex, animated: true)
     }
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-//        trackingFocusingCellAutomatically = true
         focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: true)
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-//        if trackingFocusingCellAutomatically {
-            scrollToTargetIndex(index: focusingIndex, animated: true)
-//        }
+        scrollToTargetIndex(index: focusingIndex, animated: true)
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         checkWillFocusedCell(collectionView: self)
         (is3DPresentingCell) ? updateTransform() : ()
-//        if trackingFocusingCellAutomatically {
-//            let translation = scrollView.panGestureRecognizer.translation(in: self)
-//            if let _ = self.flowLayout as? CenteredSquareTypeCollectionViewFlowlayout {
-//                checkWillFocusedCell(scrollView, direction: translation.x)
-//            }
-//        }
     }
+    //end
     
     //MARK: 3D presenting part
     func updateTransform() {
@@ -218,7 +204,7 @@ extension TimeCollectionView {
     }
     //end
     
-    //MARK: update focuing index part
+    //MARK: focusing part
     var focusingArea: CGRect {
         var _width = bounds.width * 0.8
         if let layout = self.collectionViewLayout as? CenteredSquareTypeCollectionViewFlowlayout {
@@ -235,14 +221,14 @@ extension TimeCollectionView {
                 let _height = layout.estimateCellSize.height
                 let size = CGSize(width: _width, height: _height)
                 let originX = (bounds.origin.x)
-                let originY = ((bounds.height) - _height)/2 + bounds.origin.y
+                let originY = contentOffset.y + layout.leftOverMargin
                 let origin = CGPoint(x: originX, y: originY)
                 return CGRect(origin: origin, size: size)
             }
         } else {
             let _height = bounds.height
             let size = CGSize(width: _width, height: _height)
-            let originX = ((bounds.width) - _width)/2 + bounds.origin.x
+            let originX = ((bounds.width) - _width)/2 + contentOffset.x
             let originY = (bounds.origin.y)
             let origin = CGPoint(x: originX, y: originY)
             return CGRect(origin: origin, size: size)
@@ -251,8 +237,6 @@ extension TimeCollectionView {
     
     func checkFrameIsInFocusingArea(_ frame: CGRect?) -> Bool {
         if let targetFrame = frame {
-//            print("focusingFrame : \(focusingArea)")
-//            print("targetcellframe : \(targetFrame)")
             return focusingArea.intersects(targetFrame)
         } else {
             return false
@@ -318,22 +302,40 @@ extension TimeCollectionView {
             }
         }
     }
-    //end
     
-    
-    func scrollToTargetIndex(index : IndexPath?, animated: Bool, completion: (()->Void)? = nil) {
-        guard let _index = index else {return}
-        focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: true)
-        if let layOut = self.flowLayout as? CenteredSquareTypeCollectionViewFlowlayout {
-            let scrollView = self as UIScrollView
-            scrollView.setContentOffset(layOut.postionOfCellForIndexpath(_index), animated: animated)
-            completion?()
+    //MARK: checking centered cell functions
+    func checkAreaSizeInFocusingArea(_ frame: CGRect?) -> CGFloat {
+        if let targetFrame = frame {
+            let value = focusingArea.intersection(targetFrame).areaSize
+            return value
+        } else {
+            return 0
         }
     }
     
+    func areaSizeOfCellInFocusingArea(collectionView: UICollectionView ,cell: UICollectionViewCell) -> (size: CGFloat, index: IndexPath?) {
+        let cellInfo = self.informationOfCell(cell: cell)
+        let cellFrame = cellInfo.attributeCellFrame
+        let cellIndex = cellInfo.index
+        return (checkAreaSizeInFocusingArea(cellFrame), cellIndex)
+    }
+    
+    func checkNowCenteredFocusedCell(collectionView: UICollectionView) {
+        var indexs = [(size: CGFloat, index: IndexPath?)]()
+        
+        for cell in collectionView.visibleCells {
+            let cellIsInFocusingArea = areaSizeOfCellInFocusingArea(collectionView: collectionView, cell: cell)
+            indexs.append(cellIsInFocusingArea)
+        }
+        
+        indexs.sort{ $0.size > $1.size }
+        
+        focusingIndex = indexs.first?.index
+    }
+    //end
+    
+    //MARK: collectionView delegates
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        print("centered collectionview \(indexPath) cell selected")
-        //trackingFocusingCellAutomatically = true
         guard let cell = collectionView.cellForItem(at: indexPath) else
         { return }
         
@@ -342,10 +344,12 @@ extension TimeCollectionView {
                 focusingCollectionViewDelegate?.collectionViewDidSelectFocusedIndex?(self, focusedIndex: indexPath, cell: cell)
             } else {
                 focusingIndex = indexPath
+                focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: true)
                 scrollToTargetIndex(index: indexPath, animated: true)
             }
         } else {
             focusingIndex = indexPath
+            focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: true)
             scrollToTargetIndex(index: indexPath, animated: true)
         }
     }

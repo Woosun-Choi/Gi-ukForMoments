@@ -23,11 +23,30 @@ class HashTagItem: UIView {
     
     var printOutFrameInformation: Bool = false
     
+    var cornerRadiusRatio: CGFloat {
+        get {
+            return generalSettings.cornerRadiusRatio
+        } set {
+            if newValue > 100 {
+                generalSettings.cornerRadiusRatio = 1
+            } else if newValue < 0 {
+                generalSettings.cornerRadiusRatio = 0
+            } else {
+                generalSettings.cornerRadiusRatio = newValue/100
+            }
+            setNeedsDisplay()
+        }
+    }
+    
     weak var delegate : HashTagDelegate?
     
     weak var tagLabel: UILabel!
     
     private var widthLimit : CGFloat?
+    
+    private var itemMinHeight: CGFloat?
+    
+    private var itemMinSize: CGSize?
     
     private(set) var tagString : String?
     
@@ -55,7 +74,7 @@ class HashTagItem: UIView {
         return NSAttributedString(string: string, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle,.font: font])
     }
     
-    private func createTagItem(_ withHashMark: Bool = false) {
+    private func setTagItem(withHashMark: Bool = false) {
         
         guard let tag = tagString else { return }
         var targetTag = tag
@@ -92,12 +111,32 @@ class HashTagItem: UIView {
         
         let itemSize = CGSize(width: width, height: height)
         
-        let newFrameWidth = itemSize.width + (generalSettings.leftAndRightMargins * 2)
-        let newFrameHeight = itemSize.height + (generalSettings.topAndBottomMargins * 2)
-        let newFrameSize = CGSize(width: newFrameWidth, height: newFrameHeight)
-        frame = CGRect(origin: self.frame.origin, size: newFrameSize)
+        var newFrameWidth = itemSize.width + (generalSettings.leftAndRightMargins * 2)
+        var newFrameHeight = itemSize.height + (generalSettings.topAndBottomMargins * 2)
         
-        tagLabel.frame = CGRect(origin: generalSettings.itemOrigin, size: itemSize)
+        if let requieredHeight = itemMinHeight, requieredHeight > newFrameHeight {
+            newFrameHeight = requieredHeight
+        }
+        
+        if let requieredSize = itemMinSize {
+            if newFrameHeight < requieredSize.height {
+                newFrameHeight = requieredSize.height
+            }
+            if newFrameWidth < requieredSize.width {
+                newFrameWidth = requieredSize.width
+            }
+        }
+        
+        let newFrameSize = CGSize(width: newFrameWidth, height: newFrameHeight)
+        
+        frame.size = newFrameSize
+//        frame = CGRect(origin: self.frame.origin, size: newFrameSize)
+        
+        let originX = (newFrameWidth - itemSize.width)/2
+        let originY = (newFrameHeight - itemSize.height)/2
+        let origin = CGPoint(x: originX, y: originY)
+        
+        tagLabel.frame = CGRect(origin: origin, size: itemSize)
         tagLabel.attributedText = targetString
     }
     
@@ -134,11 +173,13 @@ class HashTagItem: UIView {
     }
     
     override func layoutSubviews() {
-        createTagItem()
+        super.layoutSubviews()
+        setTagItem()
     }
     
     override func draw(_ rect: CGRect) {
-        let path = UIBezierPath(roundedRect: bounds, cornerRadius: bounds.height * generalSettings.cornerRadiusRatio)
+        var path = UIBezierPath(rect: bounds)
+        path = UIBezierPath(roundedRect: bounds, cornerRadius: fixedCornerRadius)
         path.addClip()
         contentColor.setFill()
         path.fill()
@@ -146,6 +187,7 @@ class HashTagItem: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        self.contentMode = .redraw
         backgroundColor = UIColor.clear
         isOpaque = false
         addGesture()
@@ -155,6 +197,7 @@ class HashTagItem: UIView {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        self.contentMode = .redraw
         backgroundColor = UIColor.clear
         isOpaque = false
         addGesture()
@@ -164,6 +207,22 @@ class HashTagItem: UIView {
 }
 
 extension HashTagItem {
+    
+    var isHorizontal : Bool {
+        return (frame.width/frame.height) > 1
+    }
+    
+    var fixedCornerRadius: CGFloat {
+        return bounds.height * generalSettings.cornerRadiusRatio
+    }
+    
+    var flexibleCornerRadius: CGFloat {
+        if isHorizontal {
+            return bounds.height * generalSettings.cornerRadiusRatio
+        } else {
+            return bounds.width * generalSettings.cornerRadiusRatio
+        }
+    }
     
     var viewSize: CGSize {
         let width = tagLabel.frame.width + (generalSettings.leftAndRightMargins * 2)
@@ -187,7 +246,7 @@ extension HashTagItem {
         self.init()
         widthLimit = width
         tagString = tag
-        createTagItem()
+        setTagItem()
     }
     
     convenience init(limitWidth width: CGFloat, tag: String, fontSize: CGFloat) {
@@ -195,7 +254,25 @@ extension HashTagItem {
         self.widthLimit = width
         self.tagString = tag
         self.fontSize = fontSize
-        createTagItem()
+        setTagItem()
+    }
+    
+    convenience init(limitWidth width: CGFloat, tag: String, fontSize: CGFloat, itemMinHeight: CGFloat) {
+        self.init()
+        self.widthLimit = width
+        self.tagString = tag
+        self.fontSize = fontSize
+        self.itemMinHeight = itemMinHeight
+        setTagItem()
+    }
+    
+    convenience init(limitWidth width: CGFloat, tag: String, fontSize: CGFloat, itemMinSize: CGSize) {
+        self.init()
+        self.widthLimit = width
+        self.tagString = tag
+        self.fontSize = fontSize
+        self.itemMinSize = itemMinSize
+        setTagItem()
     }
 
     convenience init(limitWidth width: CGFloat, tag: String, fontSize: CGFloat = 11, textColor: UIColor = UIColor.white, backgroundColor: CGColor = UIColor.lightGray.cgColor, leftAndRightMargins: CGFloat = 8, topAndBottomMargins: CGFloat = 5, cornerRadiusRatio: CGFloat = 100) {
@@ -208,6 +285,6 @@ extension HashTagItem {
         generalSettings.leftAndRightMargins = leftAndRightMargins
         generalSettings.topAndBottomMargins = topAndBottomMargins
         generalSettings.cornerRadiusRatio = cornerRadiusRatio
-        createTagItem()
+        setTagItem()
     }
 }

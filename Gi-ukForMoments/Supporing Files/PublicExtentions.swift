@@ -242,6 +242,12 @@ extension CGRect {
         let newOrigin = self.origin.offSetBy(dX: dX, dY: dY)
         return CGRect(origin: newOrigin, size: self.size)
     }
+    
+    var areaSize: CGFloat {
+        let width = self.width
+        let height = self.height
+        return (width * height).preventNaN
+    }
 }
 
 extension CGFloat {
@@ -737,6 +743,12 @@ extension UICollectionView {
 
 
 extension UIImage {
+    
+    func toString() -> String? {
+        let data: Data? = self.pngData()
+        return data?.base64EncodedString(options: .endLineWithLineFeed)
+    }
+    
     /// Returns a image that fills in newSize
     func resizedImage(newSize: CGSize) -> UIImage {
         // Guard newSize is different

@@ -173,20 +173,24 @@ class Giuk: NSManagedObject {
         return data
     }
     
-    func deleteGiuk(context: NSManagedObjectContext) {
+    func deleteGiuk(context: NSManagedObjectContext, completion: (()-> Void)? = nil) {
         if let tags = self.tags?.allObjects as? [Tag] {
             for tag in tags {
                 tag.removeGiukFromIndex(giuk: self)
                 tag.removeFromGiuks(self)
+                if tag.giuks?.count == 0 {
+                    context.delete(tag)
+                }
             }
             context.delete(self)
         } else {
             context.delete(self)
         }
         try? context.save()
+        completion?()
     }
     
-    func deleteGiukFromTag(context:NSManagedObjectContext, tag: Tag) {
+    func deleteGiukFromTag(context:NSManagedObjectContext, tag: Tag, completion: (()-> Void)? = nil) {
         tag.removeGiukFromIndex(giuk: self)
         tag.removeFromGiuks(self)
         if self.tags?.count == 0 {
@@ -196,6 +200,7 @@ class Giuk: NSManagedObject {
             context.delete(tag)
         }
         try? context.save()
+        completion?()
     }
 
 }
