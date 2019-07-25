@@ -73,11 +73,6 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController, FocusingIndex
             }
         }
     }
-    
-//    override func initialAction_FromViewController(_ viewController: UIViewController) {
-//        super.initialAction_FromViewController(viewController)
-//        editButton?.alpha = 0
-//    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -418,11 +413,6 @@ extension GiukViewerViewController {
     
     var presentorFrame: CGRect {
         if nowEditing {
-//            let width = contentAreaFrame.width * 0.8
-//            let height = contentAreaFrame.height
-//            let size = CGSize(width: width, height: height)
-//            let origin = contentAreaFrame.origin.offSetBy(dX: (contentAreaFrame.width - width)/2, dY: 0)
-//            return CGRect(origin: origin, size: size)
             return contentAreaFrame
         } else {
             return fullContentFrameForPresentor
@@ -470,7 +460,6 @@ extension GiukViewerViewController {
         if nowEditing {
             width = (presentorFrame.width * 0.75).preventNaN.clearUnderDot
         }
-//        let width = (presentorFrame.width * 0.9).preventNaN.clearUnderDot
         let height = (width/3)*4
         return CGSize(width: width, height: height)
     }
