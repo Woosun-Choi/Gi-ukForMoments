@@ -463,7 +463,7 @@ extension Giuk_MainFrame_ViewController {
     }
     
     func hashTagScrollView(_ hashTagScrollView: HashTagScrollView, didLongPressedItemAt item: Int, tag: String) {
-        let title = DescribingSources.MainTagView.deleteTag_notice_Title + tag
+        let title = DescribingSources.MainTagView.deleteTag_notice_Title + "\n" + "“\(tag)”"
         let alert = UIAlertController(title: title, message: DescribingSources.MainTagView.deleteTag_notice_SubTiltle, preferredStyle: .alert)
         let confirmButton = UIAlertAction(title: DescribingSources.MainTagView.delete_Title_DeleteAction, style: .destructive) { (action) in
             let context = self.context

@@ -65,13 +65,13 @@ struct DescribingSources {
         static var deleteTag_notice_SubTiltle: String {
             switch DescribingSources.language {
             case "kor": return "연관된 기억이 다른 앨범에 연결되있지 않다면,\n기억도 함께 지워집니다."
-            default : return "related Gi-uk could be deleted together\nif it has no links to other tags"
+            default : return "related Gi-uk could be deleted\nif it has no links to other album"
             }
         }
         static var delete_Title_DeleteAction: String {
             switch DescribingSources.language {
             case "kor": return "삭제"
-            default : return "delete"
+            default : return "delete album"
             }
         }
         static var delete_Title_CancelAction: String {

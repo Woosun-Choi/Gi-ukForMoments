@@ -27,4 +27,6 @@ struct ButtonImageNames {
     static let ButtonName_Content_Aligns_Center: String = "GiukIcon-Aligns-Center"
     static let ButtonName_Content_Aligns_Horizontal: String = "GiukIcon-Aligns-Horizontal"
     static let ButtonName_Content_Aligns_Vertical: String = "GiukIcon-Aligns-Vertical"
+    static let ButtonName_Content_Edit: String = "GiukIcon-Edit"
+    static let ButtonName_Content_Edit_Done: String = "GiukIcon-Edit-Done"
 }
