@@ -22,6 +22,8 @@ class WriteSectionViewController: Giuk_OpenFromFrame_ViewController, GiukContent
     
     var primarySelectedTag: String?
     
+    var requieredActionWhenSavingComplete: (() -> Void)?
+    
     var container: NSPersistentContainer? = AppDelegate.persistentContainer
     
     var context: NSManagedObjectContext {
@@ -41,7 +43,7 @@ class WriteSectionViewController: Giuk_OpenFromFrame_ViewController, GiukContent
     var savingCompleted: Bool = false {
         didSet {
             if self.savingCompleted {
-                    print("closing view")
+                requieredActionWhenSavingComplete?()
                 self.dismiss(animated: true, completion: nil)
             }
         }
@@ -171,7 +173,6 @@ class WriteSectionViewController: Giuk_OpenFromFrame_ViewController, GiukContent
     
     deinit {
         writingSection = nil
-        print("viewcontroller has gone")
     }
     
 }
@@ -194,8 +195,12 @@ extension WriteSectionViewController {
     
     func writingView(_ writingView: Giuk_ContentView_Writing, thumbnailImageForItemAt indexPath: IndexPath) -> UIImage? {
         if let thumbImage = thumbnails?[indexPath.row].image.fixOrientation() {
-            let filteredImage = filterModule.performImageFilter(filterEffect, image: thumbImage)
-            return filteredImage
+            if isNonColorPresneting {
+                let filteredImage = filterModule.performImageFilter(filterEffect, image: thumbImage)
+                return filteredImage
+            } else {
+                return thumbImage
+            }
         } else {
             return nil
         }
@@ -232,8 +237,12 @@ extension WriteSectionViewController {
     }
     
     func writeSection(_ writeSection: Giuk_ContentView_WriteSection, needRepresentedImageData imageData: Data) -> UIImage? {
-        if let image = UIImage(data: imageData)?.fixOrientation() {
-            return filterModule.performImageFilter(filterEffect, image: image)
+        if isNonColorPresneting {
+            if let image = UIImage(data: imageData)?.fixOrientation() {
+                return filterModule.performImageFilter(filterEffect, image: image)
+            } else {
+                return nil
+            }
         } else {
             return nil
         }

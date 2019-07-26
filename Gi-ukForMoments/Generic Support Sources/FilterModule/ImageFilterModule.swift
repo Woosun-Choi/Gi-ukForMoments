@@ -160,7 +160,7 @@ class ImageFilterModule {
         }
     }
     
-    func perfromContext() {
+    func performContext() {
     }
     
 }

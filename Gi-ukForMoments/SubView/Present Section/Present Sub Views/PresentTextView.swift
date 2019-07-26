@@ -10,9 +10,29 @@ import UIKit
 
 class PresentTextView: UIView {
     
+    private var isHorizontal : Bool {
+        return ((frame.width/frame.height) > 1)
+    }
+    
+    private var fontSize: CGFloat {
+        var factor = CGFloat.zero
+        if isHorizontal {
+            factor = (((frame.width/3) * 4 )/1.863).clearUnderDot
+        } else {
+            factor = (frame.height/1.863).clearUnderDot
+        }
+        let estimateFontSize = factor/15
+        let size = valueBetweenMinAndMax(maxValue: 16, minValue: 10, mutableValue: estimateFontSize)
+        return size
+    }
+    
+    var estimateMarginForTextView: CGFloat {
+        return fontSize*0.55
+    }
+    
     weak var backgroundView: UIView!
     
-    weak var textView: adad!
+    weak var textView: UITextView!
     
     var textData: TextInformation? {
         didSet {
@@ -37,12 +57,6 @@ class PresentTextView: UIView {
     
     var isCenteredPresenting: Bool = false
     
-    var estimateMarginForTextView: CGFloat = 10 {
-        didSet {
-            layoutSubviews()
-        }
-    }
-    
     private func setOrRepositionBackgroundView() {
         if backgroundView == nil {
             let newView = generateUIView(view: backgroundView, frame: estimateArea_BackgroundView)
@@ -55,17 +69,11 @@ class PresentTextView: UIView {
         }
     }
     
-    class adad: UITextView {
-        override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-            return true
-        }
-    }
-    
     private func setOrRepositionTextView() {
         if textView == nil {
             let newView = generateUIView(view: textView, frame: estimateArea_TextView)
             textView = newView
-            textView.font = UIFont.appleSDGothicNeo.medium.font(size: 16)
+            textView.font = UIFont.appleSDGothicNeo.medium.font(size: fontSize)
             textView.textColor = .goyaFontColor
             textView.backgroundColor = .clear
             textView.autocorrectionType = .no
@@ -76,10 +84,12 @@ class PresentTextView: UIView {
             backgroundView.addSubview(textView)
         } else {
             if isCenteredPresenting {
+                textView.font = UIFont.appleSDGothicNeo.medium.font(size: fontSize)
                 sizeToFitTextView()
             } else {
                 textView.setNewFrame(estimateArea_TextView)
             }
+            textView.font = UIFont.appleSDGothicNeo.medium.font(size: fontSize)
         }
     }
     
@@ -114,10 +124,10 @@ class PresentTextView: UIView {
     }
     
     var estimateArea_TextView: CGRect {
-        let width = estimateArea_BackgroundView.width - (estimateMargin_TextView * 2)
-        let height = estimateArea_BackgroundView.height - (estimateMargin_TextView * 2)
+        let width = estimateArea_BackgroundView.width - (estimateMarginForTextView * 2)
+        let height = estimateArea_BackgroundView.height - (estimateMarginForTextView * 2)
         let size = CGSize(width: width, height: height)
-        let origin = CGPoint(x: estimateMargin_TextView, y: estimateMargin_TextView)
+        let origin = CGPoint(x: estimateMargin_TextView, y: estimateMarginForTextView)
         return CGRect(origin: origin, size: size)
     }
     

@@ -8,6 +8,32 @@
 
 import UIKit
 
+//for using this function, sorting array should have a value that could be matched with compareArray value.
+// array : array needs to be sort
+// compareArray : compare source who providing standard.
+// compareKeyPath : keypath for call arrays key matched value. the value should be matched with compareArrays value.
+public func arrayAcendingWithOtherArray<T: Comparable>(array: [NSObject], compareArray: [T], compareKeyPath: String) -> [NSObject]? {
+    
+    func comparableTypeValue<T: Comparable>(target: NSObject, keyPath: String) -> T? {
+        if let result = target.value(forKey: keyPath) as? T {
+            return result
+        } else {
+            return nil
+        }
+    }
+    
+    var target = array
+    if let compare = compareArray as? [String] {
+        target.sort{
+            compare.firstIndex(of: comparableTypeValue(target: $0, keyPath: compareKeyPath)!)! < compare.firstIndex(of: comparableTypeValue(target: $1, keyPath: compareKeyPath)!)!
+        }
+        return target
+    } else {
+        return nil
+    }
+}
+//
+
 public func findItemsIndexInArray<T:Comparable>(_ array: [T], item: T) -> Int? {
     for (index, element) in array.enumerated() {
         if element == item {

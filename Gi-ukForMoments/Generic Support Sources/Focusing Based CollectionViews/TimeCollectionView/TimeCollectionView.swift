@@ -35,6 +35,10 @@ class TimeCollectionView: FocusingIndexBasedCollectionView {
         self.requiredItemIndex = maxIndex
     }
     
+    func setStartIndexTo(_ index: IndexPath?) {
+        self.requiredItemIndex = index
+    }
+    
     func setStartState(with index: IndexPath, completion:(()->Void)? = nil) {
         self.requiredItemIndex = index
         self.reloadData()
@@ -53,27 +57,43 @@ class TimeCollectionView: FocusingIndexBasedCollectionView {
     
     override func reloadData() {
         super.reloadData()
-        focusingIndex = nil
+        if let _ = requiredItemIndex {
+            focusingIndex = requiredItemIndex
+        } else {
+            focusingIndex = nil
+        }
         scrollWhenRequiredIndexExist()
     }
     
     //MARK: overrided delegate
     override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         super.scrollViewDidEndScrollingAnimation(scrollView)
+        scrollToTargetIndex(index: focusingIndex, animated: true)
         focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: false)
+    }
+    
+    override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        super.scrollViewDidEndDecelerating(scrollView)
+        scrollToTargetIndex(index: focusingIndex, animated: true)
     }
     //end
     
     //MARK: Layout updates
     private func scrollWhenRequiredIndexExist() {
-        if let _ = focusingIndex {
+        if let required = requiredItemIndex {
+            scrollToTargetIndex(index: required, animated: false)
+            requiredItemIndex = nil
         } else {
-            checkNowCenteredFocusedCell(collectionView: self)
-            if let currentFocused = focusingIndex {
-                scrollToTargetIndex(index: currentFocused, animated: false)
+            if let _ = focusingIndex {
+            } else {
+                checkNowCenteredFocusedCell(collectionView: self)
+                if let currentFocused = focusingIndex {
+                    scrollToTargetIndex(index: currentFocused, animated: false)
+                }
+//                (is3DPresentingCell) ? updateTransform() : ()
             }
-            (is3DPresentingCell) ? updateTransform() : ()
         }
+        (is3DPresentingCell) ? updateTransform() : ()
     }
     
     override var frame: CGRect {

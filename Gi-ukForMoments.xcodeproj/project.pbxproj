@@ -18,6 +18,8 @@
 		A717360B22C5CA000098B077 /* TextFieldWithContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A717360A22C5CA000098B077 /* TextFieldWithContainer.swift */; };
 		A717360D22C5CA740098B077 /* TagInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A717360C22C5CA740098B077 /* TagInformation.swift */; };
 		A717361022CA0E250098B077 /* DescribingSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = A717360F22CA0E250098B077 /* DescribingSources.swift */; };
+		A784640922E9B8C5007BA730 /* PublicVariables.swift in Sources */ = {isa = PBXBuildFile; fileRef = A784640822E9B8C5007BA730 /* PublicVariables.swift */; };
+		A784640B22EAB82A007BA730 /* Giuk_ThumbnailCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A784640A22EAB82A007BA730 /* Giuk_ThumbnailCollectionView.swift */; };
 		A78B0DF6228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0DF5228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift */; };
 		A78B0DF8228D9D2900D0B275 /* UIButton_WithIdentifire.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0DF7228D9D2900D0B275 /* UIButton_WithIdentifire.swift */; };
 		A78B0E0D2292E0B200D0B275 /* DotStylePresentorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0DFE2292E0B200D0B275 /* DotStylePresentorView.swift */; };
@@ -99,6 +101,8 @@
 		A717360A22C5CA000098B077 /* TextFieldWithContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithContainer.swift; sourceTree = "<group>"; };
 		A717360C22C5CA740098B077 /* TagInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagInformation.swift; sourceTree = "<group>"; };
 		A717360F22CA0E250098B077 /* DescribingSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescribingSources.swift; sourceTree = "<group>"; };
+		A784640822E9B8C5007BA730 /* PublicVariables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicVariables.swift; sourceTree = "<group>"; };
+		A784640A22EAB82A007BA730 /* Giuk_ThumbnailCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_ThumbnailCollectionView.swift; sourceTree = "<group>"; };
 		A78B0DF5228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_MainFrame_ContainerView.swift; sourceTree = "<group>"; };
 		A78B0DF7228D9D2900D0B275 /* UIButton_WithIdentifire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIButton_WithIdentifire.swift; sourceTree = "<group>"; };
 		A78B0DFE2292E0B200D0B275 /* DotStylePresentorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DotStylePresentorView.swift; sourceTree = "<group>"; };
@@ -523,6 +527,7 @@
 			isa = PBXGroup;
 			children = (
 				A717360F22CA0E250098B077 /* DescribingSources.swift */,
+				A784640822E9B8C5007BA730 /* PublicVariables.swift */,
 				A7FBD39E22D2BE96004DCF3F /* ButtonImageNames.swift */,
 				A7A6A611228A4EAC001FCA4D /* PublicExtentions.swift */,
 				A7A6A5FA228A4CCA001FCA4D /* AppDelegate.swift */,
@@ -611,6 +616,7 @@
 		A7FBD3C222DDEDAE004DCF3F /* Present Sub Views */ = {
 			isa = PBXGroup;
 			children = (
+				A784640A22EAB82A007BA730 /* Giuk_ThumbnailCollectionView.swift */,
 				A7FBD3BE22DD9119004DCF3F /* PresentGiukView.swift */,
 				A7FBD3C022DDED7A004DCF3F /* PresentTextView.swift */,
 				A7FBD3C522E1F7CA004DCF3F /* BookFlowLayout.swift */,
@@ -705,6 +711,7 @@
 				A78B0E0F2292E0B200D0B275 /* CenteredCollectionView.swift in Sources */,
 				A7FBD39F22D2BE96004DCF3F /* ButtonImageNames.swift in Sources */,
 				A7A6A610228A4D1A001FCA4D /* ContentUIViewController.swift in Sources */,
+				A784640922E9B8C5007BA730 /* PublicVariables.swift in Sources */,
 				A78B0E132292E0B200D0B275 /* TimeCollectionViewer.swift in Sources */,
 				A7A6A61A228B9249001FCA4D /* Giuk_MainFrameViewController.swift in Sources */,
 				A7A6A603228A4CCA001FCA4D /* Gi_ukForMoments.xcdatamodeld in Sources */,
@@ -737,6 +744,7 @@
 				A78B0DF6228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift in Sources */,
 				A707B41922E8635E00CA539A /* PageCounterLabel.swift in Sources */,
 				A7FBD3CD22E71581004DCF3F /* TransitionManager.swift in Sources */,
+				A784640B22EAB82A007BA730 /* Giuk_ThumbnailCollectionView.swift in Sources */,
 				A7FBD3B122DC3784004DCF3F /* Text.swift in Sources */,
 				A78B0E0E2292E0B200D0B275 /* CircleView.swift in Sources */,
 				A78B0DF8228D9D2900D0B275 /* UIButton_WithIdentifire.swift in Sources */,

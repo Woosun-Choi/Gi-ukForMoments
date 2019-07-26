@@ -53,7 +53,7 @@ struct TextInformation: Codable {
 
 //MARK: Delegate
 @objc protocol Giuk_ContentView_WritingTextViewDelegate: class {
-    @objc optional func writingTextView(_ writingView: Giuk_ContentView_WritingTextView, didChangeSelectionAt rect: CGRect, keyBoardHeight: CGFloat)
+    @objc optional func writingTextView(_ writingView: Giuk_ContentView_WritingTextView, didChangeSelectionAt rect: CGRect, keyBoardHeight: CGFloat, textViewMargin: CGFloat)
     @objc optional func writingTextView(_ writingView: Giuk_ContentView_WritingTextView, didEndEditing: Bool)
     @objc optional func writingTextView(_ writingView: Giuk_ContentView_WritingTextView, didKeyBoardComesIn: Bool, keyBoardHeight: CGFloat)
 }
@@ -74,6 +74,26 @@ class Giuk_ContentView_WritingTextView: UIView, UITextViewDelegate {
     //MARK: Variables
     weak var delegate: Giuk_ContentView_WritingTextViewDelegate?
     
+    private var isHorizontal : Bool {
+        return ((frame.width/frame.height) > 1)
+    }
+    
+    private var fontSize: CGFloat {
+        var factor = CGFloat.zero
+        if isHorizontal {
+            factor = (((frame.width/3) * 4 )/1.863).clearUnderDot
+        } else {
+            factor = (frame.height/1.863).clearUnderDot
+        }
+        let estimateFontSize = factor/15
+        let size = valueBetweenMinAndMax(maxValue: 16, minValue: 10, mutableValue: estimateFontSize)
+        return size
+    }
+    
+    var estimateMarginForTextView: CGFloat {
+        return fontSize*0.55
+    }
+    
     var isEditable: Bool = true {
         didSet {
             textView?.isEditable = self.isEditable
@@ -83,12 +103,6 @@ class Giuk_ContentView_WritingTextView: UIView, UITextViewDelegate {
     }
     
     var limitNumberOfCharactors: Int?
-    
-    var estimateMarginForTextView: CGFloat = 10 {
-        didSet {
-            layoutSubviews()
-        }
-    }
     
     var toolBarHeight: CGFloat = 35 {
         didSet {
@@ -147,7 +161,7 @@ class Giuk_ContentView_WritingTextView: UIView, UITextViewDelegate {
         if textView == nil {
             let newView = generateUIView(view: textView, frame: estimateArea_TextView)
             textView = newView
-            textView.font = UIFont.appleSDGothicNeo.medium.font(size: 16)
+            textView.font = UIFont.appleSDGothicNeo.medium.font(size: fontSize)
             textView.delegate = self
             textView.textColor = .goyaFontColor
             textView.backgroundColor = .clear
@@ -160,6 +174,7 @@ class Giuk_ContentView_WritingTextView: UIView, UITextViewDelegate {
         } else {
             textView.isEditable = self.isEditable
             textView.setNewFrame(estimateArea_TextView)
+            textView.font = UIFont.appleSDGothicNeo.medium.font(size: fontSize)
             textView.inputAccessoryView?.frame.size.height = toolBarHeight
         }
     }
@@ -220,7 +235,7 @@ class Giuk_ContentView_WritingTextView: UIView, UITextViewDelegate {
     
     func textViewDidChangeSelection(_ textView: UITextView) {
         if let position = trackingCursorPosition(), let boardHeight = keyBoardHeight {
-            delegate?.writingTextView?(self, didChangeSelectionAt: position, keyBoardHeight: (boardHeight))
+            delegate?.writingTextView?(self, didChangeSelectionAt: position, keyBoardHeight: (boardHeight), textViewMargin: estimateMarginForTextView)
         }
     }
     

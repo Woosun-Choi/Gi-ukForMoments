@@ -35,11 +35,11 @@ class CenteredSquareTypeCollectionViewFlowlayout: UICollectionViewFlowLayout {
     var estimateCellSize: CGSize {
         if isHorizontal {
             let expectedWidth = ((self.width - contentMinimumMargin*2)/numberOfCellsInLine).absValue
-            let expectedHeight = (self.height - (contentMinimumMargin*2)).absValue
+            let expectedHeight = expectedWidth//(self.height - (contentMinimumMargin*2)).absValue
             return CGSize(width: expectedWidth, height: expectedHeight)
         } else {
             let expectedHeight = ((self.height - contentMinimumMargin*2)/numberOfCellsInLine).absValue
-            let expectedWidth = (self.width - (contentMinimumMargin*2)).absValue
+            let expectedWidth = expectedHeight//(self.width - (contentMinimumMargin*2)).absValue
             return CGSize(width: expectedWidth, height: expectedHeight)
         }
     }

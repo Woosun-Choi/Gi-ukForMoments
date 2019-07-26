@@ -10,7 +10,7 @@ import UIKit
 
 class Giuk_OpenFromFrame_ViewController: ContentUIViewController, FrameTransitionDataSource {
 
-    weak var closeButton: UIButton!
+    weak var closeButton: UIButton_WithIdentifire!
     
     var closingFunction: (()->Void)?
     
@@ -38,7 +38,6 @@ class Giuk_OpenFromFrame_ViewController: ContentUIViewController, FrameTransitio
     }
     
     @objc func closeButtonAction(_ sender: UIButton) {
-//        dismiss(animated: true, completion: nil)
         UIView.animate(withDuration: 0.25, animations: {
             self.view.subviews.forEach { $0.alpha = 0}
         }) { (finished) in
@@ -59,6 +58,11 @@ class Giuk_OpenFromFrame_ViewController: ContentUIViewController, FrameTransitio
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         setCloseButton()
+    }
+    
+    deinit {
+        closingFunction = nil
+        print("content frame controller has gone")
     }
 }
 

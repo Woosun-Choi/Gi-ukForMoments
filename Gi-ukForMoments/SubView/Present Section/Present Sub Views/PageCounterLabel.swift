@@ -41,7 +41,7 @@ class PageCounterLabel: UILabel {
             let seperator = " / "
             let pagesString = pages.string
             let fullString = pageString + seperator + pagesString
-            let attrString = fullString.centeredAttributedString(fontSize: fontSize)
+            let attrString = fullString.centeredAttributedString(fontSize: fontSize, type: .bold)
             attributedText = attrString
         } else {
             attributedText = noPages
@@ -58,12 +58,12 @@ class PageCounterLabel: UILabel {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        font = UIFont.appleSDGothicNeo.regular.font(size: fontSize)
+//        font = UIFont.appleSDGothicNeo.regular.font(size: fontSize)
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        font = UIFont.appleSDGothicNeo.regular.font(size: fontSize)
+//        font = UIFont.appleSDGothicNeo.regular.font(size: fontSize)
         textAlignment = .center
         textColor = .goyaWhite
 //        attributedText = noPages
@@ -71,7 +71,7 @@ class PageCounterLabel: UILabel {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        font = UIFont.appleSDGothicNeo.regular.font(size: fontSize)
+//        font = UIFont.appleSDGothicNeo.regular.font(size: fontSize)
         textAlignment = .center
         textColor = .goyaWhite
 //        attributedText = noPages

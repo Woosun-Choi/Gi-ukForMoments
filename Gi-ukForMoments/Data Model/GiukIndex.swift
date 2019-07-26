@@ -12,6 +12,11 @@ struct GiukIndex: Codable {
     
     var indexOfGiuks: [String]
     
+    mutating func replaceGiukIndex(from fromIndex: Int, to targetIndex: Int) {
+        let replaceItem = indexOfGiuks.remove(at: fromIndex)
+        indexOfGiuks.insert(replaceItem, at: targetIndex)
+    }
+    
     mutating func addNewIndex(identifire: String) {
         if indexOfGiuks.firstIndex(of: identifire) == nil {
             indexOfGiuks.insert(identifire, at: 0)

@@ -9,20 +9,40 @@
 import UIKit
 import CoreData
 
-class GiukViewerViewController: Giuk_OpenFromFrame_ViewController, FocusingIndexBasedCollectionViewDelegate, UICollectionViewDataSource, ImageCroppingViewDelegate, ThumbnailImageViewDelegate
+class GiukViewerViewController: Giuk_OpenFromFrame_ViewController
 {
+    //MARk: subviews
+    weak var editButton: UIButton_WithIdentifire!
     
+    weak var addButton: UIButton_WithIdentifire!
+    
+    weak var deleteButton: UIButton_WithIdentifire!
+    
+    weak var presentCollectionView: CenteredCollectionView!
+    
+    weak var pageCounter: PageCounterLabel!
+    
+    weak var thumbnailViewContainer: UIView!
+    
+    weak var thumbnailCollectionView: Giuk_ThumbnailCollectionView!
+    //end
+    
+    //MARK: Variables
     var filterModule = ImageFilterModule()
     
     var tagString: String?
     
     var tag: Tag?
     
+    var updatePermistion: Bool = true
+    
     var giuks: [Giuk]? {
         didSet {
-            nowScrollingView = nil
-            presentCollectionView?.reloadData()
-            thumbnailCollectionView?.reloadData()
+            if updatePermistion {
+                nowScrollingView = nil
+                presentCollectionView?.reloadData()
+                thumbnailCollectionView?.reloadData()
+            }
         }
     }
     
@@ -36,17 +56,22 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController, FocusingIndex
         }
     }
     
-    weak var editButton: UIButton_WithIdentifire!
+    enum ScrollingView {
+        case presentor
+        case thumbnail
+    }
     
-    weak var deleteButton: UIButton_WithIdentifire!
+    var nowScrollingView : ScrollingView?
     
-    weak var presentCollectionView: CenteredCollectionView!
+    var selectedCell: IndexPath?
     
-    weak var pageCounter: PageCounterLabel!
+    var frontButtons: [UIButton_WithIdentifire?] {
+        return [closeButton,editButton,addButton]
+    }
     
-    weak var thumbnailViewContainer: UIView!
-    
-    weak var thumbnailCollectionView: TimeCollectionView!
+    var controlButtons: [UIButton_WithIdentifire?] {
+        return [closeButton, editButton, addButton, deleteButton]
+    }
     
     var nowEditing: Bool = false {
         didSet {
@@ -56,59 +81,68 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController, FocusingIndex
                 self.viewDidLayoutSubviews()
             })
             UIView.animate(withDuration: 0.35, animations: {
+                [unowned self] in
                 if self.nowEditing {
                     self.presentCollectionView.alpha = 0.65
                     self.view.backgroundColor = .goyaFontColor
                     self.closeButton.alpha = 0
+                    self.addButton.alpha = 0
                 } else {
                     self.presentCollectionView.alpha = 1
                     self.view.backgroundColor = .GiukBackgroundColor_depth_1
                     self.closeButton.alpha = 1
+                    self.addButton.alpha = 1
                 }
             })
             if nowEditing {
                 closeButton.isUserInteractionEnabled = false
+                addButton.isUserInteractionEnabled = false
             } else {
                 closeButton.isUserInteractionEnabled = true
+                addButton.isUserInteractionEnabled = true
             }
         }
     }
+    //end
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setEditButton()
-        setPresentCollectionView()
-        setPageCounter()
-        setThumbnailCollectionViewContainer()
-        setThumbnailCollectionView()
-        setDeleteButton()
+        setAllSubViews()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        setEditButton()
-        setPresentCollectionView()
-        setPageCounter()
-        setThumbnailCollectionViewContainer()
-        setThumbnailCollectionView()
-        setDeleteButton()
+        setAllSubViews()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        updateGiuks()
+    }
+    
+    //MARK: extra functions
+    private func updateGiuks() {
         if let _tag = tag {
             giuks = _tag.requestGiuks()
         }
     }
     
-    func setEditButton() {
+    override func closeButtonAction(_ sender: UIButton) {
+        giuks = nil
+        super.closeButtonAction(sender)
+    }
+}
+
+extension GiukViewerViewController {
+    //MARK: set subviews
+    private func setEditButton() {
         if editButton == nil {
             let newButton = generateUIView(view: editButton, frame: editButtonFrame)
             newButton?.imageView?.contentMode = .scaleAspectFit
             newButton?.setImage(UIImage(named: ButtonImageNames.ButtonName_Content_Edit), for: .normal)
             newButton?.identifire = "edit"
             newButton?.setTitleColor(.goyaWhite, for: .normal)
-            newButton?.addTarget(self, action: #selector(editButtonAction(_:)), for: .touchUpInside)
+            newButton?.addTarget(self, action: #selector(controlButtonActions(_:)), for: .touchUpInside)
             newButton?.backgroundColor = .clear
             editButton = newButton
             view.addSubview(editButton)
@@ -123,20 +157,33 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController, FocusingIndex
         }
     }
     
-    func setDeleteButton() {
-        let originX = view.frame.width - deleteButtonSize.width - 16
-        let originY:CGFloat = thumbnailFrame.minY - deleteButtonSize.height - 8
-        let buttonFrame = CGRect(origin: CGPoint(x: originX, y: originY), size: deleteButtonSize)
-        if deleteButton == nil {
-            let newButton = generateUIView(view: deleteButton, frame: buttonFrame)
+    private func setAddButton() {
+        if addButton == nil {
+            let newButton = generateUIView(view: addButton, frame: addButtonFrame)
             newButton?.layer.backgroundColor = UIColor.clear.cgColor
-            newButton?.layer.cornerRadius = buttonFrame.size.height * 0.2
+            newButton?.imageView?.contentMode = .scaleAspectFit
+            newButton?.setImage(UIImage(named: ButtonImageNames.ButtonName_Main_Giuk), for: .normal)
+            newButton?.clipsToBounds = true
+            newButton?.identifire = "add"
+            newButton?.setTitleColor(.goyaRoseGoldColor, for: .normal)
+            newButton?.addTarget(self, action: #selector(controlButtonActions(_:)), for: .touchUpInside)
+            addButton = newButton
+            view.addSubview(addButton)
+        } else {
+            addButton.setNewFrame(addButtonFrame)
+        }
+    }
+    
+    private func setDeleteButton() {
+        if deleteButton == nil {
+            let newButton = generateUIView(view: deleteButton, frame: deleteButtonFrame)
+            newButton?.layer.backgroundColor = UIColor.clear.cgColor
             newButton?.imageView?.contentMode = .scaleAspectFit
             newButton?.setImage(UIImage(named: ButtonImageNames.ButtonName_Content_Delete), for: .normal)
             newButton?.clipsToBounds = true
             newButton?.identifire = "delete"
             newButton?.setTitleColor(.goyaRoseGoldColor, for: .normal)
-            newButton?.addTarget(self, action: #selector(editButtonAction(_:)), for: .touchUpInside)
+            newButton?.addTarget(self, action: #selector(controlButtonActions(_:)), for: .touchUpInside)
             deleteButton = newButton
             if nowEditing {
                 deleteButton.isUserInteractionEnabled = true
@@ -154,51 +201,8 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController, FocusingIndex
                 deleteButton.isUserInteractionEnabled = false
                 deleteButton.alpha = 0
             }
-            deleteButton.setNewFrame(buttonFrame)
+            deleteButton.setNewFrame(deleteButtonFrame)
         }
-    }
-    
-    @objc func editButtonAction(_ sender: UIButton_WithIdentifire) {
-        if sender.identifire == "edit" {
-            nowEditing = !nowEditing
-        } else {
-            if let selected = presentCollectionView.focusingIndex {
-                presentAlertControllerForEdit(selected)
-            }
-        }
-    }
-    
-    private func presentAlertControllerForEdit(_ index: IndexPath) {
-        let alert = UIAlertController(title: DescribingSources.deleteSection.delete_Title, message: DescribingSources.deleteSection.delete_SubTitle, preferredStyle: .actionSheet)
-        let cancelAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_CancelAction, style: .cancel, handler: nil)
-        let deleteAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_DeleteAction, style: .destructive) {
-            [unowned self] (action) in
-            if let targetGiuk = self.giuks?[index.row] {
-                targetGiuk.deleteGiuk(context: self.context) {
-                    [weak self] in
-                    self?.giuks?.remove(at: index.item)
-                    if self?.giuks?.count == 0 {
-                        self?.closeButtonAction(self!.closeButton)
-                    }
-                }
-            }
-        }
-        let removeAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_RemoveAction, style: .default) {
-            [unowned self] (action) in
-            if let targetGiuk = self.giuks?[index.row] {
-                targetGiuk.deleteGiukFromTag(context: self.context, tag: self.tag!) {
-                    [weak self] in
-                    self?.giuks?.remove(at: index.item)
-                    if self?.giuks?.count == 0 {
-                        self?.closeButtonAction(self!.closeButton)
-                    }
-                }
-            }
-        }
-        alert.addAction(removeAction)
-        alert.addAction(deleteAction)
-        alert.addAction(cancelAction)
-        present(alert, animated: true)
     }
     
     func setPresentCollectionView() {
@@ -217,6 +221,7 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController, FocusingIndex
             presentCollectionView.showsVerticalScrollIndicator = false
             presentCollectionView.showsHorizontalScrollIndicator = false
             presentCollectionView.clipsToBounds = true
+            presentCollectionView.allowsSelection = false
             view.addSubview(presentCollectionView)
         } else {
             presentCollectionView?.setNewFrame(presentorFrame)
@@ -251,10 +256,12 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController, FocusingIndex
     
     func setThumbnailCollectionView() {
         if thumbnailCollectionView == nil {
-            let newCollectionView = TimeCollectionView(frame: thumbnailCollectionViewFrame, collectionViewLayout: UICollectionViewLayout())
+            let newCollectionView = Giuk_ThumbnailCollectionView(frame: thumbnailCollectionViewFrame, collectionViewLayout: UICollectionViewLayout())
             thumbnailCollectionView = newCollectionView
             thumbnailCollectionView.dataSource = self
             thumbnailCollectionView.focusingCollectionViewDelegate = self
+            thumbnailCollectionView.dragDelegate = self
+            thumbnailCollectionView.dropDelegate = self
             thumbnailCollectionView.showsVerticalScrollIndicator = false
             thumbnailCollectionView.showsHorizontalScrollIndicator = false
             thumbnailCollectionView.register(ThumbnailCollectionViewCell.self, forCellWithReuseIdentifier: ThumbnailCollectionViewCell.identifier)
@@ -265,11 +272,85 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController, FocusingIndex
         }
     }
     
-    override func closeButtonAction(_ sender: UIButton) {
-        giuks = nil
-        super.closeButtonAction(sender)
+    private func setAllSubViews() {
+        setEditButton()
+        setAddButton()
+        setPresentCollectionView()
+        setPageCounter()
+        setThumbnailCollectionViewContainer()
+        setThumbnailCollectionView()
+        setDeleteButton()
+    }
+    //end
+    
+    //MARK: Button actions
+    @objc func controlButtonActions(_ sender: UIButton_WithIdentifire) {
+        switch sender.identifire {
+        case "edit": nowEditing = !nowEditing
+        case "add":
+            if let nowTag = self.tag
+            {
+                presentWritingViewControllerWithTag(nowTag)
+            }
+        default:
+            if let selected = presentCollectionView.focusingIndex {
+                presentAlertControllerForEdit(selected)
+            }
+        }
     }
     
+    private func presentWritingViewControllerWithTag(_ tag: Tag) {
+        let newVC = WriteSectionViewController()
+        newVC.isEditOnly = false
+        newVC.primarySelectedTag = tag.tagName
+        newVC.requieredActionWhenSavingComplete = {
+            [weak self] in
+            if newVC.savingCompleted {
+                let firstIndex = IndexPath(item: 0, section: 0)
+                self?.presentCollectionView.setStartIndexTo(firstIndex)
+                self?.thumbnailCollectionView.setStartIndexTo(firstIndex)
+            }
+        }
+        present(newVC, animated:  true)
+    }
+    
+    private func presentAlertControllerForEdit(_ index: IndexPath) {
+        let alert = UIAlertController(title: DescribingSources.deleteSection.delete_Title, message: DescribingSources.deleteSection.delete_SubTitle, preferredStyle: .actionSheet)
+        let cancelAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_CancelAction, style: .cancel, handler: nil)
+        let deleteAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_DeleteAction, style: .destructive) {
+            [unowned self] (action) in
+            if let targetGiuk = self.giuks?[index.row] {
+                targetGiuk.deleteGiuk(context: self.context) {
+                    [weak self] in
+                    self?.giuks?.remove(at: index.item)
+                    if self?.giuks?.count == 0 {
+                        self?.closeButtonAction(self!.closeButton)
+                    }
+                }
+            }
+        }
+        let removeAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_RemoveAction, style: .default) {
+            [unowned self] (action) in
+            if let targetGiuk = self.giuks?[index.row] {
+                targetGiuk.deleteGiukFromTag(context: self.context, tag: self.tag!) {
+                    [weak self] in
+                    self?.giuks?.remove(at: index.item)
+                    if self?.giuks?.count == 0 {
+                        self?.closeButtonAction(self!.closeButton)
+                    }
+                }
+            }
+        }
+        alert.addAction(removeAction)
+        alert.addAction(deleteAction)
+        alert.addAction(cancelAction)
+        present(alert, animated: true)
+    }
+    //end
+}
+
+extension GiukViewerViewController: UICollectionViewDataSource {
+    //MARK: collectionView dataSources
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return giuks?.count ?? 0
     }
@@ -283,24 +364,28 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController, FocusingIndex
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ThumbnailCollectionViewCell.identifier, for: indexPath) as! ThumbnailCollectionViewCell
             cell.imageView.delegate = self
+            if let colView = collectionView as? Giuk_ThumbnailCollectionView {
+                if colView.focusingIndex != indexPath {
+                    cell.nowFocused = false
+                }
+            }
             ((giuks?.count ?? 0) > 0) ? (cell.giuk = giuks![indexPath.row]) : ()
             return cell
         }
     }
-    
-    func thumbnailImageViewShouldReturnImageAs(_ thumbnailImageView: ThumbnailImageView, imageData: Data) -> UIImage? {
-        let result = filterModule.performImageFilter(.CIPhotoEffectTonal, image: UIImage(data: imageData)!)
-        return result
-    }
-    
-    func imageCroppingView(_ croppingView: ImageCroppingView, needRepresentedImageData imageData: Data) -> UIImage? {
-        let result = filterModule.performImageFilter(.CIPhotoEffectTonal, image: UIImage(data: imageData)!)
-        return result
-    }
-    
+    //end
+}
+
+extension GiukViewerViewController: FocusingIndexBasedCollectionViewDelegate {
+    //MARK: Focusingbased collectionView delegate
     func collectionViewDidUpdateFocusingIndex(_ collectionView: UICollectionView, with indexPath: IndexPath) {
         checkNowPageAndUpdatePageCounter()
+        checkNowFocusedCellAndLayoutForFocusing(collectionView, indexPath: indexPath)
+    }
+    
+    func checkNowFocusedCellAndLayoutForFocusing(_ collectionView: UICollectionView, indexPath: IndexPath) {
         if collectionView == thumbnailCollectionView {
+            print("highlighted cell checked")
             for cell in collectionView.visibleCells {
                 if let targetCell = cell as? ThumbnailCollectionViewCell {
                     if collectionView.indexPath(for: targetCell) == indexPath {
@@ -333,13 +418,6 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController, FocusingIndex
         }
     }
     
-    enum ScrollingView {
-        case presentor
-        case thumbnail
-    }
-    
-    var nowScrollingView : ScrollingView?
-    
     func collectionViewScrollingState(_ collectionView: UICollectionView, scrolling: Bool) {
         if scrolling == true {
             if collectionView == presentCollectionView {
@@ -351,8 +429,6 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController, FocusingIndex
             nowScrollingView = nil
         }
     }
-    
-    var selectedCell: IndexPath?
     
     func collectionViewDidSelectFocusedIndex(_ collectionView: UICollectionView, focusedIndex: IndexPath, cell: UICollectionViewCell) {
         if collectionView == presentCollectionView {
@@ -367,15 +443,112 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController, FocusingIndex
                 newVC.closingFunction = {
                     [weak self] in
                     if let selected = self?.selectedCell {
-                        //                    self?.collectionView.centeredCollectionView.reloadItems(at: [selected])
                         self?.presentCollectionView.reloadItems(at: [selected])
                     }
                 }
                 present(newVC,animated: true)
-                print(focusedIndex)
             }
         }
     }
+}
+
+extension GiukViewerViewController: ImageCroppingViewDelegate, ThumbnailImageViewDelegate {
+    //MARK: PresentingImages To collectionview cells delegates
+    func imageCroppingView(_ croppingView: ImageCroppingView, needRepresentedImageData imageData: Data) -> UIImage? {
+        if isNonColorPresneting {
+            let result = filterModule.performImageFilter(.CIPhotoEffectTonal, image: UIImage(data: imageData)!)
+            return result
+        } else {
+            return nil
+        }
+    }
+    
+    func thumbnailImageViewShouldReturnImageAs(_ thumbnailImageView: ThumbnailImageView, imageData: Data) -> UIImage? {
+        if isNonColorPresneting {
+            let result = filterModule.performImageFilter(.CIPhotoEffectTonal, image: UIImage(data: imageData)!)
+            return result
+        } else {
+            return nil
+        }
+    }
+    //end
+}
+
+extension GiukViewerViewController: UICollectionViewDragDelegate {
+    //MARK: drag delegate
+    func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        return dragItems(at: indexPath)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, itemsForAddingTo session: UIDragSession, at indexPath: IndexPath, point: CGPoint) -> [UIDragItem] {
+        return dragItems(at: indexPath)
+    }
+    
+    func dragItems(at indexPath: IndexPath) -> [UIDragItem] {
+        if let cell = (thumbnailCollectionView.cellForItem(at: indexPath) as? ThumbnailCollectionViewCell) {
+            let giuk = cell.giuk!
+            let string = giuk.identifire!
+            let attributedString = NSAttributedString(string: string)
+            let dragItem = UIDragItem(itemProvider: NSItemProvider(object: attributedString))
+            dragItem.localObject = giuk
+            return [dragItem]
+        } else {
+            return []
+        }
+    }
+}
+
+extension GiukViewerViewController: UICollectionViewDropDelegate {
+    //MARK: drop delegate
+    func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
+        if collectionView.hasActiveDrag {
+            return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+        } else {
+            return UICollectionViewDropProposal(operation: .forbidden)
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
+        let destinationIndexPath = coordinator.destinationIndexPath ?? IndexPath(item: 0, section: 0)
+        for item in coordinator.items {
+            if let sourceIndexPath = item.sourceIndexPath {
+                if let giuk = item.dragItem.localObject as? Giuk {
+                    updatePermistion = false
+                    self.giuks?.remove(at: sourceIndexPath.item)
+                    self.giuks?.insert(giuk, at: destinationIndexPath.item)
+                    thumbnailCollectionView.focusingIndex = destinationIndexPath
+                    thumbnailCollectionView.scrollToTargetIndex(index: destinationIndexPath, animated: false)
+                    checkIndexPathConsistency()
+                    reloadCellsInVisible(presentCollectionView)
+                    reloadCellsInVisible(thumbnailCollectionView)
+                    checkNowFocusedCellAndLayoutForFocusing(thumbnailCollectionView, indexPath: destinationIndexPath)
+                    tag?.replaceGiukIndexInTo(replacingGiuk: giuk, fromIndex: sourceIndexPath.item, toIndex: destinationIndexPath.item)
+                    try? context.save()
+                    updatePermistion = true
+//                    updateGiuks()
+                }
+            }
+        }
+    }
+    
+    private func checkIndexPathConsistency() {
+        if let nowFocused = thumbnailCollectionView.focusingIndex {
+            presentCollectionView.focusingIndex = nowFocused
+            presentCollectionView.scrollToTargetIndex(index: nowFocused, animated: false)
+        }
+    }
+    
+    private func reloadCellsInVisible(_ collectionView: UICollectionView) {
+        var cellIndexes = [IndexPath]()
+        for cell in collectionView.visibleCells {
+            if let index = collectionView.indexPath(for: cell) {
+                cellIndexes.append(index)
+            }
+        }
+        collectionView.reloadItems(at: cellIndexes)
+    }
+    
+    
 }
 
 extension GiukViewerViewController: PageCounterLabelDatasource {
@@ -392,23 +565,34 @@ extension GiukViewerViewController: PageCounterLabelDatasource {
 
 extension GiukViewerViewController {
     
-    var editButtonSize: CGSize {
-        let width = closeButtonSize.width * 2
-        let height = closeButtonSize.height
-        return CGSize(width: width, height: height)
-    }
+//    var editButtonSize: CGSize {
+//        let width = min(topContainerAreaSize.height * 0.618, 35)//(closeButtonSize.width * 1.618).clearUnderDot
+//        let height = width
+//        return CGSize(width: width, height: height)
+//    }
     
-    var _editButtonSize: CGSize {
-        let width = topContainerAreaSize.height * 0.818
+    var editButtonSize: CGSize {
+        let width = min(topContainerAreaSize.height * 0.718, 35)
         let height = width
         return CGSize(width: width, height: height)
     }
     
-    var editButtonFrame: CGRect {
-        let originX = topContainerAreaSize.width - GiukContentFrameFactors.contentMinimumMargin.dX - _editButtonSize.width
-        let originY = topContainerAreaFrame.minY + ((topContainerAreaSize.height - _editButtonSize.height)/2)
+    var addButtonFrame: CGRect {
+        let originX = topContainerAreaSize.width - GiukContentFrameFactors.contentMinimumMargin.dX - editButtonSize.width
+        let originY = topContainerAreaFrame.minY + ((topContainerAreaSize.height - editButtonSize.height)/2)
         let origin = CGPoint(x: originX, y: originY)
-        return CGRect(origin: origin, size: _editButtonSize)
+        return CGRect(origin: origin, size: editButtonSize)
+    }
+    
+    var editButtonFrame: CGRect {
+        let originX = topContainerAreaSize.width - GiukContentFrameFactors.contentMinimumMargin.dX - editButtonSize.width
+        var originY = thumbnailFrame.minY - editButtonSize.height - 8
+        if !nowEditing {
+            originY = pageCounterFrame.midY - (editButtonSize.height/2)
+        }
+        //topContainerAreaFrame.minY + ((topContainerAreaSize.height - editButtonSize.height)/2)
+        let origin = CGPoint(x: originX, y: originY)
+        return CGRect(origin: origin, size: editButtonSize)
     }
     
     var presentorFrame: CGRect {
@@ -465,7 +649,16 @@ extension GiukViewerViewController {
     }
     
     var deleteButtonSize: CGSize {
-        return CGSize(width: 35, height: 35)
+        let width = min(bottomContainerAreaSize.height * 0.4, 35)
+        let height = width
+        return CGSize(width: width, height: height)
+    }
+    
+    var deleteButtonFrame: CGRect {
+        let originX = CGFloat(16)//view.frame.width - deleteButtonSize.width - 16
+        let originY = thumbnailFrame.minY - deleteButtonSize.height - 8//thumbnailFrame.minY - deleteButtonSize.height - 8
+        let origin = CGPoint(x: originX, y: originY)
+        return CGRect(origin: origin, size: deleteButtonSize)
     }
 
 }

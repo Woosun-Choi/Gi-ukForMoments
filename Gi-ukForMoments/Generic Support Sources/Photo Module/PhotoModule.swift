@@ -250,7 +250,7 @@ struct PhotoModule {
         instantFetchOptions.sortDescriptors = [NSSortDescriptor(key:"creationDate", ascending: false)]
         instantFetchOptions.predicate = predicate
         
-        var myImageData : Data!
+        var resizedImageData : Data!
         
         let fetchResault : PHFetchResult = PHAsset.fetchAssets(with: .image, options: instantFetchOptions)
         
@@ -269,12 +269,11 @@ struct PhotoModule {
             let newSize = CGSize(width: newWidth, height: newHeight)
             imageManager.requestImage(for: asset, targetSize: newSize, contentMode: .aspectFill, options: requestOptions, resultHandler: {
                 image, error in
-                if let myImage = image {
-                    myImageData = myImage.jpegData(compressionQuality: 1)
-                    print(myImage.size.width)
+                if let targetImage = image {
+                    resizedImageData = targetImage.jpegData(compressionQuality: 1)
                 }
             })
-            return myImageData
+            return resizedImageData
         } else {
             return nil
         }

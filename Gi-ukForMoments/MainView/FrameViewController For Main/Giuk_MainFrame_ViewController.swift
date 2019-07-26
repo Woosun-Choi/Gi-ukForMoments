@@ -379,8 +379,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         } else if let controller = viewController as? GiukViewerViewController {
             UIView.animate(withDuration: 0.3) {
                 controller.presentCollectionView.alpha = 1
-                controller.closeButton.alpha = 1
-                controller.editButton?.alpha = 1
+                controller.frontButtons.forEach { $0?.alpha = 1 }
             }
         }
     }
@@ -391,8 +390,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
             controller.closeButton.alpha = 0
         } else if let controller = viewController as? GiukViewerViewController{
             controller.presentCollectionView.alpha = 0
-            controller.closeButton.alpha = 0
-            controller.editButton?.alpha = 0
+            controller.frontButtons.forEach { $0?.alpha = 0 }
         }
     }
     //end

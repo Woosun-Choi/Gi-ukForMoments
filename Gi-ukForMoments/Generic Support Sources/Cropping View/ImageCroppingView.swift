@@ -501,7 +501,8 @@ class ImageCroppingView: UIView, UIScrollViewDelegate {
     
     func requestThumbnailDataInEstimateCropArea() -> Data? {
         let rect = calculateThumbnailAreaRectAsSquare()
-        guard let targetImage = imageView.image else { return nil }
+        guard let imageData = image else { return nil }
+        guard let targetImage = UIImage(data: imageData)?.fixOrientation() else { return nil }
         guard let croppedCGImage = targetImage.cgImage?.cropping(to: rect) else { print("image setting error"); return nil }
         let croppedImage = UIImage(cgImage: croppedCGImage).resizedImageWithinRect(rectSize: CGSize(width: 150, height: 150))
         let thumbnailData = croppedImage.jpegData(compressionQuality: 1)

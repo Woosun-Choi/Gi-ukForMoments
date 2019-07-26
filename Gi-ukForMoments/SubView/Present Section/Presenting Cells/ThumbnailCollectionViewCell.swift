@@ -35,15 +35,15 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
     
     weak var imageView: ThumbnailImageView!
     
-    var nowFocused: Bool? {
+    var nowFocused: Bool = false {
         didSet {
-            if let focused = self.nowFocused {
-                if focused {
+//            if let focused = self.nowFocused {
+                if nowFocused {
                     self.imageView.alpha = 1
                 } else {
                     self.imageView.alpha = 0.5
                 }
-            }
+//            }
         }
     }
     
@@ -64,7 +64,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
         if imageView == nil {
             let newView = generateUIView(view: imageView, frame: bounds)
             imageView = newView
-            imageView.alpha = 0.5
+//            imageView.alpha = 0.5
             imageView.contentMode = .scaleAspectFit
             addSubview(imageView)
         } else {
@@ -75,6 +75,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
     override func prepareForReuse() {
         imageView.image = nil
         nowFocused = false
+        giuk = nil
     }
     
     override init(frame: CGRect) {

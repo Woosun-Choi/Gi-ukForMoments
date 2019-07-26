@@ -26,8 +26,16 @@ class CenteredCollectionView: FocusingIndexBasedCollectionView {
     
     override func reloadData() {
         super.reloadData()
-        focusingIndex = nil
+        if let _ = requiredItemIndex {
+            focusingIndex = requiredItemIndex
+        } else {
+            focusingIndex = nil
+        }
         scrollWhenRequiredIndexExist()
+    }
+    
+    func setStartIndexTo(_ index: IndexPath?) {
+        self.requiredItemIndex = index
     }
     
     func scrollToTargetIndex(index : IndexPath?, animated: Bool, completion: (()->Void)? = nil) {
@@ -41,11 +49,17 @@ class CenteredCollectionView: FocusingIndexBasedCollectionView {
     
     //MARK: update layouts
     private func scrollWhenRequiredIndexExist() {
-        if let _ = focusingIndex {
+        if let required = requiredItemIndex {
+            print("scroll to required")
+            scrollToTargetIndex(index: required, animated: false)
+            requiredItemIndex = nil
         } else {
-            checkNowCenteredFocusedCell(collectionView: self)
-            if let currentFocused = focusingIndex {
-                scrollToTargetIndex(index: currentFocused, animated: false)
+            if let _ = focusingIndex {
+            } else {
+                checkNowCenteredFocusedCell(collectionView: self)
+                if let currentFocused = focusingIndex {
+                    scrollToTargetIndex(index: currentFocused, animated: false)
+                }
             }
         }
     }
@@ -79,8 +93,13 @@ class CenteredCollectionView: FocusingIndexBasedCollectionView {
     //MARK: overrided scrollview delegate from focusingindexbasedscrollview
     override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         super.scrollViewDidEndScrollingAnimation(scrollView)
-//        scrollToTargetIndex(index: focusingIndex, animated: true)
+        scrollToTargetIndex(index: focusingIndex, animated: true)
         focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: false)
+    }
+    
+    override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        super.scrollViewDidEndDecelerating(scrollView)
+        scrollToTargetIndex(index: focusingIndex, animated: true)
     }
     
     //MARK: init Methodes

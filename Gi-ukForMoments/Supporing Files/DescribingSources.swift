@@ -6,12 +6,7 @@
 //  Copyright © 2019 goya. All rights reserved.
 //
 
-import Foundation
 import UIKit
-
-struct SizeSources {
-    static var tagItemMinimumSize: CGSize = CGSize(width: 50, height: 30)
-}
 
 struct DescribingSources {
     static private let language = Locale.current.languageCode
@@ -46,13 +41,13 @@ struct DescribingSources {
         static var notice_Title: String {
             switch DescribingSources.language {
             case "kor": return "\n기억을 만드세요"
-            default : return "\ncreate new 'Gi-uk'"
+            default : return ""//"\ncreate new 'Gi-uk' album"
             }
         }
         static var notice_SubTiltle: String {
             switch DescribingSources.language {
             case "kor": return "\n상단에있는 버튼을 눌러\n새로운 기억을 만드세요"
-            default : return "\ncreate by pressing\nthe button on the top"
+            default : return "\ncreate new album by pressing\nthe button on the top"
             }
         }
         
@@ -156,7 +151,7 @@ struct DescribingSources {
         static var delete_SubTitle: String {
             switch DescribingSources.language {
             case "kor": return "앨범에서 빼거나 삭제합니다"
-            default : return "remove Giuk from album or delete"
+            default : return "remove Gi-uk from album or delete"
             }
         }
         

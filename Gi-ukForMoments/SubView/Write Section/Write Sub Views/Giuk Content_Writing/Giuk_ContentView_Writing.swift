@@ -218,7 +218,7 @@ class Giuk_ContentView_Writing: NonAutomaticScrollView, ImageSelectAndCropViewDa
         }
     }
     
-    func writingTextView(_ writingView: Giuk_ContentView_WritingTextView, didChangeSelectionAt rect: CGRect, keyBoardHeight: CGFloat) {
+    func writingTextView(_ writingView: Giuk_ContentView_WritingTextView, didChangeSelectionAt rect: CGRect, keyBoardHeight: CGFloat, textViewMargin: CGFloat) {
         
         guard let ownerView = dataSource?.writingView_OwnerView(self) else {return}
         guard let subViewFrameInfo = dataSource?.writingView_ViewCoordinatesInOwnerView(self) else {return}
@@ -228,16 +228,16 @@ class Giuk_ContentView_Writing: NonAutomaticScrollView, ImageSelectAndCropViewDa
         let leftAreaHeight = subViewFrameInfo.maxY - leftHeight
         
         var textShouldBeIn: CGRect {
-            let originX: CGFloat = 5
-            let originY: CGFloat = 5
-            let maxheight = bounds.height - leftAreaHeight - 10
-            let maxWidth = bounds.width - 10
+            let originX: CGFloat = textViewMargin/2
+            let originY: CGFloat = textViewMargin/2
+            let maxheight = bounds.height - leftAreaHeight - textViewMargin
+            let maxWidth = bounds.width - textViewMargin
             return CGRect(x: originX, y: originY, width: maxWidth, height: maxheight)
         }
         
         let point = convert(rect, from: writingView)
         let currentOriginOfContentContainer = contentOffSet
-        if point.maxY > textShouldBeIn.maxY && (contentOffSet.y > -(leftAreaHeight + 10)) {
+        if point.maxY > textShouldBeIn.maxY && (contentOffSet.y > -(leftAreaHeight + textViewMargin)) {
             scrollToPosition(currentOriginOfContentContainer.offSetBy(dX: 0, dY: (textShouldBeIn.maxY - point.maxY)), animated: false)
         } else if point.minY < textShouldBeIn.minY && (contentOffSet.y < 0) {
             let targetPoint = currentOriginOfContentContainer.offSetBy(dX: 0, dY: (textShouldBeIn.minY - point.minY))
