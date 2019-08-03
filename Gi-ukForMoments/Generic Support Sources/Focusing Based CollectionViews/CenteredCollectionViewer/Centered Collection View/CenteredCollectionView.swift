@@ -19,6 +19,8 @@ class CenteredCollectionView: FocusingIndexBasedCollectionView {
     
     var requiredItemIndex: IndexPath?
     
+    var is3DPresentingCell : Bool = true
+    
     var flowLayouts : UICollectionViewLayout {
         return self.collectionViewLayout
     }
@@ -62,6 +64,7 @@ class CenteredCollectionView: FocusingIndexBasedCollectionView {
                 }
             }
         }
+        updateTransform()
     }
     
     override var frame: CGRect {
@@ -140,6 +143,7 @@ extension CenteredCollectionView {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         checkWillFocusedCell(collectionView: self)
+        updateTransform()
     }
     //end
     
@@ -265,11 +269,10 @@ extension CenteredCollectionView {
     
     //MARK: 3D presenting cell method
     fileprivate func animateCell(cellFrame: CGRect, contentOffSet: CGFloat) -> CATransform3D? {
-        let angleFromX = Double(((cellFrame.origin.x - contentOffSet)) / 5)
+        let angleFromX = -Double(((cellFrame.origin.x - contentOffSet)) / 8)
         let angle = CGFloat((angleFromX * Double.pi) / 180.0)
         var transform = CATransform3DIdentity
         transform.m34 = -1.0/1000
-        let rotation = CATransform3DRotate(transform, angle, 0, 1, 0)
         
         let factor = (cellFrame.origin.x - contentOffSet)/cellFrame.width * 100
         
@@ -283,6 +286,7 @@ extension CenteredCollectionView {
             if scaleFromX < scaleMin {
                 scaleFromX = scaleMin
             }
+            let rotation = CATransform3DRotate(transform, angle, 0, 1, 0)
             let scale = CATransform3DScale(CATransform3DIdentity, scaleFromX, scaleFromX, 1)
             return CATransform3DConcat(rotation, scale)
         } else {
@@ -295,16 +299,21 @@ extension CenteredCollectionView {
             if scaleFromX < scaleMin {
                 scaleFromX = scaleMin
             }
+            let rotation = CATransform3DRotate(transform, angle, 0, 1, 0)
             let scale = CATransform3DScale(CATransform3DIdentity, scaleFromX, scaleFromX, 1)
             return CATransform3DConcat(rotation, scale)
         }
     }
     
     func updateTransform() {
-        for cell in self.visibleCells {
-            if let _cellFrame = self.attributeFrameOfCell(cell: cell) {
-                if let transform = animateCell(cellFrame: _cellFrame, contentOffSet: self.contentOffset.x) {
-                    cell.layer.transform = transform
+        if is3DPresentingCell {
+            if let layout = self.collectionViewLayout as? CenteredCollectionViewFlowLayout {
+                for cell in self.visibleCells {
+                    if let _cellFrame = self.attributeFrameOfCell(cell: cell) {
+                        if let transform = animateCell(cellFrame: _cellFrame, contentOffSet: self.contentOffset.x.absValue + layout.leftOverMargin) {
+                            cell.layer.transform = transform
+                        }
+                    }
                 }
             }
         }

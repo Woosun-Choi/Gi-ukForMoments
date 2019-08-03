@@ -28,7 +28,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     
     private(set) weak var animationView_Setting: AnimateButtonView!
     
-    private(set) weak var containerView_MainContent: UIView!
+    private(set) weak var containerView_MainContent: InnerShadowUIView!
     
     private(set) weak var tagView: GiukHashtagScrollView!
     //end
@@ -116,23 +116,18 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         setAnimationView()
         setAnimationBehaviorForInitailAnimation()
         setAnimationBehaviorToAnimationLoader()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if !initailStage && authorized {
-            findAllTags()
+        
+        //set initailSettings
+        if initailStage {
+            allButtons.forEach { (button) in
+                button.alpha = 0
+            }
+            containerView_MainContent.alpha = 0
         }
     }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        if initailStage {
-            allButtons.forEach { (button) in
-                button.alpha = 0
-            }
-            tagView.alpha = 0
-        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -141,6 +136,13 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
             layoutContainers()
             layoutAnimationView()
             layoutTagView()
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if !initailStage && authorized {
+            setTagsOnTagView()
         }
     }
     
@@ -211,7 +213,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     }
     //end
     
-    //MARK: setup Sub views
+    //MARK: set Sub views
     private func setContainers() {
         let contentContainer = generateUIView(view: containerView_MainContent, origin: contentAreaOrigin_Start, size: contentAreaSize)
         containerView_MainContent = contentContainer
@@ -229,6 +231,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         tagView = newTagView
         tagView.hashTagScrollViewDelegate = self
         tagView.dataSource = self
+        tagView.clipsToBounds = true
         tagView.tagItemCornerRadius_Percent = 20
         tagView.itemMinSize = SizeSources.tagItemMinimumSize
         //        tagView.backgroundColor = UIColor(patternImage: UIImage(named: "GiukBackground")!)
@@ -293,13 +296,14 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         requieredFunctionWithInInitialStageAnimationCompleted = { [unowned self] in
             self.layoutContainers()
             self.layoutAnimationView()
+            self.containerView_MainContent.isInnerShadowRequired = true
             UIView.animate(withDuration: 0.5, delay: 0, options: [.curveEaseOut], animations: {
                 self.allButtons.forEach({ (button) in
                     button.alpha = 1
                 })
-                self.tagView.alpha = 1
+                self.containerView_MainContent.alpha = 1
             }, completion: {(finished) in
-                self.findAllTags()
+                self.setTagsOnTagView()
             })
         }
     }
@@ -425,7 +429,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
 extension Giuk_MainFrame_ViewController {
     
     //MARK: Tag related function
-    func findAllTags() {
+    func setTagsOnTagView() {
         tags = Tag.findAllTags(context: AppDelegate.viewContext)
     }
     
@@ -497,6 +501,7 @@ extension Giuk_MainFrame_ViewController {
         animationLoader.settings_Animations = {
             [unowned self] (state) in
             print("animationcalled")
+            
             switch state {
             case .normal :
                 self.animationView_Top.frame = self.topAnimationViewStartFrame

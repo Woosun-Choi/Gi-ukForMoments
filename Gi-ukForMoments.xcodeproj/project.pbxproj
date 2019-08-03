@@ -20,6 +20,8 @@
 		A717361022CA0E250098B077 /* DescribingSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = A717360F22CA0E250098B077 /* DescribingSources.swift */; };
 		A784640922E9B8C5007BA730 /* PublicVariables.swift in Sources */ = {isa = PBXBuildFile; fileRef = A784640822E9B8C5007BA730 /* PublicVariables.swift */; };
 		A784640B22EAB82A007BA730 /* Giuk_ThumbnailCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A784640A22EAB82A007BA730 /* Giuk_ThumbnailCollectionView.swift */; };
+		A784642B22EC808A007BA730 /* InnerShadowUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A784642A22EC808A007BA730 /* InnerShadowUIView.swift */; };
+		A78464B822F5C668007BA730 /* CurrentDeviceOrientationChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78464B722F5C668007BA730 /* CurrentDeviceOrientationChecker.swift */; };
 		A78B0DF6228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0DF5228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift */; };
 		A78B0DF8228D9D2900D0B275 /* UIButton_WithIdentifire.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0DF7228D9D2900D0B275 /* UIButton_WithIdentifire.swift */; };
 		A78B0E0D2292E0B200D0B275 /* DotStylePresentorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78B0DFE2292E0B200D0B275 /* DotStylePresentorView.swift */; };
@@ -103,6 +105,8 @@
 		A717360F22CA0E250098B077 /* DescribingSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescribingSources.swift; sourceTree = "<group>"; };
 		A784640822E9B8C5007BA730 /* PublicVariables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicVariables.swift; sourceTree = "<group>"; };
 		A784640A22EAB82A007BA730 /* Giuk_ThumbnailCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_ThumbnailCollectionView.swift; sourceTree = "<group>"; };
+		A784642A22EC808A007BA730 /* InnerShadowUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InnerShadowUIView.swift; sourceTree = "<group>"; };
+		A78464B722F5C668007BA730 /* CurrentDeviceOrientationChecker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentDeviceOrientationChecker.swift; sourceTree = "<group>"; };
 		A78B0DF5228D39F600D0B275 /* Giuk_MainFrame_ContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_MainFrame_ContainerView.swift; sourceTree = "<group>"; };
 		A78B0DF7228D9D2900D0B275 /* UIButton_WithIdentifire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIButton_WithIdentifire.swift; sourceTree = "<group>"; };
 		A78B0DFE2292E0B200D0B275 /* DotStylePresentorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DotStylePresentorView.swift; sourceTree = "<group>"; };
@@ -236,6 +240,14 @@
 				A717360822C5C9D50098B077 /* LabelWithContainer.swift */,
 			);
 			path = "Tag Generator";
+			sourceTree = "<group>";
+		};
+		A78464B922F5C66D007BA730 /* Device Orientation Checker */ = {
+			isa = PBXGroup;
+			children = (
+				A78464B722F5C668007BA730 /* CurrentDeviceOrientationChecker.swift */,
+			);
+			path = "Device Orientation Checker";
 			sourceTree = "<group>";
 		};
 		A78B0DF9228D9D4A00D0B275 /* Giuk SubContainer View */ = {
@@ -439,6 +451,7 @@
 			children = (
 				A7FBD3BA22DC7C23004DCF3F /* PropertyAnimationLoader.swift */,
 				A78B0E47229F6BDC00D0B275 /* Giuk_MainFrame_ViewController.swift */,
+				A784642A22EC808A007BA730 /* InnerShadowUIView.swift */,
 				A7FBD3CA22E57FAF004DCF3F /* GiukHashtagScrollView.swift */,
 			);
 			path = "FrameViewController For Main";
@@ -552,6 +565,7 @@
 		A7A6A616228A4F12001FCA4D /* Generic Support Sources */ = {
 			isa = PBXGroup;
 			children = (
+				A78464B922F5C66D007BA730 /* Device Orientation Checker */,
 				A7A6A61D228B9C1B001FCA4D /* GenericMultiButtonView.swift */,
 				A78B0E5322ADE9FC00D0B275 /* StartWithAnimation_ViewController.swift */,
 				A78B0DF7228D9D2900D0B275 /* UIButton_WithIdentifire.swift */,
@@ -711,6 +725,7 @@
 				A78B0E0F2292E0B200D0B275 /* CenteredCollectionView.swift in Sources */,
 				A7FBD39F22D2BE96004DCF3F /* ButtonImageNames.swift in Sources */,
 				A7A6A610228A4D1A001FCA4D /* ContentUIViewController.swift in Sources */,
+				A784642B22EC808A007BA730 /* InnerShadowUIView.swift in Sources */,
 				A784640922E9B8C5007BA730 /* PublicVariables.swift in Sources */,
 				A78B0E132292E0B200D0B275 /* TimeCollectionViewer.swift in Sources */,
 				A7A6A61A228B9249001FCA4D /* Giuk_MainFrameViewController.swift in Sources */,
@@ -725,6 +740,7 @@
 				A78B0E232292E15700D0B275 /* AnalogTypeLcdItemView.swift in Sources */,
 				A7A6A61E228B9C1B001FCA4D /* GenericMultiButtonView.swift in Sources */,
 				A78B0E142292E0B200D0B275 /* TimeCollectionView.swift in Sources */,
+				A78464B822F5C668007BA730 /* CurrentDeviceOrientationChecker.swift in Sources */,
 				A78B0E2F2292E1EE00D0B275 /* HashTagView.swift in Sources */,
 				A78B0E222292E15700D0B275 /* AnalogNumberView.swift in Sources */,
 				A78B0E5F22AFE8F000D0B275 /* ImageFilterModule.swift in Sources */,

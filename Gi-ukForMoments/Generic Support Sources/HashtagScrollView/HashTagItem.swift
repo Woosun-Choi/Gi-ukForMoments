@@ -21,6 +21,8 @@ class HashTagItem: UIView {
         }
     }
     
+    var shadowVisible: Bool = true
+    
     var printOutFrameInformation: Bool = false
     
     var cornerRadiusRatio: CGFloat {
@@ -172,15 +174,25 @@ class HashTagItem: UIView {
         }
     }
     
+    private func setShadow() {
+        let path = UIBezierPath(roundedRect: bounds, cornerRadius: fixedCornerRadius)
+        layer.shadowPath = path.cgPath
+        layer.shadowColor = UIColor.goyaBlack.cgColor
+        layer.shadowOffset = CGSize(width: 2, height: 2)
+        layer.shadowRadius = 1
+        layer.shadowOpacity = 0.35
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         setTagItem()
+        if shadowVisible {
+            setShadow()
+        }
     }
     
     override func draw(_ rect: CGRect) {
-        var path = UIBezierPath(rect: bounds)
-        path = UIBezierPath(roundedRect: bounds, cornerRadius: fixedCornerRadius)
-        path.addClip()
+        let path = UIBezierPath(roundedRect: bounds, cornerRadius: fixedCornerRadius)
         contentColor.setFill()
         path.fill()
     }

@@ -21,6 +21,7 @@ class GiukHashtagScrollView: HashTagScrollView {
         if placeHolder == nil {
             let newHolder = generateUIView(view: placeHolder, frame: placeHolerFrame)
             placeHolder = newHolder
+            placeHolder.backgroundColor = .clear
             placeHolder.setLabelAsSDStyleWithSpecificFontSize(fontSize: fontSize)
             placeHolder.textColor = .GiukBackgroundColor_depth_1
             placeHolder.numberOfLines = 0

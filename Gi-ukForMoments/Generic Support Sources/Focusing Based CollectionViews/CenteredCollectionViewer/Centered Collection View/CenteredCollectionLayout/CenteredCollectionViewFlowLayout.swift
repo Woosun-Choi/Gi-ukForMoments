@@ -59,6 +59,10 @@ class CenteredCollectionViewFlowLayout: UICollectionViewLayout {
         return expectedCellSizeFactor * 0.3
     }
     
+    var leftOverMargin: CGFloat {
+        return requiredEdgeMarginForAlignCellsToCenter
+    }
+    
     private var requiredEdgeMarginForAlignCellsToCenter: CGFloat {
         if isHorizontal {
             return ((width - expectedCellSizeFactor)/2).absValue

@@ -74,6 +74,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         imageView.image = nil
+        imageView.imageData = nil
         nowFocused = false
         giuk = nil
     }

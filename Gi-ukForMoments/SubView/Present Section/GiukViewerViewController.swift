@@ -84,7 +84,7 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController
                 [unowned self] in
                 if self.nowEditing {
                     self.presentCollectionView.alpha = 0.65
-                    self.view.backgroundColor = .goyaFontColor
+                    self.view.backgroundColor = .goyaSemiBlackColor
                     self.closeButton.alpha = 0
                     self.addButton.alpha = 0
                 } else {
@@ -131,6 +131,71 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController
         giuks = nil
         super.closeButtonAction(sender)
     }
+    
+    //MARK: Button actions
+    @objc func controlButtonActions(_ sender: UIButton_WithIdentifire) {
+        switch sender.identifire {
+        case "edit": nowEditing = !nowEditing
+        case "add":
+            if let nowTag = self.tag
+            {
+                presentWritingViewControllerWithTag(nowTag)
+            }
+        default:
+            if let selected = presentCollectionView.focusingIndex {
+                presentAlertControllerForEdit(selected)
+            }
+        }
+    }
+    
+    private func presentWritingViewControllerWithTag(_ tag: Tag) {
+        let newVC = WriteSectionViewController()
+        newVC.isEditOnly = false
+        newVC.primarySelectedTag = tag.tagName
+        newVC.requieredActionWhenSavingComplete = {
+            [weak self] in
+            if newVC.savingCompleted {
+                let firstIndex = IndexPath(item: 0, section: 0)
+                self?.presentCollectionView.setStartIndexTo(firstIndex)
+                self?.thumbnailCollectionView.setStartIndexTo(firstIndex)
+            }
+        }
+        present(newVC, animated:  true)
+    }
+    
+    private func presentAlertControllerForEdit(_ index: IndexPath) {
+        let alert = UIAlertController(title: DescribingSources.deleteSection.delete_Title, message: DescribingSources.deleteSection.delete_SubTitle, preferredStyle: .actionSheet)
+        let cancelAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_CancelAction, style: .cancel, handler: nil)
+        let deleteAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_DeleteAction, style: .destructive) {
+            [unowned self] (action) in
+            if let targetGiuk = self.giuks?[index.row] {
+                targetGiuk.deleteGiuk(context: self.context) {
+                    [weak self] in
+                    self?.giuks?.remove(at: index.item)
+                    if self?.giuks?.count == 0 {
+                        self?.closeButtonAction(self!.closeButton)
+                    }
+                }
+            }
+        }
+        let removeAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_RemoveAction, style: .default) {
+            [unowned self] (action) in
+            if let targetGiuk = self.giuks?[index.row] {
+                targetGiuk.deleteGiukFromTag(context: self.context, tag: self.tag!) {
+                    [weak self] in
+                    self?.giuks?.remove(at: index.item)
+                    if self?.giuks?.count == 0 {
+                        self?.closeButtonAction(self!.closeButton)
+                    }
+                }
+            }
+        }
+        alert.addAction(removeAction)
+        alert.addAction(deleteAction)
+        alert.addAction(cancelAction)
+        present(alert, animated: true)
+    }
+    //end
 }
 
 extension GiukViewerViewController {
@@ -280,71 +345,6 @@ extension GiukViewerViewController {
         setThumbnailCollectionViewContainer()
         setThumbnailCollectionView()
         setDeleteButton()
-    }
-    //end
-    
-    //MARK: Button actions
-    @objc func controlButtonActions(_ sender: UIButton_WithIdentifire) {
-        switch sender.identifire {
-        case "edit": nowEditing = !nowEditing
-        case "add":
-            if let nowTag = self.tag
-            {
-                presentWritingViewControllerWithTag(nowTag)
-            }
-        default:
-            if let selected = presentCollectionView.focusingIndex {
-                presentAlertControllerForEdit(selected)
-            }
-        }
-    }
-    
-    private func presentWritingViewControllerWithTag(_ tag: Tag) {
-        let newVC = WriteSectionViewController()
-        newVC.isEditOnly = false
-        newVC.primarySelectedTag = tag.tagName
-        newVC.requieredActionWhenSavingComplete = {
-            [weak self] in
-            if newVC.savingCompleted {
-                let firstIndex = IndexPath(item: 0, section: 0)
-                self?.presentCollectionView.setStartIndexTo(firstIndex)
-                self?.thumbnailCollectionView.setStartIndexTo(firstIndex)
-            }
-        }
-        present(newVC, animated:  true)
-    }
-    
-    private func presentAlertControllerForEdit(_ index: IndexPath) {
-        let alert = UIAlertController(title: DescribingSources.deleteSection.delete_Title, message: DescribingSources.deleteSection.delete_SubTitle, preferredStyle: .actionSheet)
-        let cancelAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_CancelAction, style: .cancel, handler: nil)
-        let deleteAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_DeleteAction, style: .destructive) {
-            [unowned self] (action) in
-            if let targetGiuk = self.giuks?[index.row] {
-                targetGiuk.deleteGiuk(context: self.context) {
-                    [weak self] in
-                    self?.giuks?.remove(at: index.item)
-                    if self?.giuks?.count == 0 {
-                        self?.closeButtonAction(self!.closeButton)
-                    }
-                }
-            }
-        }
-        let removeAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_RemoveAction, style: .default) {
-            [unowned self] (action) in
-            if let targetGiuk = self.giuks?[index.row] {
-                targetGiuk.deleteGiukFromTag(context: self.context, tag: self.tag!) {
-                    [weak self] in
-                    self?.giuks?.remove(at: index.item)
-                    if self?.giuks?.count == 0 {
-                        self?.closeButtonAction(self!.closeButton)
-                    }
-                }
-            }
-        }
-        alert.addAction(removeAction)
-        alert.addAction(deleteAction)
-        alert.addAction(cancelAction)
-        present(alert, animated: true)
     }
     //end
 }
@@ -564,13 +564,7 @@ extension GiukViewerViewController: PageCounterLabelDatasource {
 }
 
 extension GiukViewerViewController {
-    
-//    var editButtonSize: CGSize {
-//        let width = min(topContainerAreaSize.height * 0.618, 35)//(closeButtonSize.width * 1.618).clearUnderDot
-//        let height = width
-//        return CGSize(width: width, height: height)
-//    }
-    
+    //MARK: Frame resources
     var editButtonSize: CGSize {
         let width = min(topContainerAreaSize.height * 0.718, 35)
         let height = width

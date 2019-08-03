@@ -51,7 +51,7 @@ class WriteSectionViewController: Giuk_OpenFromFrame_ViewController, GiukContent
     //end
     
     //MARK: CollectionView RelatedVariables
-    private var photoModule = PhotoModule(.all)
+    private var photoModule = PhotoModule()
     
     private var filterModule = ImageFilterModule()
     

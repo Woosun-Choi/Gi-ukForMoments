@@ -39,8 +39,8 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
     }
     
     fileprivate struct generalSettings {
-        static var verticalEdgeMargin : CGFloat = 8
-        static var horizontalEdgeMargin : CGFloat = 8
+        static var verticalEdgeMargin : CGFloat = 16
+        static var horizontalEdgeMargin : CGFloat = 12
         static var itemVerticalSpace : CGFloat = 5
         static var itemHorizontalSpace : CGFloat = 5
     }
@@ -50,12 +50,12 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
     
     private var widthLimitForPresentingTags : CGFloat?
     
-    var widthLimit : CGFloat? {
+    var widthLimit : CGFloat {
         get {
             if widthLimitForPresentingTags == nil {
                 return self.bounds.width - (generalSettings.itemHorizontalSpace * 2)
             } else {
-                return widthLimitForPresentingTags
+                return widthLimitForPresentingTags!
             }
         }
         set { widthLimitForPresentingTags = newValue }
@@ -291,7 +291,7 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
 extension HashTagScrollView {
     //MARK: Grid informations
     private var estimateWidthLimit : CGFloat {
-        return widthLimit! - (generalSettings.horizontalEdgeMargin*2)
+        return widthLimit - (generalSettings.horizontalEdgeMargin*2)
     }
     
     private var trailingEdgeLimit: CGFloat {
