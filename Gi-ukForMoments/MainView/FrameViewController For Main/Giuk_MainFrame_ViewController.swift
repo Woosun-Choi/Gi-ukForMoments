@@ -11,6 +11,9 @@ import CoreData
 
 class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateButtonViewButtonDataSource, FrameTransitionDataSource, HashTagScrollViewDataSource, HashTagScrollViewDelegate {
     
+//    var filterEffect : ImageFilterModule.CIFilterName = .CIPhotoEffectInstant
+    var filterEffect : ImageFilterModule.CIFilterName = .CIPhotoEffectTonal
+    
     //MARK: screenversion?
     var isFullScreenVersion: Bool = true {
         didSet {
@@ -390,9 +393,11 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     
     func initialAction_ToViewController(_ viewController: UIViewController) {
         if let controller = viewController as? WriteSectionViewController {
+            controller.filterEffect = filterEffect
             controller.writingSection.alpha = 0
             controller.closeButton.alpha = 0
         } else if let controller = viewController as? GiukViewerViewController{
+            controller.filterEffect = filterEffect
             controller.presentCollectionView.alpha = 0
             controller.frontButtons.forEach { $0?.alpha = 0 }
         }

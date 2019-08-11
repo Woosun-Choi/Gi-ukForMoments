@@ -11,6 +11,14 @@ import CoreData
 
 class GiukViewerViewController: Giuk_OpenFromFrame_ViewController
 {
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
     //MARk: subviews
     weak var editButton: UIButton_WithIdentifire!
     
@@ -28,7 +36,11 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController
     //end
     
     //MARK: Variables
+    var isFirstLoaded: Bool = true
+    
     var filterModule = ImageFilterModule()
+    
+    var filterEffect : ImageFilterModule.CIFilterName = .CIPhotoEffectTonal
     
     var tagString: String?
     
@@ -118,6 +130,10 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         updateGiuks()
+        if !isFirstLoaded {
+            checkTagData()
+        }
+        isFirstLoaded = false
     }
     
     //MARK: extra functions
@@ -130,6 +146,25 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController
     override func closeButtonAction(_ sender: UIButton) {
         giuks = nil
         super.closeButtonAction(sender)
+    }
+    
+    private func checkTagData() {
+        print("checking Tag")
+        if let _tag = tag {
+            if let tagName = _tag.tagName {
+                let request: NSFetchRequest<Tag> = Tag.fetchRequest()
+                let predicate = NSPredicate(format: "tagName == %@", tagName)
+                request.predicate = predicate
+                let result = try? context.count(for: request)
+                if result == 0 {
+                    dismiss(animated: true, completion: nil)
+                }
+            } else {
+                dismiss(animated: true, completion: nil)
+            }
+        } else {
+            dismiss(animated: true, completion: nil)
+        }
     }
     
     //MARK: Button actions
@@ -456,7 +491,7 @@ extension GiukViewerViewController: ImageCroppingViewDelegate, ThumbnailImageVie
     //MARK: PresentingImages To collectionview cells delegates
     func imageCroppingView(_ croppingView: ImageCroppingView, needRepresentedImageData imageData: Data) -> UIImage? {
         if isNonColorPresneting {
-            let result = filterModule.performImageFilter(.CIPhotoEffectTonal, image: UIImage(data: imageData)!)
+            let result = filterModule.performImageFilter(filterEffect, image: UIImage(data: imageData)!)
             return result
         } else {
             return nil
@@ -465,7 +500,7 @@ extension GiukViewerViewController: ImageCroppingViewDelegate, ThumbnailImageVie
     
     func thumbnailImageViewShouldReturnImageAs(_ thumbnailImageView: ThumbnailImageView, imageData: Data) -> UIImage? {
         if isNonColorPresneting {
-            let result = filterModule.performImageFilter(.CIPhotoEffectTonal, image: UIImage(data: imageData)!)
+            let result = filterModule.performImageFilter(filterEffect, image: UIImage(data: imageData)!)
             return result
         } else {
             return nil

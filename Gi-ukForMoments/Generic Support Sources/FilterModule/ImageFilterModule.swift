@@ -72,53 +72,63 @@ class ImageFilterModule {
         "None" : CIFilterEffects.None,
         "CIPhotoEffectChrome": CIFilterEffects.CIPhotoEffectChrome({
             let filter = CIFilter(name: "CIPhotoEffectChrome" )
+            filter?.setDefaults()
             filter?.setValue($0, forKey: kCIInputImageKey)
             return filter?.outputImage
         }),
         "CIPhotoEffectFade": CIFilterEffects.CIPhotoEffectFade({
             let filter = CIFilter(name: "CIPhotoEffectFade" )
+            filter?.setDefaults()
             filter?.setValue($0, forKey: kCIInputImageKey)
             return filter?.outputImage
         }),
         "CIPhotoEffectInstant": CIFilterEffects.CIPhotoEffectInstant({
             let filter = CIFilter(name: "CIPhotoEffectInstant" )
+            filter?.setDefaults()
             filter?.setValue($0, forKey: kCIInputImageKey)
             return filter?.outputImage
         }),
         "CIPhotoEffectNoir": CIFilterEffects.CIPhotoEffectNoir({
             let filter = CIFilter(name: "CIPhotoEffectNoir" )
+            filter?.setDefaults()
             filter?.setValue($0, forKey: kCIInputImageKey)
             return filter?.outputImage
         }),
         "CIPhotoEffectProcess": CIFilterEffects.CIPhotoEffectProcess({
             let filter = CIFilter(name: "CIPhotoEffectProcess" )
+            filter?.setDefaults()
             filter?.setValue($0, forKey: kCIInputImageKey)
             return filter?.outputImage
         }),
         "CIPhotoEffectTonal": CIFilterEffects.CIPhotoEffectTonal({
             let filter = CIFilter(name: "CIPhotoEffectTonal" )
+            filter?.setDefaults()
             filter?.setValue($0, forKey: kCIInputImageKey)
             return filter?.outputImage
         }),
         "CIPhotoEffectTransfer": CIFilterEffects.CIPhotoEffectTransfer({
             let filter = CIFilter(name: "CIPhotoEffectTransfer" )
+            filter?.setDefaults()
             filter?.setValue($0, forKey: kCIInputImageKey)
             return filter?.outputImage
         }),
         "CISepiaTone": CIFilterEffects.CISepiaTone({
-            guard let filter = CIFilter(name: "CISepiaTone" ) else { return nil}
-            filter.setValue($0, forKey: kCIInputImageKey)
-            return filter.outputImage
+            let filter = CIFilter(name: "CISepiaTone" )
+            filter?.setDefaults()
+            filter?.setValue($0, forKey: kCIInputImageKey)
+            return filter?.outputImage
         }),
         "CIColorClamp": CIFilterEffects.CIColorClamp({
-            guard let filter = CIFilter(name: "CISepiaTone" ) else { return nil}
-            filter.setValue($0, forKey: kCIInputImageKey)
-            return filter.outputImage
+            let filter = CIFilter(name: "CISepiaTone" )
+            filter?.setDefaults()
+            filter?.setValue($0, forKey: kCIInputImageKey)
+            return filter?.outputImage
         }),
         "CIColorControls": CIFilterEffects.CIColorControls({
-            guard let filter = CIFilter(name: "CISepiaTone" ) else { return nil}
-            filter.setValue($0, forKey: kCIInputImageKey)
-            return filter.outputImage
+            let filter = CIFilter(name: "CISepiaTone" )
+            filter?.setDefaults()
+            filter?.setValue($0, forKey: kCIInputImageKey)
+            return filter?.outputImage
         })
     ]
     

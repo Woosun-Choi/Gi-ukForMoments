@@ -8,6 +8,8 @@
 
 import UIKit
 
+public var userID: String?
+
 class GiukHashtagScrollView: HashTagScrollView {
     
     weak var placeHolder: UILabel!

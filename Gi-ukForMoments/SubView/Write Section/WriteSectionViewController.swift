@@ -11,6 +11,14 @@ import CoreData
 
 class WriteSectionViewController: Giuk_OpenFromFrame_ViewController, GiukContentView_WritingDatasource, Giuk_ContentView_WriteSection_Delegate {
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+    
     //MARK: subViews
     weak var writingSection: Giuk_ContentView_WriteSection!
     //end

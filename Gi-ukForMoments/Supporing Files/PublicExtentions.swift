@@ -8,6 +8,121 @@
 
 import UIKit
 
+public func distanceBetweenTwoPoints(from: CGPoint, to: CGPoint) -> CGFloat {
+    let yDeviding = (from.y - to.y)
+    let xDeviding = (from.x - to.x)
+    let distance = sqrt((xDeviding * xDeviding) + (yDeviding * yDeviding))
+    
+    return distance
+}
+
+public enum RelativeCoordinateInformationBetweenPoints {
+    case leftTop
+    case leftBottom
+    case rightTop
+    case rightBottom
+    case leftAligned
+    case rightAligned
+    case verticalTopAligned
+    case verticalBottomAligned
+    case samePoint
+}
+
+public func linearFunctionBetweenTwoPoints(from: CGPoint, to: CGPoint) -> (coordinate: RelativeCoordinateInformationBetweenPoints, function: ((CGFloat) -> CGFloat)) {
+    let centerFactorX = from.x
+    let centerFactorY = from.y
+    
+    var coordinate : RelativeCoordinateInformationBetweenPoints = .leftTop
+    var fixedPointTo = CGPoint.zero
+    if centerFactorX > to.x {
+        let newPointX = (to.x - centerFactorX)
+        let newPointY = -(to.y - centerFactorY)
+        fixedPointTo = CGPoint(x: newPointX, y: newPointY)
+        if centerFactorY < to.y {
+            coordinate = .leftBottom
+        } else if centerFactorY == to.y {
+            coordinate = .leftAligned
+        }
+    } else if centerFactorX < to.x {
+        let newPointX = (to.x - centerFactorX)
+        let newPointY = -(to.y - centerFactorY)
+        fixedPointTo = CGPoint(x: newPointX, y: newPointY)
+        if centerFactorY < to.y {
+            coordinate = .rightBottom
+        } else if centerFactorY > to.y {
+            coordinate = .rightTop
+        } else {
+            coordinate = .rightAligned
+        }
+    } else {
+        if centerFactorY < to.y {
+            coordinate = .verticalBottomAligned
+        } else if centerFactorY > to.y {
+            coordinate = .verticalTopAligned
+        } else {
+            coordinate = .samePoint
+        }
+    }
+    
+    let functionInclination = fixedPointTo.y/fixedPointTo.x
+    
+    return (coordinate, {(x) in return x * functionInclination })
+}
+
+public func pointInLinearFunctionWithDistance(_ distance: CGFloat, anchorPoint: CGPoint, endPoint: CGPoint) -> CGPoint {
+    let coordinateInfo = linearFunctionBetweenTwoPoints(from: anchorPoint, to: endPoint)
+    let currentCoordinate = coordinateInfo.coordinate
+    var expectedX : CGFloat = 0
+    var expectedY : CGFloat {
+        return coordinateInfo.function(expectedX)
+    }
+    var nowDis : CGFloat {
+        return sqrt((expectedX * expectedX) + (expectedY * expectedY))
+    }
+    
+    var absDis: CGFloat {
+        if distance < 0 {
+            return -distance
+        } else {
+            return distance
+        }
+    }
+    
+    if currentCoordinate != .leftAligned && currentCoordinate != .verticalBottomAligned && currentCoordinate != .verticalTopAligned && currentCoordinate != .rightAligned {
+        while nowDis < absDis {
+            if currentCoordinate == .rightTop || currentCoordinate == .rightBottom || currentCoordinate == .rightAligned {
+                expectedX += 0.1
+            } else {
+                expectedX -= 0.1
+            }
+        }
+    }
+    
+    let preResult = CGPoint(x: expectedX, y: expectedY)
+    
+    var finalResult = CGPoint.zero
+    
+    if currentCoordinate == .rightTop || currentCoordinate == .rightBottom {
+        let fixedToOriginalCoordinateX = (preResult.x) + anchorPoint.x
+        let fixedToOriginalCoordinateY = (-preResult.y) + anchorPoint.y
+        finalResult = CGPoint(x: fixedToOriginalCoordinateX, y: fixedToOriginalCoordinateY)
+    } else if currentCoordinate == .verticalTopAligned {
+        finalResult = CGPoint(x: anchorPoint.x, y: anchorPoint.y - distance.absValue)
+    } else if currentCoordinate == .verticalBottomAligned {
+        finalResult = CGPoint(x: anchorPoint.x, y: anchorPoint.y + distance.absValue)
+    } else if currentCoordinate == .leftAligned {
+        finalResult = CGPoint(x: anchorPoint.x - distance.absValue, y: anchorPoint.y)
+    } else if currentCoordinate == .rightAligned {
+        finalResult = CGPoint(x: anchorPoint.x + distance.absValue, y: anchorPoint.y)
+    } else {
+        let fixedToOriginalCoordinateX = (preResult.x) + anchorPoint.x
+        let fixedToOriginalCoordinateY = (-preResult.y) + anchorPoint.y
+        finalResult = CGPoint(x: fixedToOriginalCoordinateX, y: fixedToOriginalCoordinateY)
+    }
+    
+    return finalResult
+}
+
 //for using this function, sorting array should have a value that could be matched with compareArray value.
 // array : array needs to be sort
 // compareArray : compare source who providing standard.

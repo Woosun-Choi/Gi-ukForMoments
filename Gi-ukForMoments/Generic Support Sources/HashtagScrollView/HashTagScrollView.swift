@@ -78,6 +78,12 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
             reloadData()
         }
     }
+    
+    var isShadowedItem : Bool = false {
+        didSet {
+            reloadData()
+        }
+    }
     //end
     
     //MARK: Computed Variables
@@ -96,6 +102,7 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
             hashTagScrollViewDelegate?.hashTagScrollView?(self, didSelectItemAt: index, tag: tag)
         }
     }
+    
     func hashTagItem(_ tagItemView: HashTagItem, longPressed tag: String) {
         if let index = subviews.firstIndex(of: tagItemView) {
             hashTagScrollViewDelegate?.hashTagScrollView?(self, didLongPressedItemAt: index, tag: tag)
@@ -199,6 +206,7 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
 //            let hash = HashTagItem(limitWidth: estimateWidthLimit, tag: item, fontSize: estimatedFontSizeForTagItem, itemMinHeight: tagItemMinHeight)
             let hash = HashTagItem(limitWidth: estimateWidthLimit, tag: item, fontSize: estimatedFontSizeForTagItem, itemMinSize: itemMinSize)
             hash.cornerRadiusRatio = tagItemCornerRadius_Percent
+            hash.shadowVisible = isShadowedItem
             hash.delegate = self
             self.addSubview(hash)
         }

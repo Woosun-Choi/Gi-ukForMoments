@@ -18,6 +18,18 @@ class InnerShadowUIView: UIView {
         }
     }
     
+    var shadowColor: (from: UIColor, to: UIColor) = (UIColor.goyaBlack.withAlphaComponent(0.8), .clear) {
+        didSet {
+            setInnerShadowLayer()
+        }
+    }
+    
+    var shadowRadius: CGFloat = 3 {
+        didSet {
+            setInnerShadowLayer()
+        }
+    }
+    
     var edgeDirection: EdgeShadowLayer.Edge {
         get {
             return self._edgeDirection
@@ -38,13 +50,13 @@ class InnerShadowUIView: UIView {
     func setInnerShadowLayer() {
         if isInnerShadowRequired {
             if innerShadowLayer == nil {
-                let newLayer = EdgeShadowLayer(forView: self, edge: edgeDirection, shadowRadius: 5, toColor: .clear, fromColor: UIColor.goyaBlack.withAlphaComponent(0.9))
+                let newLayer = EdgeShadowLayer(forView: self, edge: edgeDirection, shadowRadius: shadowRadius, toColor: shadowColor.to, fromColor: shadowColor.from)
                 newLayer.backgroundColor = UIColor.clear.cgColor
                 innerShadowLayer = newLayer
                 layer.addSublayer(innerShadowLayer)
             } else {
                 innerShadowLayer.removeFromSuperlayer()
-                let newLayer = EdgeShadowLayer(forView: self, edge: edgeDirection, shadowRadius: 5, toColor: .clear, fromColor: UIColor.goyaBlack.withAlphaComponent(0.9))
+                let newLayer = EdgeShadowLayer(forView: self, edge: edgeDirection, shadowRadius: shadowRadius, toColor: shadowColor.to, fromColor: shadowColor.from)
                 newLayer.backgroundColor = UIColor.clear.cgColor
                 innerShadowLayer = newLayer
                 layer.addSublayer(innerShadowLayer)
