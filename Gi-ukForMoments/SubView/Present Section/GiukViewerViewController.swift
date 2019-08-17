@@ -230,7 +230,7 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController
 //        alert.addAction(cancelAction)
         
         let alert = WoosunAlertController(title: DescribingSources.deleteSection.delete_Title, message: DescribingSources.deleteSection.delete_SubTitle, style: .bottom)
-        let removeAction = WoosunAlertControllerItem(style: .normal, title: "remove") {
+        let removeAction = WoosunAlertControllerItem(style: .normal, title: DescribingSources.deleteSection.delete_Title_RemoveAction) {
             [unowned self] in
             if let targetGiuk = self.giuks?[index.row] {
                 targetGiuk.deleteGiukFromTag(context: self.context, tag: self.tag!) {
@@ -243,7 +243,7 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController
             }
         }
         
-        let deleteAction = WoosunAlertControllerItem(style: .destructive, title: "delete") {
+        let deleteAction = WoosunAlertControllerItem(style: .destructive, title: DescribingSources.deleteSection.delete_Title_DeleteAction) {
             [unowned self] in
             if let targetGiuk = self.giuks?[index.row] {
                 targetGiuk.deleteGiuk(context: self.context) {
@@ -256,7 +256,7 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController
             }
         }
         
-        let cancelAction = WoosunAlertControllerItem(style: .cancel, title: "cancel", completion: nil)
+        let cancelAction = WoosunAlertControllerItem(style: .cancel, title: DescribingSources.deleteSection.delete_Title_CancelAction, completion: nil)
         alert.addAction(cancelAction)
         alert.addAction(removeAction)
         alert.addAction(deleteAction)

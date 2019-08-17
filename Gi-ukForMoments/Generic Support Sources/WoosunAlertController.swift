@@ -42,6 +42,7 @@ class WoosunAlertController: ContentUIViewController {
     
     var transitionDelegate = FadeInTransitioningDelegate()
     
+    private weak var messageLabelContainer: UIScrollView!
     private weak var titleLabel: UILabel!
     private weak var messageLabel: UILabel!
     private weak var effectView: UIVisualEffectView!
@@ -70,10 +71,10 @@ class WoosunAlertController: ContentUIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setGesture(view)
-//        self.transitioningDelegate = transitionDelegate
         self.view.backgroundColor = backgroundColor
         setEffectView()
         setTitleLable()
+        setMessageLabelContainer()
         setMessageLable()
         setButtons()
     }
@@ -82,16 +83,26 @@ class WoosunAlertController: ContentUIViewController {
         super.viewDidLayoutSubviews()
         setEffectView()
         setTitleLable()
+        setMessageLabelContainer()
         setMessageLable()
         setButtons()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        setEffectView()
-        setTitleLable()
-        setMessageLable()
-        setButtons()
+    }
+    
+    func setMessageLabelContainer() {
+        if messageLabelContainer == nil {
+            let newContainer = generateUIView(view: messageLabelContainer, frame: messageContainerRect)
+            newContainer?.showsVerticalScrollIndicator = false
+            newContainer?.showsHorizontalScrollIndicator = false
+            newContainer?.clipsToBounds = true
+            messageLabelContainer = newContainer
+            view.addSubview(messageLabelContainer)
+        } else {
+            messageLabelContainer.setNewFrame(messageContainerRect)
+        }
     }
     
     func setTitleLable() {
@@ -115,7 +126,7 @@ class WoosunAlertController: ContentUIViewController {
             newLabel?.numberOfLines = 0
             messageLabel = newLabel
             messageLabel.textColor = .goyaWhite
-            view.addSubview(messageLabel)
+            messageLabelContainer.addSubview(messageLabel)
             setMessageInMessageLabel()
             layoutMessageLabel()
         } else {
@@ -136,21 +147,22 @@ class WoosunAlertController: ContentUIViewController {
         let content = currentMessage.centeredAttributedString(fontSize: messageFontSize, type: .regular)
         messageLabel?.attributedText = content
         messageLabel?.sizeToFit()
+        messageLabelContainer.contentSize = CGSize(width: messageLabelContainer.frame.width, height: messageLabel.frame.height + 32)
     }
     
     private func layoutTitleLabel() {
         let titleSize = titleLabel.frame.size
         let originX = (titleContainerRect.width - titleSize.width)/2
-        let originY = (titleContainerRect.height - titleSize.height)/2
-        let prefferedOrigin = titleContainerRect.origin.offSetBy(dX: originX, dY: originY)
+        let originY: CGFloat = titleContainerRect.maxY - titleSize.height
+        let prefferedOrigin = CGPoint(x: originX, y: originY)
         titleLabel.frame.origin = prefferedOrigin
     }
     
     private func layoutMessageLabel() {
         let titleSize = messageLabel.frame.size
         let originX = (messageContainerRect.width - titleSize.width)/2
-        let originY = (messageContainerRect.height - titleSize.height)/2
-        let prefferedOrigin = messageContainerRect.origin.offSetBy(dX: originX, dY: originY)
+        let originY: CGFloat = 16
+        let prefferedOrigin = CGPoint(x: originX, y: originY)
         messageLabel.frame.origin = prefferedOrigin
     }
     
@@ -257,32 +269,28 @@ class WoosunAlertController: ContentUIViewController {
 
 extension WoosunAlertController {
     
-    fileprivate var heightGrid: (title: CGFloat, message: CGFloat, buttons: CGFloat) {
-        return (0.1,0.1,0.8)
-    }
-    
-    fileprivate var prefferedContainerHeights: (title: CGFloat, message: CGFloat, buttons: CGFloat) {
-        return (
-            safeAreaRelatedAreaFrame.height * heightGrid.title,
-            safeAreaRelatedAreaFrame.height * heightGrid.message,
-            safeAreaRelatedAreaFrame.height * heightGrid.buttons
-        )
-    }
-    
     fileprivate var titleContainerRect : CGRect {
-        let size = CGSize(width: safeAreaRelatedAreaFrame.width, height: prefferedContainerHeights.title)
+        let height = safeAreaRelatedAreaFrame.height * 0.2
+        let size = CGSize(width: safeAreaRelatedAreaFrame.width, height: height)
         let origin = CGPoint(x: 0, y: safeAreaRelatedAreaFrame.origin.y)
         return CGRect(origin: origin, size: size)
     }
     
+    fileprivate var prefferedSubContainerHeights: (message: CGFloat, buttons: CGFloat) {
+        let factor = (safeAreaRelatedAreaFrame.height - titleContainerRect.height - 16)
+        let messageHeight = factor * 0.3
+        let buttonHeight = factor - messageHeight
+        return (messageHeight, buttonHeight)
+    }
+    
     fileprivate var messageContainerRect : CGRect {
-        let size = CGSize(width: safeAreaRelatedAreaFrame.width, height: prefferedContainerHeights.message)
-        let origin = CGPoint(x: 0, y: titleContainerRect.maxY)
+        let size = CGSize(width: safeAreaRelatedAreaFrame.width, height: prefferedSubContainerHeights.message)
+        let origin = CGPoint(x: 0, y: titleContainerRect.maxY + 16)
         return CGRect(origin: origin, size: size)
     }
     
     fileprivate var buttonContainerRect : CGRect {
-        let size = CGSize(width: safeAreaRelatedAreaFrame.width, height: prefferedContainerHeights.buttons)
+        let size = CGSize(width: safeAreaRelatedAreaFrame.width, height: prefferedSubContainerHeights.buttons)
         let origin = CGPoint(x: 0, y: messageContainerRect.maxY)
         return CGRect(origin: origin, size: size)
     }

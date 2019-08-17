@@ -587,6 +587,7 @@
 				A7A6A61D228B9C1B001FCA4D /* GenericMultiButtonView.swift */,
 				A78B0DF7228D9D2900D0B275 /* UIButton_WithIdentifire.swift */,
 				A784642A22EC808A007BA730 /* InnerShadowUIView.swift */,
+				A77B3D402307C0F8000EF17F /* WoosunAlertController.swift */,
 				A78464B922F5C66D007BA730 /* Device Orientation Checker */,
 				A78B0E382292E49200D0B275 /* Content View Controller */,
 				A77B3D452307DA1E000EF17F /* View Transitioning Delegates */,
@@ -640,7 +641,6 @@
 			isa = PBXGroup;
 			children = (
 				A7FBD3B722DC69B2004DCF3F /* GiukViewerViewController.swift */,
-				A77B3D402307C0F8000EF17F /* WoosunAlertController.swift */,
 				A7F95E7E22E8187100300776 /* Presenting Cells */,
 				A7FBD3C222DDEDAE004DCF3F /* Present Sub Views */,
 			);
