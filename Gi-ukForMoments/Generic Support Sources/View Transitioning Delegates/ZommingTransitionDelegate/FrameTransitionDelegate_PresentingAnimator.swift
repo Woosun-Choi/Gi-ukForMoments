@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ZommingTransitionDelegate_PresentingAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+class FrameTransitionDelegate_PresentingAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     
     init(targetRect: CGRect) {
         openingFrame = targetRect
@@ -16,18 +16,26 @@ class ZommingTransitionDelegate_PresentingAnimator: NSObject, UIViewControllerAn
     
     convenience init(targetRect: CGRect, setBeforeAnimate: ((UIViewController) -> Void)?, setAfterAnimate: ((UIViewController) -> Void)?) {
         self.init(targetRect: targetRect)
-        convenienceTargetViewOriginSetting = setBeforeAnimate
-        convenienceTargetViewFinalSetting = setAfterAnimate
     }
+    
+    var animateDuration: TimeInterval = 0.5
+    
+    var animationCurveStyle: UIView.AnimationOptions?
     
     private var openingFrame: CGRect?
     
-    var convenienceTargetViewOriginSetting : ((UIViewController) -> Void)?
+    var initialActionForController_presenting : ((UIViewController) -> Void)?
     
-    var convenienceTargetViewFinalSetting : ((UIViewController) -> Void)?
+    var finalActionForController_presenting : ((UIViewController) -> Void)?
+    
+    var initialActionForController_presented : ((UIViewController) -> Void)?
+    
+    var finalActionForController_presented : ((UIViewController) -> Void)?
+    
+    var completionActionForController_presented : ((UIViewController) -> Void)?
     
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.5
+        return animateDuration
     }
     
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
@@ -42,22 +50,19 @@ class ZommingTransitionDelegate_PresentingAnimator: NSObject, UIViewControllerAn
         
         let finalFrame = transitionContext.finalFrame(for: toViewController)
         
-//        if let targetView = toViewController as? ZoomingStyleTransitionDataSource {
-//            convenienceTargetViewOriginSetting = targetView.targetViewSetting_PreparePresenting
-//            convenienceTargetViewFinalSetting = targetView.targetViewSetting_FinishPresenting
-//        }
-//        
-        convenienceTargetViewOriginSetting?(toViewController)
+        initialActionForController_presenting?(fromViewController)
+        initialActionForController_presented?(toViewController)
         toViewController.view.frame = originFrame
         toViewController.view.layoutIfNeeded()
         containerView.addSubview(toViewController.view)
         
-        //fromViewController.view.subviews.forEach({ $0.alpha = 0 })
-        UIView.animate(withDuration: animationDuration, delay: 0.0, options: .curveEaseInOut, animations: {
+        UIView.animate(withDuration: animationDuration, delay: 0, options: (animationCurveStyle ?? .curveEaseOut), animations: {
             toViewController.view.frame = finalFrame
-            self.convenienceTargetViewFinalSetting?(toViewController)
+            self.finalActionForController_presenting?(fromViewController)
+            self.finalActionForController_presented?(toViewController)
             toViewController.view.layoutIfNeeded()
         }) { (finished) in
+            self.completionActionForController_presented?(toViewController)
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
     }

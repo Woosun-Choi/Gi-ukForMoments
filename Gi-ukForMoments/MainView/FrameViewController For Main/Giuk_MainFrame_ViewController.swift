@@ -40,6 +40,10 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         return .lightContent
     }
     
+//    override var prefersStatusBarHidden: Bool {
+//        return true
+//    }
+    
     var container: NSPersistentContainer? = AppDelegate.persistentContainer
     
     var context: NSManagedObjectContext {
@@ -92,6 +96,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        PrimarySettings.checkAndCreateSettings(context: context)
         //for authorize - passcode or login
         authorized = true
         
@@ -131,6 +136,11 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
+        if let setting = PrimarySettings.callSettings(context: context) {
+            if let filterName = setting.filterName {
+                filterEffect = ImageFilterModule.CIFilterName.requestedFilter(filterName) ?? .CIPhotoEffectTonal
+            }
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -140,6 +150,10 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
             layoutAnimationView()
             layoutTagView()
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -471,8 +485,9 @@ extension Giuk_MainFrame_ViewController {
     
     func hashTagScrollView(_ hashTagScrollView: HashTagScrollView, didLongPressedItemAt item: Int, tag: String) {
         let title = DescribingSources.MainTagView.deleteTag_notice_Title + "\n" + "“\(tag)”"
-        let alert = UIAlertController(title: title, message: DescribingSources.MainTagView.deleteTag_notice_SubTiltle, preferredStyle: .alert)
-        let confirmButton = UIAlertAction(title: DescribingSources.MainTagView.delete_Title_DeleteAction, style: .destructive) { (action) in
+//        let alert = UIAlertController(title: title, message: DescribingSources.MainTagView.deleteTag_notice_SubTiltle, preferredStyle: .alert)
+        let alert = WoosunAlertController(title: title, message: DescribingSources.MainTagView.deleteTag_notice_SubTiltle, style: .bottom)
+        let confirmButton = WoosunAlertControllerItem(style: .destructive, title: DescribingSources.MainTagView.delete_Title_DeleteAction) {
             let context = self.context
             Tag.findTagFromTagName(context: context, tagName: tag)?.delete(context: context) {
                 [weak self] in
@@ -480,10 +495,23 @@ extension Giuk_MainFrame_ViewController {
                 self?._tags?.remove(at: item)
             }
         }
-        let cancelButton = UIAlertAction(title: DescribingSources.MainTagView.delete_Title_CancelAction, style: .cancel, handler: nil)
-        
+        let cancelButton = WoosunAlertControllerItem(style: .cancel, title: DescribingSources.MainTagView.delete_Title_CancelAction, completion: nil)
         alert.addAction(cancelButton)
         alert.addAction(confirmButton)
+        
+        
+//        let confirmButton = UIAlertAction(title: DescribingSources.MainTagView.delete_Title_DeleteAction, style: .destructive) { (action) in
+//            let context = self.context
+//            Tag.findTagFromTagName(context: context, tagName: tag)?.delete(context: context) {
+//                [weak self] in
+//                self?.tagView.removeHashItem(at: item)
+//                self?._tags?.remove(at: item)
+//            }
+//        }
+//        let cancelButton = UIAlertAction(title: DescribingSources.MainTagView.delete_Title_CancelAction, style: .cancel, handler: nil)
+//
+//        alert.addAction(cancelButton)
+//        alert.addAction(confirmButton)
         
         present(alert, animated: true)
     }

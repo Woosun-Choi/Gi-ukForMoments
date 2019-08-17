@@ -6,4 +6,5 @@
   Copyright © 2019 goya. All rights reserved.
 */
 
+CFBundleDisplayName = "기억";
 NSPhotoLibraryUsageDescription = "기억을 만들기 위해 사진첩을 사용합니다.";

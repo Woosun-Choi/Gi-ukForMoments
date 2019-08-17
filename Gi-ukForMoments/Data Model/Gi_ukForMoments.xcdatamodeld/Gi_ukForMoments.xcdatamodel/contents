@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14492.1" systemVersion="18G84" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14492.1" systemVersion="18G87" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Giuk" representedClassName=".Giuk" syncable="YES" codeGenerationType="category">
         <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="identifire" optional="YES" attributeType="String" syncable="YES"/>
@@ -11,6 +11,10 @@
     <entity name="Image" representedClassName=".Image" syncable="YES" codeGenerationType="category">
         <attribute name="imageData" optional="YES" attributeType="Binary" syncable="YES"/>
         <relationship name="giuk" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Giuk" inverseName="image" inverseEntity="Giuk" syncable="YES"/>
+    </entity>
+    <entity name="PrimarySettings" representedClassName=".PrimarySettings" syncable="YES" codeGenerationType="category">
+        <attribute name="filterName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="Tag" representedClassName=".Tag" syncable="YES" codeGenerationType="category">
         <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
@@ -32,5 +36,6 @@
         <element name="Tag" positionX="-1653.2890625" positionY="-686.28125" width="128" height="103"/>
         <element name="Text" positionX="-1802.265625" positionY="-554.21484375" width="128" height="73"/>
         <element name="ThumbnailImage" positionX="-1913.15625" positionY="-370.546875" width="128" height="73"/>
+        <element name="PrimarySettings" positionX="-2137.0859375" positionY="-559.69921875" width="128" height="73"/>
     </elements>
 </model>

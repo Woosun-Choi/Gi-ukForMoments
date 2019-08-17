@@ -6,4 +6,5 @@
   Copyright © 2019 goya. All rights reserved.
 */
 
+CFBundleDisplayName = "Gi-uk";
 NSPhotoLibraryUsageDescription = "Using photolibrary for choosing moment";

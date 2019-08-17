@@ -119,13 +119,13 @@ class ImageFilterModule {
             return filter?.outputImage
         }),
         "CIColorClamp": CIFilterEffects.CIColorClamp({
-            let filter = CIFilter(name: "CISepiaTone" )
+            let filter = CIFilter(name: "CIColorClamp" )
             filter?.setDefaults()
             filter?.setValue($0, forKey: kCIInputImageKey)
             return filter?.outputImage
         }),
         "CIColorControls": CIFilterEffects.CIColorControls({
-            let filter = CIFilter(name: "CISepiaTone" )
+            let filter = CIFilter(name: "CIColorControls" )
             filter?.setDefaults()
             filter?.setValue($0, forKey: kCIInputImageKey)
             return filter?.outputImage

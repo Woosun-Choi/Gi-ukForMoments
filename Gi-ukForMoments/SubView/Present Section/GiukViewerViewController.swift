@@ -199,22 +199,39 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController
     }
     
     private func presentAlertControllerForEdit(_ index: IndexPath) {
-        let alert = UIAlertController(title: DescribingSources.deleteSection.delete_Title, message: DescribingSources.deleteSection.delete_SubTitle, preferredStyle: .actionSheet)
-        let cancelAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_CancelAction, style: .cancel, handler: nil)
-        let deleteAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_DeleteAction, style: .destructive) {
-            [unowned self] (action) in
-            if let targetGiuk = self.giuks?[index.row] {
-                targetGiuk.deleteGiuk(context: self.context) {
-                    [weak self] in
-                    self?.giuks?.remove(at: index.item)
-                    if self?.giuks?.count == 0 {
-                        self?.closeButtonAction(self!.closeButton)
-                    }
-                }
-            }
-        }
-        let removeAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_RemoveAction, style: .default) {
-            [unowned self] (action) in
+//        let alert = UIAlertController(title: DescribingSources.deleteSection.delete_Title, message: DescribingSources.deleteSection.delete_SubTitle, preferredStyle: .actionSheet)
+//        let cancelAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_CancelAction, style: .cancel, handler: nil)
+//        let deleteAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_DeleteAction, style: .destructive) {
+//            [unowned self] (action) in
+//            if let targetGiuk = self.giuks?[index.row] {
+//                targetGiuk.deleteGiuk(context: self.context) {
+//                    [weak self] in
+//                    self?.giuks?.remove(at: index.item)
+//                    if self?.giuks?.count == 0 {
+//                        self?.closeButtonAction(self!.closeButton)
+//                    }
+//                }
+//            }
+//        }
+//        let removeAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_RemoveAction, style: .default) {
+//            [unowned self] (action) in
+//            if let targetGiuk = self.giuks?[index.row] {
+//                targetGiuk.deleteGiukFromTag(context: self.context, tag: self.tag!) {
+//                    [weak self] in
+//                    self?.giuks?.remove(at: index.item)
+//                    if self?.giuks?.count == 0 {
+//                        self?.closeButtonAction(self!.closeButton)
+//                    }
+//                }
+//            }
+//        }
+//        alert.addAction(removeAction)
+//        alert.addAction(deleteAction)
+//        alert.addAction(cancelAction)
+        
+        let alert = WoosunAlertController(title: DescribingSources.deleteSection.delete_Title, message: DescribingSources.deleteSection.delete_SubTitle, style: .bottom)
+        let removeAction = WoosunAlertControllerItem(style: .normal, title: "remove") {
+            [unowned self] in
             if let targetGiuk = self.giuks?[index.row] {
                 targetGiuk.deleteGiukFromTag(context: self.context, tag: self.tag!) {
                     [weak self] in
@@ -225,9 +242,24 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController
                 }
             }
         }
+        
+        let deleteAction = WoosunAlertControllerItem(style: .destructive, title: "delete") {
+            [unowned self] in
+            if let targetGiuk = self.giuks?[index.row] {
+                targetGiuk.deleteGiuk(context: self.context) {
+                    [weak self] in
+                    self?.giuks?.remove(at: index.item)
+                    if self?.giuks?.count == 0 {
+                        self?.closeButtonAction(self!.closeButton)
+                    }
+                }
+            }
+        }
+        
+        let cancelAction = WoosunAlertControllerItem(style: .cancel, title: "cancel", completion: nil)
+        alert.addAction(cancelAction)
         alert.addAction(removeAction)
         alert.addAction(deleteAction)
-        alert.addAction(cancelAction)
         present(alert, animated: true)
     }
     //end
