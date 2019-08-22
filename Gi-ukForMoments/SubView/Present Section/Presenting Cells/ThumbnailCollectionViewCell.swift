@@ -56,6 +56,10 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
                         imageView.imageData = thumbnailData
                     }
                 }
+            } else {
+                imageView.image = nil
+                imageView.imageData = nil
+                nowFocused = false
             }
         }
     }
@@ -73,9 +77,6 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
     }
     
     override func prepareForReuse() {
-        imageView.image = nil
-        imageView.imageData = nil
-        nowFocused = false
         giuk = nil
     }
     

@@ -11,7 +11,6 @@ import CoreData
 
 class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateButtonViewButtonDataSource, FrameTransitionDataSource, HashTagScrollViewDataSource, HashTagScrollViewDelegate {
     
-//    var filterEffect : ImageFilterModule.CIFilterName = .CIPhotoEffectInstant
     var filterEffect : ImageFilterModule.CIFilterName = .CIPhotoEffectTonal
     
     //MARK: screenversion?
@@ -34,6 +33,44 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     private(set) weak var containerView_MainContent: InnerShadowUIView!
     
     private(set) weak var tagView: GiukHashtagScrollView!
+    //end
+    
+    //MARK: test passcodeView
+    var passCodeChecked: Bool = false
+    
+    private(set) weak var passcodeView: PassCodeView!
+    
+    func checkPassCodeAvailable() {
+        if !passCodeChecked {
+            let request : NSFetchRequest<PrimarySettings> = PrimarySettings.fetchRequest()
+            guard let result = try? context.fetch(request).first else { return }
+            if let passCode = result.passCode, passCode != "" {
+                presentPassCodeView(passCode)
+            } else {
+                passCodeChecked = true
+            }
+        }
+    }
+    
+    func presentPassCodeView(_ withCode: String) {
+        if !passCodeChecked {
+            if passcodeView == nil {
+                let newCodeView = PassCodeView(mode: .checkingMode, passCode: withCode)
+                newCodeView.frame = containerView_MainContent.bounds
+                passcodeView = newCodeView
+                passcodeView.delegate = self
+                passcodeView.alpha = 0
+                passcodeView.backgroundColor = .goyaYellowWhite
+                containerView_MainContent.addSubview(passcodeView)
+                containerView_MainContent.bringSubviewToFront(passcodeView)
+                allButtons.forEach { $0.isUserInteractionEnabled = false }
+                UIView.animate(withDuration: 0.25) {
+                    [unowned self] in
+                    self.passcodeView.alpha = 1
+                }
+            }
+        }
+    }
     //end
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -161,74 +198,9 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         if !initailStage && authorized {
             setTagsOnTagView()
         }
+        checkPassCodeAvailable()
+        updateFilterFromSetting()
     }
-    
-    //MARK: Main Button datasource
-    func containerViewButtonItem(_ containerView: AnimateButtonView) -> [UIButton_WithIdentifire] {
-        switch containerView {
-        case animationView_Top :
-            return buttons[.top] ?? []
-        case animationView_Right :
-            return buttons[.right] ?? []
-        case animationView_Setting :
-            return buttons[.rightTop] ?? []
-        default:
-            return []
-        }
-    }
-    
-    func containerViewButtonAreaRect(_ containerView: AnimateButtonView) -> CGRect {
-        switch containerView {
-        case animationView_Top :
-            return containerView_Top_ButtonAreaFrame
-        case animationView_Right :
-            return containerView_Right_ButtonAreaFrame
-        case animationView_Setting :
-            return containerView_Setting_ButtonAreaFrame
-        default:
-            return CGRect.zero
-        }
-    }
-    
-    func buttonsForTop(target: Any = self ,selector: Selector = #selector(handleOntap(_:)), forEvent: UIControl.Event = .touchUpInside) -> [UIButton_WithIdentifire] {
-        var controlButtons = [UIButton_WithIdentifire]()
-        let addButton = UIButton_WithIdentifire()
-        addButton.identifire = buttonLocation.top.rawValue
-        addButton.setImage(UIImage(named: ButtonImageNames.ButtonName_Main_Giuk), for: .normal)
-        addButton.addTarget(target, action: selector, for: forEvent)
-        addButton.backgroundColor = .clear
-        controlButtons.append(addButton)
-        return controlButtons
-    }
-    
-    func buttonsForRight(target: Any = self ,selector: Selector = #selector(handleOntap(_:)), forEvent: UIControl.Event = .touchUpInside) -> [UIButton_WithIdentifire] {
-        var controlButtons = [UIButton_WithIdentifire]()
-        let addButton = UIButton_WithIdentifire()
-        addButton.identifire = buttonLocation.right.rawValue
-        addButton.setImage(UIImage(named: ButtonImageNames.ButtonName_Main_Key), for: .normal)
-        addButton.addTarget(target, action: selector, for: forEvent)
-        addButton.backgroundColor = .clear
-        controlButtons.append(addButton)
-        return []
-    }
-    
-    func buttonsForRightTop(target: Any = self ,selector: Selector = #selector(handleOntap(_:)), forEvent: UIControl.Event = .touchUpInside) -> [UIButton_WithIdentifire] {
-        var controlButtons = [UIButton_WithIdentifire]()
-        let addButton = UIButton_WithIdentifire()
-        addButton.identifire = buttonLocation.rightTop.rawValue
-        addButton.setTitle("⚙︎", for: .normal)
-        addButton.addTarget(target, action: selector, for: forEvent)
-        addButton.backgroundColor = .clear
-        controlButtons.append(addButton)
-        return []
-    }
-    
-    private func setButtonDataSource() {
-        buttons[.top] = buttonsForTop()
-        buttons[.right] = buttonsForRight()
-        buttons[.rightTop] = buttonsForRightTop()
-    }
-    //end
     
     //MARK: set Sub views
     private func setContainers() {
@@ -326,7 +298,99 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
     }
     //end
     
-    //MARK: Will Presented ViewController for Button Identifire
+    //MARK: Main Button datasource
+    func containerViewButtonItem(_ containerView: AnimateButtonView) -> [UIButton_WithIdentifire] {
+        switch containerView {
+        case animationView_Top :
+            return buttons[.top] ?? []
+        case animationView_Right :
+            return buttons[.right] ?? []
+        case animationView_Setting :
+            return buttons[.rightTop] ?? []
+        default:
+            return []
+        }
+    }
+    
+    func containerViewButtonAreaRect(_ containerView: AnimateButtonView) -> CGRect {
+        switch containerView {
+        case animationView_Top :
+            return containerView_Top_ButtonAreaFrame
+        case animationView_Right :
+            return containerView_Right_ButtonAreaFrame
+        case animationView_Setting :
+            return containerView_Setting_ButtonAreaFrame
+        default:
+            return CGRect.zero
+        }
+    }
+    
+    func buttonsForTop(target: Any = self ,selector: Selector = #selector(handleOntap(_:)), forEvent: UIControl.Event = .touchUpInside) -> [UIButton_WithIdentifire] {
+        var controlButtons = [UIButton_WithIdentifire]()
+        let blankButton = UIButton_WithIdentifire()
+        
+        let addButton = UIButton_WithIdentifire()
+        addButton.identifire = buttonLocation.top.rawValue
+        addButton.setImage(UIImage(named: ButtonImageNames.ButtonName_Main_Giuk), for: .normal)
+        addButton.addTarget(target, action: selector, for: forEvent)
+        addButton.backgroundColor = .clear
+        
+        let setButton = UIButton_WithIdentifire()
+        setButton.identifire = buttonLocation.rightTop.rawValue
+        setButton.setTitle("⚙︎", for: .normal)
+        setButton.addTarget(target, action: selector, for: forEvent)
+        setButton.backgroundColor = .clear
+        
+        controlButtons.append(blankButton)
+        controlButtons.append(addButton)
+        controlButtons.append(setButton)
+        return controlButtons
+    }
+    
+    func buttonsForRight(target: Any = self ,selector: Selector = #selector(handleOntap(_:)), forEvent: UIControl.Event = .touchUpInside) -> [UIButton_WithIdentifire] {
+        //
+        return []
+    }
+    
+    func buttonsForRightTop(target: Any = self ,selector: Selector = #selector(handleOntap(_:)), forEvent: UIControl.Event = .touchUpInside) -> [UIButton_WithIdentifire] {
+        //
+        return []
+    }
+    
+    private func setButtonDataSource() {
+        buttons[.top] = buttonsForTop()
+        buttons[.right] = buttonsForRight()
+        buttons[.rightTop] = buttonsForRightTop()
+    }
+    //end
+    
+    //MARK: Button action - ViewController present button action
+    @objc private func handleOntap(_ sender: UIButton_WithIdentifire) {
+        let identifire = sender.identifire
+        if let newVC = requestedViewControllerWithButtonIdentifire(identifire) {
+            openViewControllerFromRect(openingFrameForButtonIdentifire(identifire), viewController: newVC)
+        }
+        setAnimateStateForButtonIdentifire(identifire)
+        performAnimationWithState(self.animationLoader.animationState)
+    }
+    
+    func setAnimateStateForButtonIdentifire(_ identifire: String) {
+        if animationLoader.animationState == .normal {
+            switch identifire {
+            case buttonLocation.top.rawValue:
+                animationLoader.animationState = .topContainerMode
+            case buttonLocation.right.rawValue:
+                animationLoader.animationState = .rightContainerMode
+            case buttonLocation.rightTop.rawValue:
+                animationLoader.animationState = .settingMenuContainerMode
+            default:
+                break
+            }
+        }
+    }
+    //end
+    
+    //MARK: Button action finctions - Will Presented ViewController for Button Identifire
     func viewControllerForButtonIdentifire(_ identifire: String) -> Giuk_OpenFromFrame_ViewController? {
         switch identifire {
         case buttonLocation.top.rawValue:
@@ -338,7 +402,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
             newVC.view.backgroundColor = .GiukBackgroundColor_depth_1
             return newVC
         case buttonLocation.rightTop.rawValue:
-            let newVC = Giuk_OpenFromFrame_ViewController()
+            let newVC = SettingViewController()
             newVC.view.backgroundColor = .GiukBackgroundColor_depth_2
             return newVC
         default:
@@ -402,6 +466,10 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
                 controller.presentCollectionView.alpha = 1
                 controller.frontButtons.forEach { $0?.alpha = 1 }
             }
+        } else if let controller = viewController as? SettingViewController {
+            UIView.animate(withDuration: 0.3) {
+                controller.allContainers.forEach { $0.alpha = 1 }
+            }
         }
     }
     
@@ -414,32 +482,8 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
             controller.filterEffect = filterEffect
             controller.presentCollectionView.alpha = 0
             controller.frontButtons.forEach { $0?.alpha = 0 }
-        }
-    }
-    //end
-    
-    //MARK: ViewController present button action - animationView's button action
-    @objc private func handleOntap(_ sender: UIButton_WithIdentifire) {
-        let identifire = sender.identifire
-        if let newVC = requestedViewControllerWithButtonIdentifire(identifire) {
-            openViewControllerFromRect(openingFrameForButtonIdentifire(identifire), viewController: newVC)
-        }
-        setAnimateStateForButtonIdentifire(identifire)
-        performAnimationWithState(self.animationLoader.animationState)
-    }
-    
-    func setAnimateStateForButtonIdentifire(_ identifire: String) {
-        if animationLoader.animationState == .normal {
-            switch identifire {
-            case buttonLocation.top.rawValue:
-                animationLoader.animationState = .topContainerMode
-            case buttonLocation.right.rawValue:
-                animationLoader.animationState = .rightContainerMode
-            case buttonLocation.rightTop.rawValue:
-                animationLoader.animationState = .settingMenuContainerMode
-            default:
-                break
-            }
+        } else if let controller = viewController as? SettingViewController {
+            controller.allContainers.forEach { $0.alpha = 0 }
         }
     }
     //end
@@ -447,7 +491,7 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
 
 extension Giuk_MainFrame_ViewController {
     
-    //MARK: Tag related function
+    //MARK: CoreData related function
     func setTagsOnTagView() {
         tags = Tag.findAllTags(context: AppDelegate.viewContext)
     }
@@ -456,6 +500,16 @@ extension Giuk_MainFrame_ViewController {
         _tags = newTags
         if reload {
             tagView.reloadData(animate: true, duration: animationDuration)
+        }
+    }
+    
+    func updateFilterFromSetting() {
+        let request : NSFetchRequest<PrimarySettings> = PrimarySettings.fetchRequest()
+        guard let result = try? context.fetch(request).first else { return }
+        guard let settedFilterName = result.filterName else { return }
+        guard let filter = ImageFilterModule.CIFilterName.requestedFilter(settedFilterName) else { return }
+        if filter.rawValue != self.filterEffect.rawValue {
+            self.filterEffect = filter
         }
     }
     //end
@@ -485,7 +539,6 @@ extension Giuk_MainFrame_ViewController {
     
     func hashTagScrollView(_ hashTagScrollView: HashTagScrollView, didLongPressedItemAt item: Int, tag: String) {
         let title = DescribingSources.MainTagView.deleteTag_notice_Title + "\n" + "“\(tag)”"
-//        let alert = UIAlertController(title: title, message: DescribingSources.MainTagView.deleteTag_notice_SubTiltle, preferredStyle: .alert)
         let alert = WoosunAlertController(title: title, message: DescribingSources.MainTagView.deleteTag_notice_SubTiltle, style: .bottom)
         let confirmButton = WoosunAlertControllerItem(style: .destructive, title: DescribingSources.MainTagView.delete_Title_DeleteAction) {
             let context = self.context
@@ -498,20 +551,6 @@ extension Giuk_MainFrame_ViewController {
         let cancelButton = WoosunAlertControllerItem(style: .cancel, title: DescribingSources.MainTagView.delete_Title_CancelAction, completion: nil)
         alert.addAction(cancelButton)
         alert.addAction(confirmButton)
-        
-        
-//        let confirmButton = UIAlertAction(title: DescribingSources.MainTagView.delete_Title_DeleteAction, style: .destructive) { (action) in
-//            let context = self.context
-//            Tag.findTagFromTagName(context: context, tagName: tag)?.delete(context: context) {
-//                [weak self] in
-//                self?.tagView.removeHashItem(at: item)
-//                self?._tags?.remove(at: item)
-//            }
-//        }
-//        let cancelButton = UIAlertAction(title: DescribingSources.MainTagView.delete_Title_CancelAction, style: .cancel, handler: nil)
-//
-//        alert.addAction(cancelButton)
-//        alert.addAction(confirmButton)
         
         present(alert, animated: true)
     }
@@ -598,6 +637,21 @@ extension Giuk_MainFrame_ViewController {
     }
     //end
     //end
+}
+
+extension Giuk_MainFrame_ViewController: PassCodeViewDelegate {
+    func passCodeView(_ passcodeView: PassCodeView, mode: PassCodeModule.CodeMode, didUpdateSate state: PassCodeModule.PassCodeState, code: String) {
+        if state == .completed {
+            UIView.animate(withDuration: 0.25, animations: {
+                [unowned self] in
+                self.passcodeView?.alpha = 0
+            }) { [unowned self] (finished) in
+                self.passcodeView = nil
+                self.passCodeChecked = true
+                self.allButtons.forEach { $0.isUserInteractionEnabled = true }
+            }
+        }
+    }
 }
 
 extension Giuk_MainFrame_ViewController {
@@ -827,7 +881,7 @@ extension Giuk_MainFrame_ViewController {
     
     var contentAreaSize: CGSize {
         let width: CGFloat = view.frame.width - rightAnimationViewAreaWidth
-        let height: CGFloat = view.frame.height - topAnimationViewAreaHeight - safeAreaRelatedTopMargin
+        let height: CGFloat = safeAreaRelatedAreaFrame.height - topAnimationViewAreaHeight//view.frame.height - topAnimationViewAreaHeight - safeAreaRelatedTopMargin
         return CGSize(width: width, height: height)
     }
     
@@ -844,7 +898,7 @@ extension Giuk_MainFrame_ViewController {
     }
     
     var contentAreaOrigin_Start: CGPoint {
-        let originY: CGFloat = view.frame.height - contentAreaSize.height
+        let originY: CGFloat = safeAreaRelatedAreaFrame.minY + (safeAreaRelatedAreaFrame.height - contentAreaSize.height)//view.frame.height - contentAreaSize.height
         return CGPoint(x: 0, y: originY)
     }
     
@@ -884,19 +938,11 @@ extension Giuk_MainFrame_ViewController {
         return 5
     }
     
-    var estimateTopButtonMarign: CGFloat {
-        return 10
-    }
-    
-    var estimateButtonSizeFactor: CGFloat {
-        return containerView_Right_ButtonAreaFrame.width
-    }
-    
     var containerView_Top_ButtonAreaFrame: CGRect {
-        let topTriggerSizeHeight = min(CGFloat(40), (topAnimationViewAreaHeight - (estimateTopButtonMarign*2)))
-        let topTriggerSizeWidth = fullFrameSize.width - rightAnimationViewAreaWidth - (estimateTopButtonMarign*2) - 16
-        let topTriggerOriginX = estimateTopButtonMarign + 8
-        let topTriggrtOriginY = animationView_Top.bounds.height - estimateTopButtonMarign - topTriggerSizeHeight
+        let topTriggerSizeHeight = min(CGFloat(45), topAnimationViewAreaHeight)
+        let topTriggerSizeWidth = fullFrameSize.width - rightAnimationViewAreaWidth
+        let topTriggerOriginX = CGFloat(0)
+        let topTriggrtOriginY = animationView_Top.bounds.height - topTriggerSizeHeight
         return CGRect(origin: CGPoint(x: topTriggerOriginX, y: topTriggrtOriginY), size: CGSize(width: topTriggerSizeWidth, height: topTriggerSizeHeight))
     }
     

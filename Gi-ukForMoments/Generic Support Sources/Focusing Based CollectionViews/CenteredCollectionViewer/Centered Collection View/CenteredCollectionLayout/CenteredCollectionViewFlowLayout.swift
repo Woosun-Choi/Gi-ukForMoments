@@ -98,16 +98,19 @@ class CenteredCollectionViewFlowLayout: UICollectionViewLayout {
         guard let estimateSize = estimateCellSize else { return CGSize.zero }
         if estimateSize.width + (minimumMargin*2) > width {
             let ratio = estimateSize.width/estimateSize.height
-            let newWidth = (self.width - (minimumMargin*2)).absValue
+            let newWidth = (self.width - (minimumMargin*2)).clearUnderDot.absValue
             let newHeight = (newWidth/ratio).absValue
             return CGSize(width: newWidth, height: newHeight)
         } else if estimateSize.height + (minimumMargin*2) > height {
             let ratio = estimateSize.width/estimateSize.height
-            let newHeight = (self.height - (minimumMargin*2)).absValue
+            let newHeight = (self.height - (minimumMargin*2)).clearUnderDot.absValue
             let newWidth = (newHeight*ratio).absValue
             return CGSize(width: newWidth, height: newHeight)
         } else {
-            return estimateSize
+            let ratio = estimateSize.width/estimateSize.height
+            let clearDotedWidth = estimateSize.width.clearUnderDot
+            let clearDotedHeight = clearDotedWidth/ratio
+            return CGSize(width: clearDotedWidth, height: clearDotedHeight)
         }
     }
     

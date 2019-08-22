@@ -26,9 +26,10 @@ class Giuk_OpenFromFrame_ViewController: ContentUIViewController, FrameTransitio
         if closeButton == nil {
             let newButton = generateUIView(view: closeButton, origin: CGPoint(x: originX, y: originY), size: closeButtonSize)
             newButton?.imageView?.contentMode = .scaleAspectFit
-            newButton?.setImage(UIImage(named: ButtonImageNames.ButtonName_Content_Close), for: .normal)
+            newButton?.setImage(UIImage(named: ButtonImageNames.ButtonName_Content_Close)?.withRenderingMode_alwaysTemplate, for: .normal)
             newButton?.addTarget(self, action: #selector(closeButtonAction(_:)), for: .touchUpInside)
             newButton?.backgroundColor = .clear
+            newButton?.tintColor = .goyaYellowWhite
             closeButton = newButton
             view.addSubview(closeButton)
         } else {

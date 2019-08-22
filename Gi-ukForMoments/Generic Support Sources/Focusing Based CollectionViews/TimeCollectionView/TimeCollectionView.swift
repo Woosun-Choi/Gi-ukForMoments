@@ -45,52 +45,72 @@ class TimeCollectionView: FocusingIndexBasedCollectionView {
         completion?()
     }
     
-    func scrollToTargetIndex(index : IndexPath?, animated: Bool, completion: (()->Void)? = nil) {
+    func scrollToTargetIndex(index : IndexPath?, animated: Bool) {
+        guard let _index = index else {return}
+        requiredItemIndex = nil
+        scrollActivated = true
+        if (_index.row < self.numberOfItems(inSection: _index.section)) {
+            let scrollView = self as UIScrollView
+            if let layOut = self.flowLayout as? CenteredSquareTypeCollectionViewFlowlayout {
+                scrollView.setContentOffset(layOut.postionOfCellForIndexpath(_index), animated: animated)
+            }
+        }
+    }
+    
+    private func scrollToIndex(index : IndexPath?, animated: Bool) {
         guard let _index = index else {return}
         scrollActivated = true
-        if let layOut = self.flowLayout as? CenteredSquareTypeCollectionViewFlowlayout {
+        if (_index.row < self.numberOfItems(inSection: _index.section)) {
             let scrollView = self as UIScrollView
-            scrollView.setContentOffset(layOut.postionOfCellForIndexpath(_index), animated: animated)
-            completion?()
+            if let layOut = self.flowLayout as? CenteredSquareTypeCollectionViewFlowlayout {
+                scrollView.setContentOffset(layOut.postionOfCellForIndexpath(_index), animated: animated)
+            }
         }
     }
     
     override func reloadData() {
         super.reloadData()
-        if let _ = requiredItemIndex {
-            focusingIndex = requiredItemIndex
+        if let currentIndex = requiredItemIndex {
+            if currentIndex.row < self.numberOfItems(inSection: currentIndex.section) {
+                focusingIndex = requiredItemIndex
+            } else {
+                focusingIndex = nil
+            }
         } else {
             focusingIndex = nil
         }
         scrollWhenRequiredIndexExist()
     }
     
+    func refreshAllData() {
+        requiredItemIndex = nil
+        reloadData()
+    }
+    
     //MARK: overrided delegate
     override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         super.scrollViewDidEndScrollingAnimation(scrollView)
-        scrollToTargetIndex(index: focusingIndex, animated: true)
+        scrollToIndex(index: focusingIndex, animated: true)
         focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: false)
     }
     
     override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         super.scrollViewDidEndDecelerating(scrollView)
-        scrollToTargetIndex(index: focusingIndex, animated: true)
+        scrollToIndex(index: focusingIndex, animated: true)
     }
     //end
     
     //MARK: Layout updates
     private func scrollWhenRequiredIndexExist() {
         if let required = requiredItemIndex {
-            scrollToTargetIndex(index: required, animated: false)
-            requiredItemIndex = nil
+            scrollToIndex(index: required, animated: false)
         } else {
             if let _ = focusingIndex {
             } else {
                 checkNowCenteredFocusedCell(collectionView: self)
                 if let currentFocused = focusingIndex {
-                    scrollToTargetIndex(index: currentFocused, animated: false)
+                    scrollToIndex(index: currentFocused, animated: false)
                 }
-//                (is3DPresentingCell) ? updateTransform() : ()
             }
         }
         (is3DPresentingCell) ? updateTransform() : ()
@@ -102,11 +122,6 @@ class TimeCollectionView: FocusingIndexBasedCollectionView {
             if frame.size != oldValue.size {
                 if requiredItemIndex == nil {
                     requiredItemIndex = focusingIndex
-                    if let nowIndex = focusingIndex {
-                        scrollToTargetIndex(index: nowIndex, animated: false)
-                    }
-                } else {
-                    scrollWhenRequiredIndexExist()
                 }
             }
         }
@@ -114,7 +129,7 @@ class TimeCollectionView: FocusingIndexBasedCollectionView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-            scrollWhenRequiredIndexExist()
+        scrollWhenRequiredIndexExist()
     }
     
     override func draw(_ rect: CGRect) {
@@ -148,16 +163,17 @@ class TimeCollectionView: FocusingIndexBasedCollectionView {
 extension TimeCollectionView {
     
     //MARK: scrollview delegates
-    func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
-        scrollToTargetIndex(index: focusingIndex, animated: true)
-    }
-    
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        requiredItemIndex = nil
         focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: true)
     }
     
+    func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
+        scrollToIndex(index: focusingIndex, animated: true)
+    }
+    
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        scrollToTargetIndex(index: focusingIndex, animated: true)
+        scrollToIndex(index: focusingIndex, animated: true)
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -365,12 +381,12 @@ extension TimeCollectionView {
             } else {
                 focusingIndex = indexPath
                 focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: true)
-                scrollToTargetIndex(index: indexPath, animated: true)
+                scrollToIndex(index: indexPath, animated: true)
             }
         } else {
             focusingIndex = indexPath
             focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: true)
-            scrollToTargetIndex(index: indexPath, animated: true)
+            scrollToIndex(index: indexPath, animated: true)
         }
     }
     

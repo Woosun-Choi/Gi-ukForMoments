@@ -16,6 +16,29 @@ struct DescribingSources {
         static let minFontSize : Int = 14
     }
     
+    struct SettingView {
+        static var filterSelection_Title: String {
+            switch DescribingSources.language {
+            case "kor": return "기억 필터"
+            default : return "Gi-uk Filter"
+            }
+        }
+        
+        static var passCode_Title_Activated: String {
+            switch DescribingSources.language {
+            case "kor": return "비밀번호\n( 활성화 됨)"
+            default : return "passcode\n( activated )"
+            }
+        }
+        
+        static var passCode_Title_Deactivated: String {
+            switch DescribingSources.language {
+            case "kor": return "비밀번호\n( 비활성화 됨)"
+            default : return "passcode\n( deactivated )"
+            }
+        }
+    }
+    
     struct MainTagView {
         
         static func centeredImageSource() -> NSMutableAttributedString {
@@ -34,6 +57,7 @@ struct DescribingSources {
             let frame = NSMutableAttributedString(string: " ", attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
             frame.append(NSMutableAttributedString(attributedString: stringImage))
             frame.append(NSMutableAttributedString(attributedString: blankString))
+//            frame.deleteCharacters(in: NSRange(location: 0, length: 1))
             
             return frame
         }
@@ -44,6 +68,7 @@ struct DescribingSources {
             default : return ""//"\ncreate new 'Gi-uk' album"
             }
         }
+        
         static var notice_SubTiltle: String {
             switch DescribingSources.language {
             case "kor": return "\n상단에있는 버튼을 눌러\n새로운 기억을 만드세요"
@@ -60,7 +85,7 @@ struct DescribingSources {
         static var deleteTag_notice_SubTiltle: String {
             switch DescribingSources.language {
             case "kor": return "연관된 기억이 다른 앨범에 연결되있지 않다면,\n기억도 함께 지워집니다."
-            default : return "related Gi-uk could be deleted\nif it has no links to other album"
+            default : return /*"related Gi-uk could be deleted\nif it has no links to other album"*/"related 'Gi-uk' could be deleted together,\nif it has no relation with other album."
             }
         }
         static var delete_Title_DeleteAction: String {

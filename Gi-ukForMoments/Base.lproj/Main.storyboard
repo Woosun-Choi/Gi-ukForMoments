@@ -10,10 +10,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Start With Animation View Controller-->
+        <!--Setting View Controller-->
         <scene sceneID="1Kd-zL-s1y">
             <objects>
-                <viewController id="aKY-0u-lOc" customClass="StartWithAnimation_ViewController" customModule="Gi_ukForMoments" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="aKY-0u-lOc" customClass="SettingViewController" customModule="Gi_ukForMoments" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="DeU-pD-8DQ">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

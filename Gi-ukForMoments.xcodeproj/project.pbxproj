@@ -22,6 +22,15 @@
 		A77B3D3B23010143000EF17F /* PrimarySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77B3D3A23010143000EF17F /* PrimarySettings.swift */; };
 		A77B3D412307C0F8000EF17F /* WoosunAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77B3D402307C0F8000EF17F /* WoosunAlertController.swift */; };
 		A77B3D432307CB5A000EF17F /* FadeInTransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77B3D422307CB5A000EF17F /* FadeInTransitionAnimator.swift */; };
+		A77B3D4B230AA07F000EF17F /* ButtonGridCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77B3D4A230AA07F000EF17F /* ButtonGridCalculator.swift */; };
+		A77B3D4D230B94F1000EF17F /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77B3D4C230B94F1000EF17F /* SettingViewController.swift */; };
+		A77B3D50230B9887000EF17F /* PassCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77B3D4F230B9887000EF17F /* PassCodeView.swift */; };
+		A77B3D52230BEEFF000EF17F /* GridForSquares.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77B3D51230BEEFF000EF17F /* GridForSquares.swift */; };
+		A77B3D54230BEF2F000EF17F /* NumberPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77B3D53230BEF2F000EF17F /* NumberPad.swift */; };
+		A77B3D56230BF84B000EF17F /* HiddenDotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77B3D55230BF84B000EF17F /* HiddenDotView.swift */; };
+		A77B3D58230C5464000EF17F /* PassCodeModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77B3D57230C5464000EF17F /* PassCodeModule.swift */; };
+		A77B3D5B230D2AE2000EF17F /* PassCodeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77B3D5A230D2AE2000EF17F /* PassCodeController.swift */; };
+		A77B3D5E230E17FE000EF17F /* ActiveControllButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77B3D5D230E17FE000EF17F /* ActiveControllButton.swift */; };
 		A784640922E9B8C5007BA730 /* PublicVariables.swift in Sources */ = {isa = PBXBuildFile; fileRef = A784640822E9B8C5007BA730 /* PublicVariables.swift */; };
 		A784640B22EAB82A007BA730 /* Giuk_ThumbnailCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A784640A22EAB82A007BA730 /* Giuk_ThumbnailCollectionView.swift */; };
 		A784642B22EC808A007BA730 /* InnerShadowUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A784642A22EC808A007BA730 /* InnerShadowUIView.swift */; };
@@ -115,6 +124,15 @@
 		A77B3D3A23010143000EF17F /* PrimarySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimarySettings.swift; sourceTree = "<group>"; };
 		A77B3D402307C0F8000EF17F /* WoosunAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WoosunAlertController.swift; sourceTree = "<group>"; };
 		A77B3D422307CB5A000EF17F /* FadeInTransitionAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FadeInTransitionAnimator.swift; sourceTree = "<group>"; };
+		A77B3D4A230AA07F000EF17F /* ButtonGridCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonGridCalculator.swift; sourceTree = "<group>"; };
+		A77B3D4C230B94F1000EF17F /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
+		A77B3D4F230B9887000EF17F /* PassCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassCodeView.swift; sourceTree = "<group>"; };
+		A77B3D51230BEEFF000EF17F /* GridForSquares.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridForSquares.swift; sourceTree = "<group>"; };
+		A77B3D53230BEF2F000EF17F /* NumberPad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberPad.swift; sourceTree = "<group>"; };
+		A77B3D55230BF84B000EF17F /* HiddenDotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiddenDotView.swift; sourceTree = "<group>"; };
+		A77B3D57230C5464000EF17F /* PassCodeModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassCodeModule.swift; sourceTree = "<group>"; };
+		A77B3D5A230D2AE2000EF17F /* PassCodeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassCodeController.swift; sourceTree = "<group>"; };
+		A77B3D5D230E17FE000EF17F /* ActiveControllButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveControllButton.swift; sourceTree = "<group>"; };
 		A784640822E9B8C5007BA730 /* PublicVariables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicVariables.swift; sourceTree = "<group>"; };
 		A784640A22EAB82A007BA730 /* Giuk_ThumbnailCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_ThumbnailCollectionView.swift; sourceTree = "<group>"; };
 		A784642A22EC808A007BA730 /* InnerShadowUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InnerShadowUIView.swift; sourceTree = "<group>"; };
@@ -269,6 +287,69 @@
 			path = "View Transitioning Delegates";
 			sourceTree = "<group>";
 		};
+		A77B3D46230A79D1000EF17F /* Custom Alert Controller */ = {
+			isa = PBXGroup;
+			children = (
+				A77B3D402307C0F8000EF17F /* WoosunAlertController.swift */,
+			);
+			path = "Custom Alert Controller";
+			sourceTree = "<group>";
+		};
+		A77B3D47230A79E4000EF17F /* UIView Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A77B3D59230D28A6000EF17F /* PassCode View */,
+				A784642A22EC808A007BA730 /* InnerShadowUIView.swift */,
+				A77B3D53230BEF2F000EF17F /* NumberPad.swift */,
+				A77B3D55230BF84B000EF17F /* HiddenDotView.swift */,
+			);
+			path = "UIView Resources";
+			sourceTree = "<group>";
+		};
+		A77B3D48230A79F4000EF17F /* UIButton Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A78B0DF7228D9D2900D0B275 /* UIButton_WithIdentifire.swift */,
+			);
+			path = "UIButton Resources";
+			sourceTree = "<group>";
+		};
+		A77B3D49230A7A22000EF17F /* UIViewController Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A77B3D46230A79D1000EF17F /* Custom Alert Controller */,
+				A78B0E382292E49200D0B275 /* Content View Controller */,
+				A77B3D5C230D413D000EF17F /* Pass Code Controller */,
+			);
+			path = "UIViewController Resources";
+			sourceTree = "<group>";
+		};
+		A77B3D4E230B9507000EF17F /* Setting Section */ = {
+			isa = PBXGroup;
+			children = (
+				A77B3D4C230B94F1000EF17F /* SettingViewController.swift */,
+				A77B3D5D230E17FE000EF17F /* ActiveControllButton.swift */,
+			);
+			path = "Setting Section";
+			sourceTree = "<group>";
+		};
+		A77B3D59230D28A6000EF17F /* PassCode View */ = {
+			isa = PBXGroup;
+			children = (
+				A77B3D4F230B9887000EF17F /* PassCodeView.swift */,
+				A77B3D57230C5464000EF17F /* PassCodeModule.swift */,
+			);
+			path = "PassCode View";
+			sourceTree = "<group>";
+		};
+		A77B3D5C230D413D000EF17F /* Pass Code Controller */ = {
+			isa = PBXGroup;
+			children = (
+				A77B3D5A230D2AE2000EF17F /* PassCodeController.swift */,
+			);
+			path = "Pass Code Controller";
+			sourceTree = "<group>";
+		};
 		A78464B922F5C66D007BA730 /* Device Orientation Checker */ = {
 			isa = PBXGroup;
 			children = (
@@ -289,6 +370,8 @@
 			isa = PBXGroup;
 			children = (
 				A7A6A61F228BA048001FCA4D /* ButtonGridManager.swift */,
+				A77B3D4A230AA07F000EF17F /* ButtonGridCalculator.swift */,
+				A77B3D51230BEEFF000EF17F /* GridForSquares.swift */,
 			);
 			path = "Grid Managers";
 			sourceTree = "<group>";
@@ -452,6 +535,7 @@
 				A78B0E4F22ABE11300D0B275 /* FrameViewController For SubView */,
 				A7FBD3B622DC6969004DCF3F /* Write Section */,
 				A7FBD3B922DC69BD004DCF3F /* Present Section */,
+				A77B3D4E230B9507000EF17F /* Setting Section */,
 			);
 			path = SubView;
 			sourceTree = "<group>";
@@ -585,11 +669,10 @@
 			isa = PBXGroup;
 			children = (
 				A7A6A61D228B9C1B001FCA4D /* GenericMultiButtonView.swift */,
-				A78B0DF7228D9D2900D0B275 /* UIButton_WithIdentifire.swift */,
-				A784642A22EC808A007BA730 /* InnerShadowUIView.swift */,
-				A77B3D402307C0F8000EF17F /* WoosunAlertController.swift */,
+				A77B3D48230A79F4000EF17F /* UIButton Resources */,
+				A77B3D47230A79E4000EF17F /* UIView Resources */,
+				A77B3D49230A7A22000EF17F /* UIViewController Resources */,
 				A78464B922F5C66D007BA730 /* Device Orientation Checker */,
-				A78B0E382292E49200D0B275 /* Content View Controller */,
 				A77B3D452307DA1E000EF17F /* View Transitioning Delegates */,
 				A78B0E372292E48500D0B275 /* Photo Module */,
 				A78B0E292292E1EE00D0B275 /* HashtagScrollView */,
@@ -756,10 +839,12 @@
 				A7FBD3B322DC37A1004DCF3F /* Image.swift in Sources */,
 				A717360322C0D1840098B077 /* Giuk_ContentView_Writing.swift in Sources */,
 				A78B0E122292E0B200D0B275 /* CenteredSquareTypeCollectionViewFlowlayout.swift in Sources */,
+				A77B3D50230B9887000EF17F /* PassCodeView.swift in Sources */,
 				A78B0E162292E0B200D0B275 /* VerticalLinearCollectionView.swift in Sources */,
 				A7FBD3BD22DD7BB1004DCF3F /* GiukViewerCollectionViewCell.swift in Sources */,
 				A78B0E2D2292E1EE00D0B275 /* HashTagItem.swift in Sources */,
 				A78B0E5422ADE9FD00D0B275 /* StartWithAnimation_ViewController.swift in Sources */,
+				A77B3D58230C5464000EF17F /* PassCodeModule.swift in Sources */,
 				A78B0E232292E15700D0B275 /* AnalogTypeLcdItemView.swift in Sources */,
 				A7A6A61E228B9C1B001FCA4D /* GenericMultiButtonView.swift in Sources */,
 				A78B0E142292E0B200D0B275 /* TimeCollectionView.swift in Sources */,
@@ -767,6 +852,7 @@
 				A78B0E2F2292E1EE00D0B275 /* HashTagView.swift in Sources */,
 				A78B0E222292E15700D0B275 /* AnalogNumberView.swift in Sources */,
 				A78B0E5F22AFE8F000D0B275 /* ImageFilterModule.swift in Sources */,
+				A77B3D5B230D2AE2000EF17F /* PassCodeController.swift in Sources */,
 				A717361022CA0E250098B077 /* DescribingSources.swift in Sources */,
 				A717360D22C5CA740098B077 /* TagInformation.swift in Sources */,
 				A71735F022B3E0D20098B077 /* Giuk_ContentView_WritingTextView.swift in Sources */,
@@ -777,6 +863,7 @@
 				A7FBD3C822E30F07004DCF3F /* ThumbnailCollectionViewCell.swift in Sources */,
 				A7A6A620228BA048001FCA4D /* ButtonGridManager.swift in Sources */,
 				A7FBD3A922D9EBB6004DCF3F /* ThumbnailInformation.swift in Sources */,
+				A77B3D54230BEF2F000EF17F /* NumberPad.swift in Sources */,
 				A78B0E4B22ABDF3100D0B275 /* Giuk_OpenFromFrame_ViewController.swift in Sources */,
 				A78B0E152292E0B200D0B275 /* FocusingIndexBasedCollectionview.swift in Sources */,
 				A7FBD3BF22DD9119004DCF3F /* PresentGiukView.swift in Sources */,
@@ -792,12 +879,14 @@
 				A7FBD3AD22DC3530004DCF3F /* GiukIndex.swift in Sources */,
 				A7FBD3C122DDED7A004DCF3F /* PresentTextView.swift in Sources */,
 				A7FBD3BB22DC7C23004DCF3F /* PropertyAnimationLoader.swift in Sources */,
+				A77B3D4D230B94F1000EF17F /* SettingViewController.swift in Sources */,
 				A78B0E212292E15700D0B275 /* AnalogNumberItemView.swift in Sources */,
 				A78B0E48229F6BDC00D0B275 /* Giuk_MainFrame_ViewController.swift in Sources */,
 				A717360B22C5CA000098B077 /* TextFieldWithContainer.swift in Sources */,
 				A717360922C5C9D50098B077 /* LabelWithContainer.swift in Sources */,
 				A7A6A612228A4EAC001FCA4D /* PublicExtentions.swift in Sources */,
 				A78B0E262292E19300D0B275 /* ImageCroppingView.swift in Sources */,
+				A77B3D5E230E17FE000EF17F /* ActiveControllButton.swift in Sources */,
 				A78B0E1C2292E13900D0B275 /* ColorCollectionViewCell.swift in Sources */,
 				A78B0E172292E0B200D0B275 /* VerticalSpotlightCollectionViewFlowLayout.swift in Sources */,
 				A78B0E3E2299464E00D0B275 /* Giuk_ContentView_WriteSection.swift in Sources */,
@@ -807,10 +896,13 @@
 				A77B3D432307CB5A000EF17F /* FadeInTransitionAnimator.swift in Sources */,
 				A7FBD3A622D74ACD004DCF3F /* RadialGradientLayer.swift in Sources */,
 				A78B0E3C22993FB100D0B275 /* Giuk_ContentView.swift in Sources */,
+				A77B3D4B230AA07F000EF17F /* ButtonGridCalculator.swift in Sources */,
 				A7FBD3A122D35D4B004DCF3F /* Giuk.swift in Sources */,
+				A77B3D52230BEEFF000EF17F /* GridForSquares.swift in Sources */,
 				A717360722C491230098B077 /* TagGenerator.swift in Sources */,
 				A78B0E282292E1AE00D0B275 /* PhotoModule.swift in Sources */,
 				A77B3D412307C0F8000EF17F /* WoosunAlertController.swift in Sources */,
+				A77B3D56230BF84B000EF17F /* HiddenDotView.swift in Sources */,
 				A78B0E352292E1FC00D0B275 /* FrameTransitionDelegate.swift in Sources */,
 				A717360522C25E7E0098B077 /* HashTagScrollView.swift in Sources */,
 				A78B0E44229D006B00D0B275 /* NonAutomaticScrollView.swift in Sources */,

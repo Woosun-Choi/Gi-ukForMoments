@@ -45,11 +45,7 @@ class GenericMultiButtonView: UIView {
     
     var buttonAreaFrame: CGRect {
         get {
-            if _requestedButtonAreaFrame == nil {
-                return defaultButtonAreaFrame
-            } else {
-                return _requestedButtonAreaFrame!
-            }
+            return (_requestedButtonAreaFrame == nil) ? defaultButtonAreaFrame : _requestedButtonAreaFrame!
         }
         set {
             _requestedButtonAreaFrame = newValue

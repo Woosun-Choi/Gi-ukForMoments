@@ -132,6 +132,41 @@ class ImageFilterModule {
         })
     ]
     
+    func performFilter(_ filterName: String, image: UIImage) -> UIImage? {
+        guard let filterIdentity = ImageFilterModule.CIFilterName.requestedFilter(filterName) else { return image }
+        if filterIdentity == .None {
+            return image
+        } else {
+            let orientation = image.imageOrientation
+            guard let targetImage = CIImage(image: image) else { return nil }
+            guard let filter = CIFilter(name: filterIdentity.rawValue ) else { return nil }
+            filter.setValue(targetImage, forKey: kCIInputImageKey)
+            guard let filteredImage = filter.value(forKey: kCIOutputImageKey) as? CIImage else { return nil }
+            guard let cgImage = context.createCGImage(filteredImage, from: targetImage.extent) else { return nil }
+            return UIImage(cgImage: cgImage, scale: 1, orientation: orientation)
+        }
+    }
+    
+    func performFilter(_ filterName: CIFilterName, image: UIImage) -> UIImage? {
+        if filterName == .None {
+            return image
+        } else {
+            let orientation = image.imageOrientation
+            guard let targetImage = CIImage(image: image) else { return nil }
+            guard let filter = CIFilter(name: filterName.rawValue ) else { return nil }
+            filter.setValue(targetImage, forKey: kCIInputImageKey)
+            guard let filteredImage = filter.value(forKey: kCIOutputImageKey) as? CIImage else { return nil }
+            guard let cgImage = context.createCGImage(filteredImage, from: targetImage.extent) else { return nil }
+            return UIImage(cgImage: cgImage, scale: 1, orientation: orientation)
+        }
+    }
+    
+//    guard let effect = CIFilter(name: filterIdentity) else { return nil }
+//    effect.setValue(ciImage, forKey: kCIInputImageKey)
+//    guard let filteredImage = effect.value(forKey: kCIOutputImageKey) as? CIImage else { return nil }
+//    guard let cgImage = context.createCGImage(filteredImage, from: ciImage.extent) else { return nil }
+//    return UIImage(cgImage: cgImage, scale: 1, orientation: orientation)
+    
     func performImageFilter(_ filter: CIFilterName, image: UIImage) -> UIImage? {
         guard let coreImage = CIImage(image: image) else { return nil }
         let orientation = image.imageOrientation

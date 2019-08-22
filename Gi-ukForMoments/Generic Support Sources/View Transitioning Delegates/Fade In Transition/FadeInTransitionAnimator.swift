@@ -35,7 +35,7 @@ class FadeInTransitioningAnimator: NSObject, UIViewControllerAnimatedTransitioni
     
     var animationCurveStyle: UIView.AnimationOptions?
     
-    var animateDuration: TimeInterval = 0.35
+    var animateDuration: TimeInterval = 0.25
     
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return animateDuration

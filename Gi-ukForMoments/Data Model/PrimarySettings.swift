@@ -16,11 +16,17 @@ class PrimarySettings: NSManagedObject {
         do {
             if let counting = try? context.count(for: request) {
                 if counting == 1 {
-                    
+//                    if let setting = try? context.fetch(request).first {
+//                        if setting.passCode != "1111" {
+//                            setting.passCode = "1111"
+//                            try! context.save()
+//                        }
+//                    }
                 } else if counting == 0 {
                     let newSetting = PrimarySettings(context: context)
                     newSetting.filterName = "CIPhotoEffectTonal"
                     newSetting.userID = "notAuthorized"
+                    newSetting.passCode = ""
                     print("new setting")
                     try! context.save()
                 } else {
@@ -40,6 +46,7 @@ class PrimarySettings: NSManagedObject {
                     let newSetting = PrimarySettings(context: context)
                     newSetting.filterName = "CIPhotoEffectTonal"
                     newSetting.userID = "notAuthorized"
+                    newSetting.passCode = ""
                     print("new setting")
                     try! context.save()
                     return newSetting
@@ -50,6 +57,24 @@ class PrimarySettings: NSManagedObject {
             } else {
                 return nil
             }
+        }
+    }
+    
+    enum SettingError: Error {
+        case settingError
+    }
+    
+    func updateSettingData(context: NSManagedObjectContext, filterName: String?, passCode: String?) throws {
+        if let requestedFilterName = filterName {
+            self.filterName = requestedFilterName
+        }
+        if let requestedPassCode = passCode {
+            self.passCode = requestedPassCode
+        }
+        do {
+            try context.save()
+        } catch {
+            throw SettingError.settingError
         }
     }
 }

@@ -88,6 +88,7 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController
     var nowEditing: Bool = false {
         didSet {
             setPresentCollectionView()
+            presentCollectionView?.reloadData()
             UIView.animate(withDuration: 0.25, animations: {
                 [unowned self] in
                 self.viewDidLayoutSubviews()
@@ -120,6 +121,7 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         setAllSubViews()
+        closeButton.setImage(UIImage(named: ButtonImageNames.ButtonName_Content_LeftArrow), for: .normal)
     }
     
     override func viewDidLayoutSubviews() {
@@ -199,35 +201,6 @@ class GiukViewerViewController: Giuk_OpenFromFrame_ViewController
     }
     
     private func presentAlertControllerForEdit(_ index: IndexPath) {
-//        let alert = UIAlertController(title: DescribingSources.deleteSection.delete_Title, message: DescribingSources.deleteSection.delete_SubTitle, preferredStyle: .actionSheet)
-//        let cancelAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_CancelAction, style: .cancel, handler: nil)
-//        let deleteAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_DeleteAction, style: .destructive) {
-//            [unowned self] (action) in
-//            if let targetGiuk = self.giuks?[index.row] {
-//                targetGiuk.deleteGiuk(context: self.context) {
-//                    [weak self] in
-//                    self?.giuks?.remove(at: index.item)
-//                    if self?.giuks?.count == 0 {
-//                        self?.closeButtonAction(self!.closeButton)
-//                    }
-//                }
-//            }
-//        }
-//        let removeAction = UIAlertAction(title: DescribingSources.deleteSection.delete_Title_RemoveAction, style: .default) {
-//            [unowned self] (action) in
-//            if let targetGiuk = self.giuks?[index.row] {
-//                targetGiuk.deleteGiukFromTag(context: self.context, tag: self.tag!) {
-//                    [weak self] in
-//                    self?.giuks?.remove(at: index.item)
-//                    if self?.giuks?.count == 0 {
-//                        self?.closeButtonAction(self!.closeButton)
-//                    }
-//                }
-//            }
-//        }
-//        alert.addAction(removeAction)
-//        alert.addAction(deleteAction)
-//        alert.addAction(cancelAction)
         
         let alert = WoosunAlertController(title: DescribingSources.deleteSection.delete_Title, message: DescribingSources.deleteSection.delete_SubTitle, style: .bottom)
         let removeAction = WoosunAlertControllerItem(style: .normal, title: DescribingSources.deleteSection.delete_Title_RemoveAction) {
@@ -356,11 +329,12 @@ extension GiukViewerViewController {
             presentCollectionView.allowsSelection = false
             view.addSubview(presentCollectionView)
         } else {
-            presentCollectionView?.setNewFrame(presentorFrame)
-            if let targetLayout = presentCollectionView.flowLayouts as? CenteredCollectionViewFlowLayout {
-                targetLayout.estimateCellSize = cellEstimatedSize
+            if presentCollectionView.frame != presentorFrame {
+                presentCollectionView?.setNewFrame(presentorFrame)
+                if let targetLayout = presentCollectionView.flowLayouts as? CenteredCollectionViewFlowLayout {
+                    targetLayout.estimateCellSize = cellEstimatedSize
+                }
             }
-            presentCollectionView?.reloadData()
         }
     }
     
@@ -523,7 +497,7 @@ extension GiukViewerViewController: ImageCroppingViewDelegate, ThumbnailImageVie
     //MARK: PresentingImages To collectionview cells delegates
     func imageCroppingView(_ croppingView: ImageCroppingView, needRepresentedImageData imageData: Data) -> UIImage? {
         if isNonColorPresneting {
-            let result = filterModule.performImageFilter(filterEffect, image: UIImage(data: imageData)!)
+            let result = filterModule.performFilter(filterEffect, image: UIImage(data: imageData)!)
             return result
         } else {
             return nil
@@ -532,7 +506,7 @@ extension GiukViewerViewController: ImageCroppingViewDelegate, ThumbnailImageVie
     
     func thumbnailImageViewShouldReturnImageAs(_ thumbnailImageView: ThumbnailImageView, imageData: Data) -> UIImage? {
         if isNonColorPresneting {
-            let result = filterModule.performImageFilter(filterEffect, image: UIImage(data: imageData)!)
+            let result = filterModule.performFilter(filterEffect, image: UIImage(data: imageData)!)
             return result
         } else {
             return nil

@@ -185,6 +185,15 @@ public func randomHashCreate(length: Int) -> String {
     return randString
 }
 
+public func createUserID(name: String) -> String {
+    let randomHash = randomHashCreate(length: 10)
+    let createdDate = Date()
+    let createdDateString = createdDate.requestStringFromDate(data: .year)! + createdDate.monthString + createdDate.requestStringFromDate(data: .day)!
+    let userDivider = "User_"
+    let userID = userDivider + randomHash + "_" + createdDateString + "_" + name
+    return userID
+}
+
 public func valueBetweenMinAndMax<T: Comparable>(maxValue: T, minValue: T, mutableValue: T) -> T {
     return max(min(maxValue, mutableValue), minValue)
 }
@@ -364,6 +373,25 @@ extension UIColor {
     
     static var roseGoldColor: UIColor {
         return UIColor.init(red: 225/255, green: 198/255, blue: 179/255, alpha: 1)
+    }
+    
+    var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+        getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        
+        return (red, green, blue, alpha)
+    }
+    
+    var complementaryColor: UIColor {
+        let rgbState = self.rgba
+        let red = 1.0 - rgbState.red
+        let green = 1.0 - rgbState.green
+        let blue = 1.0 - rgbState.blue
+        let alpha = rgbState.alpha
+        return UIColor(red: red, green: green, blue: blue, alpha: alpha)
     }
 }
 

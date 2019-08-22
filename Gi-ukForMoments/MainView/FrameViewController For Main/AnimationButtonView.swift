@@ -54,7 +54,8 @@ class AnimateButtonView: UIView
         }
         
         if buttonItems.count != 0 {
-            let rects = buttonGrid.requestButtonFramesWith(frame: buttonFrame, minSpace: 3, numberOfButtons: buttonItems.count)
+            let rects = try! ButtonGridCalculator.requestButtonFrames(inView: buttonArea, numberOfButtons: buttonItems.count, buttonType: .square, alignmentStyle: .edgeAligned, minSpacing: 3, marginInset: (5,5,5,5))
+//            let rects = buttonGrid.requestButtonFramesWith(frame: buttonFrame, minSpace: 3, numberOfButtons: buttonItems.count)
             for button in buttonItems {
                 if let buttonIndex = buttonItems.firstIndex(of: button) {
                     button.frame = rects[buttonIndex]

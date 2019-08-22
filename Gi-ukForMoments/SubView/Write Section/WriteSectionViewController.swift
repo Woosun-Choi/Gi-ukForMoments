@@ -204,7 +204,8 @@ extension WriteSectionViewController {
     func writingView(_ writingView: Giuk_ContentView_Writing, thumbnailImageForItemAt indexPath: IndexPath) -> UIImage? {
         if let thumbImage = thumbnails?[indexPath.row].image.fixOrientation() {
             if isNonColorPresneting {
-                let filteredImage = filterModule.performImageFilter(filterEffect, image: thumbImage)
+                let filteredImage = filterModule.performFilter(filterEffect, image: thumbImage)
+//                let filteredImage = filterModule.performImageFilter(filterEffect, image: thumbImage)
                 return filteredImage
             } else {
                 return thumbImage
@@ -247,7 +248,8 @@ extension WriteSectionViewController {
     func writeSection(_ writeSection: Giuk_ContentView_WriteSection, needRepresentedImageData imageData: Data) -> UIImage? {
         if isNonColorPresneting {
             if let image = UIImage(data: imageData)?.fixOrientation() {
-                return filterModule.performImageFilter(filterEffect, image: image)
+                return filterModule.performFilter(filterEffect, image: image)
+//                return filterModule.performImageFilter(filterEffect, image: image)
             } else {
                 return nil
             }

@@ -28,39 +28,59 @@ class CenteredCollectionView: FocusingIndexBasedCollectionView {
     
     override func reloadData() {
         super.reloadData()
-        if let _ = requiredItemIndex {
-            focusingIndex = requiredItemIndex
+        if let currentIndex = requiredItemIndex {
+            if currentIndex.row < self.numberOfItems(inSection: currentIndex.section) {
+                focusingIndex = requiredItemIndex
+            } else {
+                requiredItemIndex = IndexPath(item: (numberOfItems(inSection: currentIndex.section) - 1).absValue, section: currentIndex.section)
+                focusingIndex = nil
+            }
         } else {
             focusingIndex = nil
         }
         scrollWhenRequiredIndexExist()
     }
     
+    func refreshAllData() {
+        requiredItemIndex = nil
+        reloadData()
+    }
+    
     func setStartIndexTo(_ index: IndexPath?) {
         self.requiredItemIndex = index
     }
     
-    func scrollToTargetIndex(index : IndexPath?, animated: Bool, completion: (()->Void)? = nil) {
+    func scrollToTargetIndex(index : IndexPath?, animated: Bool) {
         guard let _index = index else {return}
-        let scrollView = self as UIScrollView
-        if let layOut = self.flowLayouts as? CenteredCollectionViewFlowLayout {
-            scrollView.setContentOffset(layOut.positionOfCellForIndexpath(_index), animated: animated)
+        requiredItemIndex = nil
+        if (_index.row < self.numberOfItems(inSection: _index.section)) {
+            let scrollView = self as UIScrollView
+            if let layOut = self.flowLayouts as? CenteredCollectionViewFlowLayout {
+                scrollView.setContentOffset(layOut.positionOfCellForIndexpath(_index), animated: animated)
+            }
         }
-        completion?()
+    }
+    
+    private func scrollToIndex(index : IndexPath?, animated: Bool) {
+        guard let _index = index else {return}
+        if (_index.row < self.numberOfItems(inSection: _index.section)) {
+            let scrollView = self as UIScrollView
+            if let layOut = self.flowLayouts as? CenteredCollectionViewFlowLayout {
+                scrollView.setContentOffset(layOut.positionOfCellForIndexpath(_index), animated: animated)
+            }
+        }
     }
     
     //MARK: update layouts
     private func scrollWhenRequiredIndexExist() {
         if let required = requiredItemIndex {
-            print("scroll to required")
-            scrollToTargetIndex(index: required, animated: false)
-            requiredItemIndex = nil
+            scrollToIndex(index: required, animated: false)
         } else {
             if let _ = focusingIndex {
             } else {
                 checkNowCenteredFocusedCell(collectionView: self)
                 if let currentFocused = focusingIndex {
-                    scrollToTargetIndex(index: currentFocused, animated: false)
+                    scrollToIndex(index: currentFocused, animated: false)
                 }
             }
         }
@@ -73,11 +93,6 @@ class CenteredCollectionView: FocusingIndexBasedCollectionView {
             if frame.size != oldValue.size {
                 if requiredItemIndex == nil {
                     requiredItemIndex = focusingIndex
-                    if let nowIndex = focusingIndex {
-                        scrollToTargetIndex(index: nowIndex, animated: false)
-                    }
-                } else {
-                    scrollWhenRequiredIndexExist()
                 }
             }
         }
@@ -89,20 +104,20 @@ class CenteredCollectionView: FocusingIndexBasedCollectionView {
     }
     
     override func draw(_ rect: CGRect) {
-        scrollWhenRequiredIndexExist()
+//        scrollWhenRequiredIndexExist()
     }
     //end
     
     //MARK: overrided scrollview delegate from focusingindexbasedscrollview
     override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         super.scrollViewDidEndScrollingAnimation(scrollView)
-        scrollToTargetIndex(index: focusingIndex, animated: true)
+        scrollToIndex(index: focusingIndex, animated: true)
         focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: false)
     }
     
     override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         super.scrollViewDidEndDecelerating(scrollView)
-        scrollToTargetIndex(index: focusingIndex, animated: true)
+        scrollToIndex(index: focusingIndex, animated: true)
     }
     
     //MARK: init Methodes
@@ -130,15 +145,16 @@ extension CenteredCollectionView {
     
     //MARK: scrollview delegates
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        requiredItemIndex = nil
         focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: true)
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        scrollToTargetIndex(index: focusingIndex, animated: true)
+        scrollToIndex(index: focusingIndex, animated: true)
     }
     
     func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
-        scrollToTargetIndex(index: focusingIndex, animated: true)
+        scrollToIndex(index: focusingIndex, animated: true)
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -331,12 +347,12 @@ extension CenteredCollectionView {
             } else {
                 focusingIndex = indexPath
                 focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: true)
-                scrollToTargetIndex(index: indexPath, animated: true)
+                scrollToIndex(index: indexPath, animated: true)
             }
         } else {
             focusingIndex = indexPath
             focusingCollectionViewDelegate?.collectionViewScrollingState?(self, scrolling: true)
-            scrollToTargetIndex(index: indexPath, animated: true)
+            scrollToIndex(index: indexPath, animated: true)
         }
     }
 }
