@@ -267,6 +267,22 @@ public class EdgeShadowLayer: CAGradientLayer {
     }
 }
 
+extension Array {
+    func pickRandomItemFor(number count: Int) -> [Element] {
+        if self.count >= count {
+            var currentArray = self
+            var items = [Element]()
+            for _ in 0..<count {
+                let randomPick = randomNumberInRange(currentArray.count)
+                items.append(currentArray.remove(at: randomPick))
+            }
+            return items
+        } else {
+            return self
+        }
+    }
+}
+
 extension UIFont {
     
     enum appleSDGothicNeo: String {
@@ -397,6 +413,30 @@ extension UIColor {
 
 extension String {
     
+    func isAllBlankedString() -> Bool {
+        var result = true
+        for index in self.indices {
+            if self[index] != " " {
+                result = false
+            }
+        }
+        return result
+    }
+    
+    func isAllBlankedStringOrStarWithBlankString() -> Bool {
+        var result = true
+        if self.first == " " {
+            return true
+        } else {
+            for index in self.indices {
+                if self[index] != " " {
+                    result = false
+                }
+            }
+            return result
+        }
+    }
+    
     func centeredAttributedString(fontSize: CGFloat, type: UIFont.appleSDGothicNeo) -> NSAttributedString {
         let font = type.font(size: fontSize)
         let paragraphStyle = NSMutableParagraphStyle()
@@ -513,6 +553,16 @@ extension Int {
     
     var cgFloat: CGFloat {
         return CGFloat(self)
+    }
+    
+    func makeIndexArrayFor() -> [Int] {
+        var numbers = [Int]()
+        var startNumber = 0
+        while startNumber < self {
+            numbers.append(startNumber)
+            startNumber += 1
+        }
+        return numbers
     }
 }
 

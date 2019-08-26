@@ -73,9 +73,13 @@ class TextFieldWithContainer: UIView, UITextFieldDelegate {
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        if string == " " {
-            delieverTextToDelegate(false)
-            return false
+        if !isTextWithBlackAvailable {
+            if string == " " {
+                delieverTextToDelegate(false)
+                return false
+            } else {
+                return true
+            }
         } else {
             return true
         }

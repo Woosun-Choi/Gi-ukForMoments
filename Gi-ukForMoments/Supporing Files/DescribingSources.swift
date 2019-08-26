@@ -9,6 +9,7 @@
 import UIKit
 
 struct DescribingSources {
+    
     static private let language = Locale.current.languageCode
     
     struct sectionsFontSize {
@@ -20,7 +21,7 @@ struct DescribingSources {
         static var filterSelection_Title: String {
             switch DescribingSources.language {
             case "kor": return "기억 필터"
-            default : return "Gi-uk Filter"
+            default : return "filter"
             }
         }
         
@@ -35,6 +36,29 @@ struct DescribingSources {
             switch DescribingSources.language {
             case "kor": return "비밀번호\n( 비활성화 됨)"
             default : return "passcode\n( deactivated )"
+            }
+        }
+    }
+    
+    struct PasscodeView {
+        static var passCode_Checking: String {
+            switch DescribingSources.language {
+            case "kor": return "비밀번호"
+            default : return "passcode"
+            }
+        }
+        
+        static var passCode_NewPasscode: String {
+            switch DescribingSources.language {
+            case "kor": return "새 비밀번호를 입력하세요"
+            default : return "enter new passcode"
+            }
+        }
+        
+        static var passCode_CheckNewPasscode: String {
+            switch DescribingSources.language {
+            case "kor": return "다시한번 입력하세요"
+            default : return "re-enter new passcode"
             }
         }
     }

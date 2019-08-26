@@ -221,8 +221,9 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         tagView.hashTagScrollViewDelegate = self
         tagView.dataSource = self
         tagView.clipsToBounds = true
-        tagView.tagItemCornerRadius_Percent = 20
+        tagView.tagItemCornerRadius_Percent = tagItemCornerRaidus
         tagView.itemMinSize = SizeSources.tagItemMinimumSize
+        tagView.itemColor = .GiukBackgroundColor_depth_1
         //        tagView.backgroundColor = UIColor(patternImage: UIImage(named: "GiukBackground")!)
         containerView_MainContent.addSubview(tagView)
     }
@@ -331,13 +332,13 @@ class Giuk_MainFrame_ViewController: StartWithAnimation_ViewController, AnimateB
         
         let addButton = UIButton_WithIdentifire()
         addButton.identifire = buttonLocation.top.rawValue
-        addButton.setImage(UIImage(named: ButtonImageNames.ButtonName_Main_Giuk), for: .normal)
+        addButton.setImage(UIImage(named: ButtonImageNames.ButtonName_Main_Add), for: .normal)
         addButton.addTarget(target, action: selector, for: forEvent)
         addButton.backgroundColor = .clear
         
         let setButton = UIButton_WithIdentifire()
         setButton.identifire = buttonLocation.rightTop.rawValue
-        setButton.setTitle("⚙︎", for: .normal)
+        setButton.setImage(UIImage(named: ButtonImageNames.ButtonName_Main_Setting), for: .normal)
         setButton.addTarget(target, action: selector, for: forEvent)
         setButton.backgroundColor = .clear
         

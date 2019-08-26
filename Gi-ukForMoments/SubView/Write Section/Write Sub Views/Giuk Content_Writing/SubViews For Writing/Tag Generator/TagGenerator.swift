@@ -79,11 +79,12 @@ class TagGenerator: UIView, TextFieldWithContainerDelegate, HashTagScrollViewDat
         if hashtagView_selected == nil {
             let newTagView = generateUIView(view: hashtagView_selected, frame: hashtagView_Selceted_Grid)
             hashtagView_selected = newTagView
-            hashtagView_selected.tagItemCornerRadius_Percent = 20
+            hashtagView_selected.tagItemCornerRadius_Percent = tagItemCornerRaidus
             hashtagView_selected.itemMinSize = SizeSources.tagItemMinimumSize
             hashtagView_selected.dataSource = self
             hashtagView_selected.hashTagScrollViewDelegate = self
             hashtagView_selected.backgroundColor = .goyaYellowWhite
+            hashtagView_selected.itemColor = .GiukBackgroundColor_depth_1
             hashtagView_selected.addGestureRecognizer(gesture)
             addSubview(hashtagView_selected)
         } else {
@@ -146,11 +147,12 @@ class TagGenerator: UIView, TextFieldWithContainerDelegate, HashTagScrollViewDat
         if hashtagView_library == nil {
             let newTagView = generateUIView(view: hashtagView_library, frame: hashtagView_Library_Grid)
             hashtagView_library = newTagView
-            hashtagView_library.tagItemCornerRadius_Percent = 20
+            hashtagView_library.tagItemCornerRadius_Percent = tagItemCornerRaidus
             hashtagView_library.itemMinSize = SizeSources.tagItemMinimumSize
             hashtagView_library.dataSource = self
             hashtagView_library.hashTagScrollViewDelegate = self
             hashtagView_library.layer.backgroundColor = UIColor.goyaBlack.cgColor
+            hashtagView_library.itemColor = .GiukBackgroundColor_depth_1
 //            hashtagView_library.backgroundColor = .goyaBlack
             addSubview(hashtagView_library)
         } else {
@@ -222,7 +224,7 @@ class TagGenerator: UIView, TextFieldWithContainerDelegate, HashTagScrollViewDat
     
     //MARK: TextInputView delegate
     func textFieldWithContainer_DidEndEditing(_ textFieldInContainer: UITextField, text: String?, expectedEndEditingState: Bool) {
-        if let inputText = text {
+        if let inputText = text, !inputText.isAllBlankedStringOrStarWithBlankString() {
             tagManager.addTags(tag: inputText)
         } else {
             textFieldInContainer.endEditing(expectedEndEditingState)

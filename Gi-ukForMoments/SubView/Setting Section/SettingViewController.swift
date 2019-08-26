@@ -85,10 +85,43 @@ class AlphaButton: UIButton_WithIdentifire {
     }
 }
 
+extension ThumbnailImage {
+    
+    static func allThumbnails(context: NSManagedObjectContext) -> [ThumbnailImage]? {
+        let request : NSFetchRequest<ThumbnailImage> = ThumbnailImage.fetchRequest()
+        return try? context.fetch(request)
+    }
+    
+    static func randomThumbnailWithCount(count : Int, context: NSManagedObjectContext) -> [ThumbnailImage] {
+        let request : NSFetchRequest<ThumbnailImage> = ThumbnailImage.fetchRequest()
+        if let numberOfThumbs = try? context.count(for: request), numberOfThumbs > count {
+            var randomIndex = [Int]()
+            var currentIndex = numberOfThumbs.makeIndexArrayFor()
+            for _ in 0..<count {
+                let randomPick = randomNumberInRange(currentIndex.count)
+                randomIndex.append(currentIndex.remove(at: randomPick))
+            }
+            
+            if let preresult = try? context.fetch(request) {
+                var result = [ThumbnailImage]()
+                for index in randomIndex {
+                    result.append(preresult[index])
+                }
+                return result
+            } else {
+                return []
+            }
+        } else {
+            return []
+        }
+    }
+}
+
 class SettingViewController: Giuk_OpenFromFrame_ViewController, FilterSelectorDataSource
 {
     weak var filterSelectorContainer: UIView_WithIdentifire!
     weak var passcodeContainer: UIView_WithIdentifire!
+    weak var memoryPresnetor: MemoryPresentor!
     
     weak var filterSelector: FilterSelector!
     weak var giukCounterLabel: UILabel!
@@ -108,15 +141,13 @@ class SettingViewController: Giuk_OpenFromFrame_ViewController, FilterSelectorDa
         return container.viewContext
     }
     
-    private var setting: PrimarySettings? {
-        didSet {
-            currentFilterName = self.setting?.filterName
-        }
-    }
-    
+//    private var setting: PrimarySettings? {
+//        didSet {
+//            currentFilterName = self.setting?.filterName
+//        }
+//    }
+//
     private var currentSetting: PrimarySettings!
-    
-    private var currentFilterName: String?
     
     private var filters: [ImageFilterModule.CIFilterName] = [.None, .CIPhotoEffectTonal, .CISepiaTone, .CIPhotoEffectFade,  .CIPhotoEffectChrome]
     
@@ -131,10 +162,10 @@ class SettingViewController: Giuk_OpenFromFrame_ViewController, FilterSelectorDa
     
     var filterModule = ImageFilterModule()
     
-    lazy var filterButtons:  [AlphaButton] = {
-        var buttons = [AlphaButton]()
+    lazy var filterButtons:  [UIButton_WithIdentifire] = {
+        var buttons = [UIButton_WithIdentifire]()
         for filterName in filterNames {
-            let button = AlphaButton()
+            let button = UIButton_WithIdentifire()
             button.identifire = filterName
             let image = UIImage(named: "Sample")
             let filteredImage = filterModule.performFilter(filterName, image: image!)
@@ -162,10 +193,12 @@ class SettingViewController: Giuk_OpenFromFrame_ViewController, FilterSelectorDa
         fetchSettingData()
         
         setColorModeSelectionContainer()
+        setMemoryPresentor()
         setFilterSelectorContainer()
         setPasscodeButton()
         
         setGeture()
+        self.becomeFirstResponder()
 //        countInfo = fetchAllData()
     }
     
@@ -179,12 +212,13 @@ class SettingViewController: Giuk_OpenFromFrame_ViewController, FilterSelectorDa
             filterSelector.dataSource = self
             filterSelector.reloadData()
         }
-        checkCurrentFilter()
+        fetchThumbnails()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         setColorModeSelectionContainer()
+        setMemoryPresentor()
         setFilterSelectorContainer()
         setPasscodeButton()
     }
@@ -228,6 +262,18 @@ class SettingViewController: Giuk_OpenFromFrame_ViewController, FilterSelectorDa
             view.addSubview(passcodeContainer)
         } else {
             passcodeContainer.setNewFrame(frame)
+        }
+    }
+    //end
+    
+    //MARK: set memorypresentor
+    private func setMemoryPresentor() {
+        if memoryPresnetor == nil {
+            let newPresentor = generateUIView(view: memoryPresnetor, frame: instantMemoryPresentorFrame)
+            memoryPresnetor = newPresentor
+            view.addSubview(memoryPresnetor)
+        } else {
+            memoryPresnetor.setNewFrame(instantMemoryPresentorFrame)
         }
     }
     //end
@@ -353,21 +399,22 @@ class SettingViewController: Giuk_OpenFromFrame_ViewController, FilterSelectorDa
         if currentSetting.filterName != sender.identifire {
             currentSetting.filterName = sender.identifire
             try? context.save()
+            pickRandomThreePictures()
         }
         filterSelectionCollapsed = true
     }
     
-    private func checkCurrentFilter() {
-        if let filterName = currentSetting.filterName {
-            for filterButton in filterButtons {
-                if filterButton.identifire == filterName {
-                    filterButton.isSelected = true
-                } else {
-                    filterButton.isSelected = false
-                }
-            }
-        }
-    }
+//    private func checkCurrentFilter() {
+//        if let filterName = currentSetting.filterName {
+//            for filterButton in filterButtons {
+//                if filterButton.identifire == filterName {
+//                    filterButton.isSelected = true
+//                } else {
+//                    filterButton.isSelected = false
+//                }
+//            }
+//        }
+//    }
     //end
     
     //MARK: WrotedDataCount
@@ -376,6 +423,62 @@ class SettingViewController: Giuk_OpenFromFrame_ViewController, FilterSelectorDa
         if let setting = try? context.fetch(request).first {
             currentSetting = setting
         }
+    }
+    
+    private var allThumbnails: [ThumbnailImage]? {
+        didSet {
+            pickRandomThumbs()
+        }
+    }
+    
+    private var pickedThumbnails = [ThumbnailImage]() {
+        didSet {
+            self.pickRandomThreePictures()
+        }
+    }
+    
+    private func pickRandomThumbs() {
+        if let thumbs = self.allThumbnails, thumbs.count > 0 {
+            self.pickedThumbnails = thumbs.pickRandomItemFor(number: 3)
+        }
+    }
+    
+    private func pickRandomThreePictures() {
+        var images = [UIImage]()
+        for pick in pickedThumbnails {
+            if let jsonData = pick.thumbnailImageData {
+                guard let thumbInfo = ThumbnailInformation.init(json: jsonData) else { return }
+                guard let data = thumbInfo.thumbnailImageData else { return }
+                if let image = UIImage(data: data) {
+                    images.append(image)
+                }
+            }
+        }
+        
+        self.pickedImages = images
+        
+    }
+    
+    
+    private var pickedImages = [UIImage]() {
+        didSet {
+            var newImages = [UIImage]()
+            for image in self.pickedImages {
+                guard let filterName = self.currentSetting.filterName else { return }
+                guard let filteredImage = self.filterModule.performFilter(filterName, image: image) else { return }
+                newImages.append(filteredImage)
+            }
+            memoryPresnetor.setImagesToImageView(newImages)
+            
+//            memoryPresnetor.setImages(with: pickedImages)
+        }
+    }
+    
+    private func fetchThumbnails() {
+//        container.performBackgroundTask { (context) in
+            let result = ThumbnailImage.allThumbnails(context: context)
+            self.allThumbnails = result
+//        }
     }
     //end
     
@@ -389,6 +492,18 @@ class SettingViewController: Giuk_OpenFromFrame_ViewController, FilterSelectorDa
     @objc func gestureAction(_ sender: UIGestureRecognizer) {
         if filterSelectionCollapsed == false {
             filterSelectionCollapsed = true
+        }
+    }
+    
+    override var canBecomeFirstResponder: Bool {
+        get {
+            return true
+        }
+    }
+    
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        if motion == .motionShake {
+            pickRandomThumbs()
         }
     }
     //end
@@ -448,12 +563,19 @@ extension SettingViewController {
     }
     
     fileprivate var sectionButtonFrame: CGRect {
-        let minSpaceforWidth = min(sectionContainerSize.width * 0.05, 4)
-        let minSpaceforHeight = sectionContainerSize.height * 0.05
+        let minSpaceforWidth = min(sectionContainerSize.width * 0.05, 8)
+        let minSpaceforHeight = sectionContainerSize.height * 0.1
         let width = sectionContainerSize.width - (minSpaceforWidth * 2)
         let height = sectionContainerSize.height - (minSpaceforHeight * 2)
         let size = CGSize(width: width, height: height)
         let origin = CGPoint(x: minSpaceforWidth, y: minSpaceforHeight)
         return CGRect(origin: origin, size: size)
+    }
+    
+    fileprivate var instantMemoryPresentorFrame: CGRect {
+        let startOrigin = sectionContainerRectAtIndex(1).origin
+        let endOriginY = sectionContainerRectAtIndex(4).maxY
+        let size = CGSize(width: view.bounds.width, height: endOriginY - startOrigin.y)
+        return CGRect(origin: startOrigin, size: size)
     }
 }

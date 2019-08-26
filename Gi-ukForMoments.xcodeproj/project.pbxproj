@@ -31,6 +31,7 @@
 		A77B3D58230C5464000EF17F /* PassCodeModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77B3D57230C5464000EF17F /* PassCodeModule.swift */; };
 		A77B3D5B230D2AE2000EF17F /* PassCodeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77B3D5A230D2AE2000EF17F /* PassCodeController.swift */; };
 		A77B3D5E230E17FE000EF17F /* ActiveControllButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77B3D5D230E17FE000EF17F /* ActiveControllButton.swift */; };
+		A77B3D6023136941000EF17F /* MemoryPresentor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77B3D5F23136941000EF17F /* MemoryPresentor.swift */; };
 		A784640922E9B8C5007BA730 /* PublicVariables.swift in Sources */ = {isa = PBXBuildFile; fileRef = A784640822E9B8C5007BA730 /* PublicVariables.swift */; };
 		A784640B22EAB82A007BA730 /* Giuk_ThumbnailCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A784640A22EAB82A007BA730 /* Giuk_ThumbnailCollectionView.swift */; };
 		A784642B22EC808A007BA730 /* InnerShadowUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A784642A22EC808A007BA730 /* InnerShadowUIView.swift */; };
@@ -133,6 +134,7 @@
 		A77B3D57230C5464000EF17F /* PassCodeModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassCodeModule.swift; sourceTree = "<group>"; };
 		A77B3D5A230D2AE2000EF17F /* PassCodeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassCodeController.swift; sourceTree = "<group>"; };
 		A77B3D5D230E17FE000EF17F /* ActiveControllButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveControllButton.swift; sourceTree = "<group>"; };
+		A77B3D5F23136941000EF17F /* MemoryPresentor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryPresentor.swift; sourceTree = "<group>"; };
 		A784640822E9B8C5007BA730 /* PublicVariables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicVariables.swift; sourceTree = "<group>"; };
 		A784640A22EAB82A007BA730 /* Giuk_ThumbnailCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Giuk_ThumbnailCollectionView.swift; sourceTree = "<group>"; };
 		A784642A22EC808A007BA730 /* InnerShadowUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InnerShadowUIView.swift; sourceTree = "<group>"; };
@@ -329,6 +331,7 @@
 			children = (
 				A77B3D4C230B94F1000EF17F /* SettingViewController.swift */,
 				A77B3D5D230E17FE000EF17F /* ActiveControllButton.swift */,
+				A77B3D5F23136941000EF17F /* MemoryPresentor.swift */,
 			);
 			path = "Setting Section";
 			sourceTree = "<group>";
@@ -839,6 +842,7 @@
 				A7FBD3B322DC37A1004DCF3F /* Image.swift in Sources */,
 				A717360322C0D1840098B077 /* Giuk_ContentView_Writing.swift in Sources */,
 				A78B0E122292E0B200D0B275 /* CenteredSquareTypeCollectionViewFlowlayout.swift in Sources */,
+				A77B3D6023136941000EF17F /* MemoryPresentor.swift in Sources */,
 				A77B3D50230B9887000EF17F /* PassCodeView.swift in Sources */,
 				A78B0E162292E0B200D0B275 /* VerticalLinearCollectionView.swift in Sources */,
 				A7FBD3BD22DD7BB1004DCF3F /* GiukViewerCollectionViewCell.swift in Sources */,

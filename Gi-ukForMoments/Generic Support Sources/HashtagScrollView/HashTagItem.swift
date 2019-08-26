@@ -52,7 +52,7 @@ class HashTagItem: UIView {
     
     private(set) var tagString : String?
     
-    var contentColor = UIColor.goyaFontColor {
+    var contentColor = UIColor.black {
         didSet {
             setNeedsDisplay()
         }

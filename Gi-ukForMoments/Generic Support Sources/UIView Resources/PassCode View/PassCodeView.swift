@@ -8,6 +8,8 @@
 
 import UIKit
 
+
+
 @objc protocol PassCodeViewDelegate {
     @objc optional func passCodeView(_ passcodeView: PassCodeView, mode: PassCodeModule.CodeMode, didUpdateSate state: PassCodeModule.PassCodeState, code: String)
 }
@@ -80,12 +82,12 @@ class PassCodeView: UIView, NumberPadDelegate, PassCodeModuleDelegate
         if state != .completed || state == nil {
             switch module.mode {
             case .checkingMode:
-                updateNoticeLabel("PASSCODE")
+                updateNoticeLabel(DescribingSources.PasscodeView.passCode_Checking)
             case .inputMode:
                 if module.passCode == nil {
-                    updateNoticeLabel("enter new passcode")
+                    updateNoticeLabel(DescribingSources.PasscodeView.passCode_NewPasscode)
                 } else {
-                    updateNoticeLabel("re-enter new passcode")
+                    updateNoticeLabel(DescribingSources.PasscodeView.passCode_CheckNewPasscode)
                 }
             }
         } else {

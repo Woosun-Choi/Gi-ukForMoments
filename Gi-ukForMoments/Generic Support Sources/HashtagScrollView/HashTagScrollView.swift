@@ -29,6 +29,12 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
         }
     }
     
+    var itemColor: UIColor = .black {
+        didSet {
+            setNeedsLayout()
+        }
+    }
+    
     var backgroundLayer: CALayer? {
         didSet {
             if self.backgroundLayer != nil {
@@ -207,6 +213,7 @@ class HashTagScrollView: UIScrollView, HashTagDelegate {
             let hash = HashTagItem(limitWidth: estimateWidthLimit, tag: item, fontSize: estimatedFontSizeForTagItem, itemMinSize: itemMinSize)
             hash.cornerRadiusRatio = tagItemCornerRadius_Percent
             hash.shadowVisible = isShadowedItem
+            hash.contentColor = itemColor
             hash.delegate = self
             self.addSubview(hash)
         }

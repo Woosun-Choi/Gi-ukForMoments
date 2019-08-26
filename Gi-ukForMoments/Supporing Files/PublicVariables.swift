@@ -11,4 +11,8 @@ struct SizeSources {
     static var tagItemMinimumSize: CGSize = CGSize(width: 50, height: 30)
 }
 
+public var tagItemCornerRaidus : CGFloat = 0
+
 public var isNonColorPresneting: Bool = true
+
+public var isTextWithBlackAvailable: Bool = true

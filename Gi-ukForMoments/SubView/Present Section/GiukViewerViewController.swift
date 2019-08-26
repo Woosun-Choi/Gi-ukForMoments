@@ -267,7 +267,7 @@ extension GiukViewerViewController {
             let newButton = generateUIView(view: addButton, frame: addButtonFrame)
             newButton?.layer.backgroundColor = UIColor.clear.cgColor
             newButton?.imageView?.contentMode = .scaleAspectFit
-            newButton?.setImage(UIImage(named: ButtonImageNames.ButtonName_Main_Giuk), for: .normal)
+            newButton?.setImage(UIImage(named: ButtonImageNames.ButtonName_Content_TagAdd), for: .normal)
             newButton?.clipsToBounds = true
             newButton?.identifire = "add"
             newButton?.setTitleColor(.goyaRoseGoldColor, for: .normal)
